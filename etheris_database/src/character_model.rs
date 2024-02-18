@@ -345,15 +345,20 @@ impl CharacterModel {
         let item_name = clear_string(name);
 
         for inventory_item in self.inventory.iter() {
+            let alternative_names = inventory_item.values.alternative_names();
+            if !alternative_names.is_empty()
+                && alternative_names
+                    .iter()
+                    .map(|n| clear_string(n))
+                    .any(|n| n == item_name)
+            {
+                return Some(inventory_item);
+            }
+
             if let Some(item) = items::get_item(&inventory_item.identifier) {
                 if clear_string(item.display_name) == item_name {
                     return Some(inventory_item);
                 }
-            }
-
-            let alternative_names = inventory_item.values.alternative_names();
-            if !alternative_names.is_empty() && alternative_names.iter().map(|n| clear_string(n)).any(|n| n == item_name) {
-                return Some(inventory_item);
             }
         }
 

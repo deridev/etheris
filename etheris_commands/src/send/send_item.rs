@@ -34,7 +34,7 @@ pub async fn send_item(
         return Ok(());
     }
 
-    let Some(inventory_item) = user_character.get_inventory_item_by_name(&item_name) else {
+    let Some(inventory_item) = author_character.get_inventory_item_by_name(&item_name) else {
         ctx.reply(
             Response::new_user_reply(
                 &author,

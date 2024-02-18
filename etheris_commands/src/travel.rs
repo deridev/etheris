@@ -64,7 +64,7 @@ pub async fn travel(mut ctx: CommandContext) -> anyhow::Result<()> {
             ButtonBuilder::new()
                 .set_custom_id(region.to_string())
                 .set_label(region.to_string())
-                .set_disabled(region.data().travel_price > character.orbs)
+                .set_disabled(!is_travel_free && region.data().travel_price > character.orbs)
         })
         .collect::<Vec<_>>();
     let row = ActionRowBuilder::new().add_buttons(buttons.clone());
