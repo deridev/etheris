@@ -88,6 +88,35 @@ pub const CACTOID: Enemy = Enemy {
     },
 };
 
+pub const DESERT_NOMAD: Enemy = Enemy {
+    identifier: "desert_nomad",
+    name: "Nômade do Deserto",
+    regions: &[(WorldRegion::Tenypt, 7), (WorldRegion::Sandywater, 1)],
+    personalities: &[Personality::Calm, Personality::Courage, Personality::Intelligence],
+    strength: 8,
+    intelligence: 14,
+    resistance: 100,
+    vitality: 185,
+    ether: 30,
+    weapon: Some(WeaponKind::Umbrella),
+    skills: &[
+        SkillKind::FlamingBall,
+        SkillKind::Refresh,
+        SkillKind::TornadoKick,
+        SkillKind::WaterBlessing,
+    ],
+    allies: None,
+    drop: EnemyReward {
+        orbs: (30, 60),
+        xp: (15, 40),
+        items: &[EnemyRewardItem {
+            amount: (1, 1),
+            item: items::tool::UMBRELLA,
+            probability: Probability::new(50)
+        }],
+    },
+};
+
 pub const ETHEREAL_HUNTER: Enemy = Enemy {
     identifier: "ethereal_hunter",
     name: "Caçador Etéreo",

@@ -100,6 +100,7 @@ pub const ALL_ENEMIES: &[Enemy] = &[
     weaks::ETHEREAL_HUNTER,
     weaks::SERPENTOID,
     weaks::CACTOID,
+    weaks::DESERT_NOMAD,
     Enemy {
         identifier: "insane_legend",
         name: "Lenda Insana",
