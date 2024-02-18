@@ -155,11 +155,11 @@ impl<'a, 'b> BattleApi<'a, 'b> {
             let accuracy_loss = if culprit.balance < 20 {
                 30
             } else if culprit.balance < 50 {
-                20
+                15
             } else if culprit.balance < 70 {
-                10
-            } else {
                 5
+            } else {
+                3
             };
 
             damage.accuracy = damage.accuracy.saturating_sub(accuracy_loss);
@@ -176,7 +176,9 @@ impl<'a, 'b> BattleApi<'a, 'b> {
                 100u8.saturating_sub(damage.accuracy + if target.balance > 80 { 15 } else { 0 }),
             );
 
-            if bad_accuracy_prob.generate_random_bool() || unlucky_miss_prob.generate_random_bool()
+            let good_accuracy = Probability::new(if target.balance > 90 { 5 } else { 15 }).generate_random_bool();
+
+            if !good_accuracy && (bad_accuracy_prob.generate_random_bool() || unlucky_miss_prob.generate_random_bool())
             {
                 missed = true;
             } else if dodge_prob.generate_random_bool() {

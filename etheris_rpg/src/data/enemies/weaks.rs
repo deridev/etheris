@@ -117,6 +117,39 @@ pub const DESERT_NOMAD: Enemy = Enemy {
     },
 };
 
+pub const BEAST_KILLER: Enemy = Enemy {
+    identifier: "beast_killer",
+    name: "Assassino de Bestas",
+    regions: &[(WorldRegion::Ethergrove, 5), (WorldRegion::Wornpeaks, 1)],
+    personalities: &[
+        Personality::Calm,
+        Personality::Intelligence,
+        Personality::Arrogance,
+    ],
+    strength: 30,
+    intelligence: 60,
+    resistance: 300,
+    vitality: 500,
+    ether: 100,
+    weapon: Some(WeaponKind::Spear),
+    skills: &[
+        SkillKind::MirrorDamage,
+        SkillKind::YinYang,
+        SkillKind::Suplex,
+        SkillKind::SimpleCut,
+        SkillKind::IcyShot,
+        SkillKind::CyclonePush,
+        SkillKind::InstinctiveReaction,
+        SkillKind::Bite,
+    ],
+    allies: None,
+    drop: EnemyReward {
+        orbs: (30, 60),
+        xp: (15, 50),
+        items: &[],
+    },
+};
+
 pub const ETHEREAL_HUNTER: Enemy = Enemy {
     identifier: "ethereal_hunter",
     name: "Caçador Etéreo",

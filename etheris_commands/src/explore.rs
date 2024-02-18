@@ -100,6 +100,12 @@ async fn explore_enemy(mut ctx: CommandContext) -> anyhow::Result<()> {
         _ => Color::GREEN,
     };
 
+    let warning = if character.stats.vitality.value < character.stats.vitality.max / 2 {
+        "⚠️ **__Você não está com a vida cheia!__**\nTome cuidado ou descanse antes de explorar.\n"
+    } else {
+        ""
+    };
+
     let embed = EmbedBuilder::new_common()
         .set_color(color)
         .set_author(EmbedAuthor {
@@ -107,7 +113,8 @@ async fn explore_enemy(mut ctx: CommandContext) -> anyhow::Result<()> {
             icon_url: Some(author.avatar_url()),
         })
         .set_description(format!(
-            "## {}\n{}{}\n{} **{}**\n{} {}\n{} {}\n\n**Habilidades**: `{}`{}",
+            "{}## {}\n{}{}\n{} **{}**\n{} {}\n{} {}\n\n**Habilidades**: `{}`{}",
+            warning,
             enemy.name,
             enemy
                 .personalities
