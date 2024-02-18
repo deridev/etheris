@@ -1,0 +1,22 @@
+[package]
+name = "etheris_framework"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+etheris_common = { path = "../etheris_common" }
+etheris_discord = { path = "../etheris_discord" }
+etheris_database = { path = "../etheris_database" }
+etheris_data = { path = "../etheris_data" }
+
+anyhow = { workspace = true }
+async-recursion = "1.0.5"
+async-trait = { workspace = true }
+serde_json = { workspace = true }
+rand = { workspace = true }
+tokio = { workspace = true }
+tokio-stream = { workspace = true }
+
+dashmap = { default-features = false, version = "5.5.3" }

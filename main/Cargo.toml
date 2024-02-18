@@ -1,0 +1,23 @@
+[package]
+name = "main"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+etheris_discord = { path = "../etheris_discord" }
+etheris_framework = { path = "../etheris_framework" }
+etheris_commands = { path = "../etheris_commands" }
+etheris_common = { path = "../etheris_common" }
+etheris_database = { path = "../etheris_database" }
+etheris_data = { path = "../etheris_data" }
+etheris_rpg = { path = "../etheris_rpg" }
+
+dotenv = "0.15.0"
+tokio = { version = "1.32.0", features = ["rt", "rt-multi-thread", "macros"] }
+tokio-stream = "0.1.14"
+
+anyhow = { workspace = true }
+once_cell = { workspace = true }
+rand = { workspace = true }

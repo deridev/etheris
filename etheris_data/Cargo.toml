@@ -1,0 +1,16 @@
+[package]
+name = "etheris_data"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+etheris_common = { path = "../etheris_common" }
+etheris_discord = { path = "../etheris_discord" }
+etheris_macros = { path = "../etheris_macros" }
+
+bson = { workspace = true }
+serde = { workspace = true }
+once_cell = { workspace = true }
+rand = { workspace = true }

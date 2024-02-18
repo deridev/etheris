@@ -1,0 +1,23 @@
+[package]
+name = "etheris_database"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+etheris_discord = { path = "../etheris_discord" }
+etheris_common = { path = "../etheris_common" }
+etheris_data = { path = "../etheris_data" }
+etheris_util = { path = "../etheris_util" }
+
+anyhow = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+once_cell = { workspace = true }
+chrono = { workspace = true }
+bson = { workspace = true }
+rand = { workspace = true }
+unidecode = { workspace = true }
+tokio-stream = { workspace = true }
+mongodb = "2.8"
