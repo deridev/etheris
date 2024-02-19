@@ -26,7 +26,7 @@ pub const CONSCIOUS_BEAR: Enemy = Enemy {
     allies: None,
     drop: EnemyReward {
         orbs: (20, 50),
-        xp: (5, 40),
+        xp: (30, 85),
         items: &[EnemyRewardItem {
             amount: (1, 1),
             item: items::special::INVIGORATING_CRYSTAL,
@@ -55,7 +55,7 @@ pub const SERPENTOID: Enemy = Enemy {
     ],
     drop: EnemyReward {
         orbs: (50, 70),
-        xp: (25, 35),
+        xp: (30, 70),
         items: &[EnemyRewardItem {
             amount: (1, 1),
             item: items::tool::KATANA,
@@ -83,7 +83,7 @@ pub const CACTOID: Enemy = Enemy {
     allies: None,
     drop: EnemyReward {
         orbs: (30, 60),
-        xp: (15, 40),
+        xp: (30, 70),
         items: &[],
     },
 };
@@ -108,7 +108,7 @@ pub const DESERT_NOMAD: Enemy = Enemy {
     allies: None,
     drop: EnemyReward {
         orbs: (30, 60),
-        xp: (15, 40),
+        xp: (50, 65),
         items: &[EnemyRewardItem {
             amount: (1, 1),
             item: items::tool::UMBRELLA,
@@ -145,7 +145,7 @@ pub const BEAST_KILLER: Enemy = Enemy {
     allies: None,
     drop: EnemyReward {
         orbs: (30, 60),
-        xp: (15, 50),
+        xp: (60, 70),
         items: &[],
     },
 };
@@ -177,7 +177,7 @@ pub const ETHEREAL_HUNTER: Enemy = Enemy {
     allies: None,
     drop: EnemyReward {
         orbs: (30, 60),
-        xp: (15, 40),
+        xp: (30, 70),
         items: &[],
     },
 };
@@ -207,7 +207,7 @@ pub const CORRUPT_MONK: Enemy = Enemy {
     allies: None,
     drop: EnemyReward {
         orbs: (30, 60),
-        xp: (15, 40),
+        xp: (50, 70),
         items: &[EnemyRewardItem {
             amount: (1, 1),
             item: items::special::INTELLIGENCE_CRYSTAL,

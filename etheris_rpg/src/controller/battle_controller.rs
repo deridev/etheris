@@ -767,7 +767,12 @@ impl<'a> BattleController<'a> {
                     }
                     EffectKind::Bleeding => {
                         if effect.amount >= 100 {
-                            api.fighter_mut().delete_effect(EffectKind::Bleeding);
+                            api.fighter_mut().remove_effect(Effect::new(
+                                effect.kind,
+                                effect.amount,
+                                Default::default(),
+                            ));
+
                             let dmg = (api.fighter().health().max as f32).mul(0.1) as i32;
                             api.fighter_mut().take_damage(
                                 effect.culprit,

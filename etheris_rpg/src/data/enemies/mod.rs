@@ -132,8 +132,8 @@ pub const ALL_ENEMIES: &[Enemy] = &[
         ],
         allies: None,
         drop: EnemyReward {
-            orbs: (100, 150),
-            xp: (100, 250),
+            orbs: (600, 800),
+            xp: (400, 600),
             items: &[
                 EnemyRewardItem {
                     amount: (1, 1),

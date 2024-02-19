@@ -21,7 +21,7 @@ use tokio_stream::StreamExt;
 #[tokio::main]
 async fn main() {
     dotenv::dotenv().unwrap();
-    
+
     let discord_token = std::env::var(if config::DEBUG {
         "DEBUG_DISCORD_TOKEN"
     } else {

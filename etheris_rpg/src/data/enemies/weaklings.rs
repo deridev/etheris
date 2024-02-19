@@ -17,7 +17,7 @@ pub const GREENAGIS_MUTANT: Enemy = Enemy {
     allies: Some(&[(Probability::new(40), "greenagis_mutant_base")]),
     drop: EnemyReward {
         orbs: (8, 15),
-        xp: (3, 5),
+        xp: (15, 30),
         items: &[],
     },
 };
@@ -42,7 +42,7 @@ pub const GIANT_RAT: Enemy = Enemy {
     skills: &[SkillKind::Bite, SkillKind::BloodDonation],
     drop: EnemyReward {
         orbs: (10, 15),
-        xp: (7, 10),
+        xp: (20, 40),
         items: &[EnemyRewardItem {
             amount: (1, 1),
             item: items::material::PAPER,
@@ -70,7 +70,7 @@ pub const BEGINNER_LOOTER: Enemy = Enemy {
     skills: &[SkillKind::SimpleCut],
     drop: EnemyReward {
         orbs: (5, 25),
-        xp: (10, 15),
+        xp: (20, 30),
         items: &[],
     },
 };
@@ -94,7 +94,7 @@ pub const BEGINNER_LOOTER_2: Enemy = Enemy {
     skills: &[SkillKind::SimpleCut],
     drop: EnemyReward {
         orbs: (15, 20),
-        xp: (10, 15),
+        xp: (25, 35),
         items: &[],
     },
 };
@@ -122,7 +122,7 @@ pub const NEWBIE_HUNTER: Enemy = Enemy {
     ],
     drop: EnemyReward {
         orbs: (10, 30),
-        xp: (5, 15),
+        xp: (25, 40),
         items: &[EnemyRewardItem {
             amount: (1, 1),
             item: items::tool::BAT,
@@ -155,7 +155,7 @@ pub const INSANE_WANDERER: Enemy = Enemy {
     ],
     drop: EnemyReward {
         orbs: (20, 40),
-        xp: (9, 15),
+        xp: (40, 50),
         items: &[
             EnemyRewardItem {
                 amount: (1, 1),
@@ -195,7 +195,7 @@ pub const WEAK_MERCENARY: Enemy = Enemy {
     ],
     drop: EnemyReward {
         orbs: (20, 30),
-        xp: (10, 15),
+        xp: (30, 40),
         items: &[EnemyRewardItem {
             amount: (1, 1),
             item: items::material::KNIFE,
@@ -227,7 +227,7 @@ pub const CONSCIOUS_BEAST: Enemy = Enemy {
     ],
     drop: EnemyReward {
         orbs: (20, 60),
-        xp: (10, 15),
+        xp: (40, 50),
         items: &[EnemyRewardItem {
             amount: (1, 7),
             item: items::material::STICK,
@@ -259,7 +259,7 @@ pub const SHREDDER_WEAK: Enemy = Enemy {
     ],
     drop: EnemyReward {
         orbs: (25, 40),
-        xp: (10, 20),
+        xp: (30, 60),
         items: &[
             EnemyRewardItem {
                 amount: (1, 1),
@@ -300,7 +300,7 @@ pub const STONE_GOLEM: Enemy = Enemy {
     ],
     drop: EnemyReward {
         orbs: (25, 50),
-        xp: (10, 25),
+        xp: (30, 60),
         items: &[
             EnemyRewardItem {
                 amount: (1, 6),
@@ -343,7 +343,7 @@ pub const WOOD_GOLEM: Enemy = Enemy {
     ],
     drop: EnemyReward {
         orbs: (25, 45),
-        xp: (10, 25),
+        xp: (40, 70),
         items: &[
             EnemyRewardItem {
                 amount: (1, 5),
@@ -387,7 +387,7 @@ pub const SWAMP_MASTER: Enemy = Enemy {
     ],
     drop: EnemyReward {
         orbs: (25, 35),
-        xp: (10, 25),
+        xp: (40, 70),
         items: &[
             EnemyRewardItem {
                 amount: (1, 3),

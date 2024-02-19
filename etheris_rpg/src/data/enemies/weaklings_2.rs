@@ -28,7 +28,7 @@ pub const INSANE_FIGHTER: Enemy = Enemy {
     allies: Some(&[(Probability::new(5), "hunter")]),
     drop: EnemyReward {
         orbs: (30, 40),
-        xp: (20, 30),
+        xp: (40, 70),
         items: &[EnemyRewardItem {
             amount: (1, 1),
             item: items::lore::OLD_ABANDONED_BASEMENT_DIARY,
@@ -57,7 +57,7 @@ pub const WANDERING_MUTANT: Enemy = Enemy {
     allies: Some(&[(Probability::new(10), "greenagis_mutant_base")]),
     drop: EnemyReward {
         orbs: (15, 30),
-        xp: (5, 25),
+        xp: (30, 60),
         items: &[EnemyRewardItem {
             amount: (1, 1),
             item: items::lore::GOLDEN_ROBOT_POEM,
@@ -91,7 +91,7 @@ pub const HUNTER: Enemy = Enemy {
     allies: Some(&[(Probability::new(10), "wandering_mutant_base")]),
     drop: EnemyReward {
         orbs: (20, 30),
-        xp: (20, 25),
+        xp: (40, 70),
         items: &[EnemyRewardItem {
             amount: (3, 6),
             item: items::material::STONE,
@@ -125,7 +125,7 @@ pub const TIRED_INSANE_WANDERER: Enemy = Enemy {
     ],
     drop: EnemyReward {
         orbs: (20, 40),
-        xp: (10, 30),
+        xp: (40, 60),
         items: &[
             EnemyRewardItem {
                 amount: (1, 1),
@@ -161,7 +161,7 @@ pub const MUMMIFIED_SWORDSMAN: Enemy = Enemy {
     ],
     drop: EnemyReward {
         orbs: (50, 70),
-        xp: (25, 30),
+        xp: (50, 80),
         items: &[EnemyRewardItem {
             amount: (1, 1),
             item: items::tool::KATANA,
@@ -193,7 +193,7 @@ pub const LOOTER: Enemy = Enemy {
     ],
     drop: EnemyReward {
         orbs: (30, 50),
-        xp: (15, 25),
+        xp: (50, 80),
         items: &[
             EnemyRewardItem {
                 amount: (1, 2),
@@ -238,7 +238,7 @@ pub const CORRUPT_SHAMAN: Enemy = Enemy {
     ],
     drop: EnemyReward {
         orbs: (30, 50),
-        xp: (15, 25),
+        xp: (50, 85),
         items: &[
             EnemyRewardItem {
                 amount: (1, 2),
