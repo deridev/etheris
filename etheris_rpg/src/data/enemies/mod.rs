@@ -47,6 +47,7 @@ impl From<EnemyReward> for Reward {
 pub struct Enemy {
     pub identifier: &'static str,
     pub name: &'static str,
+    pub base_probability: Probability,
     pub regions: &'static [(WorldRegion, i32)],
     pub personalities: &'static [Personality],
     pub strength: u32,
@@ -76,7 +77,10 @@ impl Enemy {
 pub mod weaklings;
 pub mod weaklings_2;
 pub mod weaks;
+pub mod special;
 pub const ALL_ENEMIES: &[Enemy] = &[
+    special::MINIORBS,
+
     weaklings::GREENAGIS_MUTANT,
     weaklings::GIANT_RAT,
     weaklings::BEGINNER_LOOTER,
@@ -105,6 +109,7 @@ pub const ALL_ENEMIES: &[Enemy] = &[
     Enemy {
         identifier: "insane_legend",
         name: "Lenda Insana",
+        base_probability: Probability::new(50),
         regions: &[(WorldRegion::Midgrass, 1), (WorldRegion::Wornpeaks, 1)],
         personalities: &[
             Personality::Aggressiveness,

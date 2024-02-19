@@ -5,6 +5,7 @@ use super::*;
 pub const CONSCIOUS_BEAR: Enemy = Enemy {
     identifier: "conscious_bear",
     name: "Urso Consciente",
+    base_probability: Probability::ALWAYS,
     regions: &[(WorldRegion::Ethergrove, 6), (WorldRegion::Midgrass, 1)],
     personalities: &[
         Personality::Aggressiveness,
@@ -38,6 +39,7 @@ pub const CONSCIOUS_BEAR: Enemy = Enemy {
 pub const SERPENTOID: Enemy = Enemy {
     identifier: "serpentoid_weak",
     name: "Serpentóide",
+    base_probability: Probability::ALWAYS,
     regions: &[(WorldRegion::Tenypt, 8), (WorldRegion::Sandywater, 1)],
     personalities: &[Personality::Insanity, Personality::Courage],
     strength: 30,
@@ -67,6 +69,7 @@ pub const SERPENTOID: Enemy = Enemy {
 pub const CACTOID: Enemy = Enemy {
     identifier: "cactoid",
     name: "Cactóide",
+    base_probability: Probability::ALWAYS,
     regions: &[(WorldRegion::Tenypt, 1), (WorldRegion::Sandywater, 5)],
     personalities: &[Personality::Insanity, Personality::Courage],
     strength: 20,
@@ -91,6 +94,7 @@ pub const CACTOID: Enemy = Enemy {
 pub const DESERT_NOMAD: Enemy = Enemy {
     identifier: "desert_nomad",
     name: "Nômade do Deserto",
+    base_probability: Probability::ALWAYS,
     regions: &[(WorldRegion::Tenypt, 7), (WorldRegion::Sandywater, 1)],
     personalities: &[Personality::Calm, Personality::Courage, Personality::Intelligence],
     strength: 8,
@@ -120,6 +124,7 @@ pub const DESERT_NOMAD: Enemy = Enemy {
 pub const BEAST_KILLER: Enemy = Enemy {
     identifier: "beast_killer",
     name: "Assassino de Bestas",
+    base_probability: Probability::ALWAYS,
     regions: &[(WorldRegion::Ethergrove, 5), (WorldRegion::Wornpeaks, 1)],
     personalities: &[
         Personality::Calm,
@@ -153,6 +158,7 @@ pub const BEAST_KILLER: Enemy = Enemy {
 pub const ETHEREAL_HUNTER: Enemy = Enemy {
     identifier: "ethereal_hunter",
     name: "Caçador Etéreo",
+    base_probability: Probability::ALWAYS,
     regions: &[(WorldRegion::Ethergrove, 1), (WorldRegion::Wornpeaks, 2)],
     personalities: &[
         Personality::Calm,
@@ -185,6 +191,7 @@ pub const ETHEREAL_HUNTER: Enemy = Enemy {
 pub const CORRUPT_MONK: Enemy = Enemy {
     identifier: "corrupt_monk",
     name: "Monge Corrupto",
+    base_probability: Probability::ALWAYS,
     regions: &[(WorldRegion::Ethergrove, 1), (WorldRegion::Wornpeaks, 5)],
     personalities: &[
         Personality::Calm,

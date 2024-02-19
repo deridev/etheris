@@ -5,6 +5,7 @@ use super::*;
 pub const GREENAGIS_MUTANT: Enemy = Enemy {
     identifier: "greenagis_mutant_base",
     name: "Mutante de Greenagis",
+    base_probability: Probability::ALWAYS,
     regions: &[(WorldRegion::Greenagis, 8), (WorldRegion::Emerelis, 1)],
     personalities: &[Personality::Aggressiveness],
     strength: 1,
@@ -25,6 +26,7 @@ pub const GREENAGIS_MUTANT: Enemy = Enemy {
 pub const GIANT_RAT: Enemy = Enemy {
     identifier: "giant_rat",
     name: "Rato Gigante",
+    base_probability: Probability::ALWAYS,
     regions: &[
         (WorldRegion::Greenagis, 4),
         (WorldRegion::Emerelis, 4),
@@ -54,6 +56,7 @@ pub const GIANT_RAT: Enemy = Enemy {
 pub const BEGINNER_LOOTER: Enemy = Enemy {
     identifier: "beginner_looter",
     name: "Saqueador Iniciante",
+    base_probability: Probability::ALWAYS,
     regions: &[
         (WorldRegion::Greenagis, 5),
         (WorldRegion::Emerelis, 4),
@@ -78,6 +81,7 @@ pub const BEGINNER_LOOTER: Enemy = Enemy {
 pub const BEGINNER_LOOTER_2: Enemy = Enemy {
     identifier: "beginner_looter_2",
     name: "Saqueador Iniciante",
+    base_probability: Probability::ALWAYS,
     regions: &[
         (WorldRegion::Greenagis, 5),
         (WorldRegion::Emerelis, 4),
@@ -102,6 +106,7 @@ pub const BEGINNER_LOOTER_2: Enemy = Enemy {
 pub const NEWBIE_HUNTER: Enemy = Enemy {
     identifier: "newbie_hunter",
     name: "Caçador de Novatos",
+    base_probability: Probability::ALWAYS,
     regions: &[
         (WorldRegion::Greenagis, 3),
         (WorldRegion::Emerelis, 3),
@@ -134,6 +139,7 @@ pub const NEWBIE_HUNTER: Enemy = Enemy {
 pub const INSANE_WANDERER: Enemy = Enemy {
     identifier: "insane_wanderer",
     name: "Vagante Insano",
+    base_probability: Probability::ALWAYS,
     regions: &[
         (WorldRegion::Greenagis, 1),
         (WorldRegion::Emerelis, 1),
@@ -155,17 +161,17 @@ pub const INSANE_WANDERER: Enemy = Enemy {
     ],
     drop: EnemyReward {
         orbs: (20, 40),
-        xp: (40, 50),
+        xp: (60, 80),
         items: &[
             EnemyRewardItem {
                 amount: (1, 1),
                 item: items::tool::BAT,
-                probability: Probability::new(10),
+                probability: Probability::new(80),
             },
             EnemyRewardItem {
                 amount: (1, 1),
                 item: items::tool::TRANSLATOR,
-                probability: Probability::new(10),
+                probability: Probability::new(40),
             },
         ],
     },
@@ -174,6 +180,7 @@ pub const INSANE_WANDERER: Enemy = Enemy {
 pub const WEAK_MERCENARY: Enemy = Enemy {
     identifier: "weak_mercenary",
     name: "Mercenário",
+    base_probability: Probability::ALWAYS,
     regions: &[
         (WorldRegion::Greenagis, 2),
         (WorldRegion::Emerelis, 5),
@@ -207,6 +214,7 @@ pub const WEAK_MERCENARY: Enemy = Enemy {
 pub const CONSCIOUS_BEAST: Enemy = Enemy {
     identifier: "conscious_beast",
     name: "Besta Consciente",
+    base_probability: Probability::ALWAYS,
     regions: &[
         (WorldRegion::Emerelis, 3),
         (WorldRegion::Gloomwood, 4),
@@ -239,6 +247,7 @@ pub const CONSCIOUS_BEAST: Enemy = Enemy {
 pub const SHREDDER_WEAK: Enemy = Enemy {
     identifier: "shredder_weak",
     name: "Retalhador",
+    base_probability: Probability::ALWAYS,
     regions: &[
         (WorldRegion::Emerelis, 3),
         (WorldRegion::Gloomwood, 7),
@@ -283,6 +292,7 @@ pub const SHREDDER_WEAK: Enemy = Enemy {
 pub const STONE_GOLEM: Enemy = Enemy {
     identifier: "stone_golem",
     name: "Golem de Pedregulho",
+    base_probability: Probability::ALWAYS,
     regions: &[(WorldRegion::Tenypt, 1), (WorldRegion::Murkswamp, 6)],
     personalities: &[Personality::Intelligence, Personality::Insanity],
     strength: 15,
@@ -319,6 +329,7 @@ pub const STONE_GOLEM: Enemy = Enemy {
 pub const WOOD_GOLEM: Enemy = Enemy {
     identifier: "wood_golem",
     name: "Golem de Madeira",
+    base_probability: Probability::ALWAYS,
     regions: &[
         (WorldRegion::Gloomwood, 1),
         (WorldRegion::Ethergrove, 5),
@@ -367,6 +378,7 @@ pub const WOOD_GOLEM: Enemy = Enemy {
 pub const SWAMP_MASTER: Enemy = Enemy {
     identifier: "swamp_master",
     name: "Mestre do Pântano",
+    base_probability: Probability::ALWAYS,
     regions: &[
         (WorldRegion::Mudland, 3),
         (WorldRegion::Murkswamp, 5),
@@ -407,6 +419,7 @@ pub const SWAMP_MASTER: Enemy = Enemy {
 pub const WEAK_MERCENARY_LEADER: Enemy = Enemy {
     identifier: "weak_mercenary_leader",
     name: "Mercenário Chefe",
+    base_probability: Probability::ALWAYS,
     regions: &[
         (WorldRegion::Emerelis, 1),
         (WorldRegion::Gloomwood, 2),
