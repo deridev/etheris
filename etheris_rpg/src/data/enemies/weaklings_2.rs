@@ -196,6 +196,8 @@ pub const LOOTER: Enemy = Enemy {
         SkillKind::SimpleCut,
         SkillKind::FlamingBall,
         SkillKind::TornadoKick,
+        SkillKind::Charge,
+        SkillKind::Suplex,
     ],
     drop: EnemyReward {
         orbs: (30, 50),
