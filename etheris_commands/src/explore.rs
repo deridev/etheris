@@ -38,7 +38,7 @@ async fn explore_enemy(mut ctx: CommandContext) -> anyhow::Result<()> {
             if !e.base_probability.generate_random_bool() {
                 return None;
             }
-            
+
             let regions = e.regions.iter().find(|r| r.0 == character.region)?;
 
             Some((*e, *regions))

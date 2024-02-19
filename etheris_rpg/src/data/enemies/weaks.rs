@@ -96,7 +96,11 @@ pub const DESERT_NOMAD: Enemy = Enemy {
     name: "Nômade do Deserto",
     base_probability: Probability::ALWAYS,
     regions: &[(WorldRegion::Tenypt, 7), (WorldRegion::Sandywater, 1)],
-    personalities: &[Personality::Calm, Personality::Courage, Personality::Intelligence],
+    personalities: &[
+        Personality::Calm,
+        Personality::Courage,
+        Personality::Intelligence,
+    ],
     strength: 8,
     intelligence: 14,
     resistance: 100,
@@ -116,7 +120,7 @@ pub const DESERT_NOMAD: Enemy = Enemy {
         items: &[EnemyRewardItem {
             amount: (1, 1),
             item: items::tool::UMBRELLA,
-            probability: Probability::new(50)
+            probability: Probability::new(50),
         }],
     },
 };

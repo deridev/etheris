@@ -74,13 +74,12 @@ impl Enemy {
     }
 }
 
+pub mod special;
 pub mod weaklings;
 pub mod weaklings_2;
 pub mod weaks;
-pub mod special;
 pub const ALL_ENEMIES: &[Enemy] = &[
     special::MINIORBS,
-
     weaklings::GREENAGIS_MUTANT,
     weaklings::GIANT_RAT,
     weaklings::BEGINNER_LOOTER,

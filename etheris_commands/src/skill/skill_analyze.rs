@@ -32,27 +32,6 @@ pub async fn skill_analyze(
         return Ok(());
     };
 
-    let confirmation = ctx.helper()
-        .create_confirmation(author.id, false,
-                Response::new_user_reply(
-                    &author,
-                    format!("analisar uma habilidade custa tempo e custará **1 ponto de ação!**\nQuer mesmo analisar a habilidade **{}**?", skill.data().name)
-                ).set_ephemeral().add_emoji_prefix("❓")
-            ).await?;
-
-    if !confirmation {
-        return Ok(());
-    }
-
-    let mut character: CharacterModel = parse_user_character!(ctx, author);
-    if character.action_points < 1 {
-        ctx.send(Response::new_user_reply(&author, "você não tem 1 ponto de ação! Use **/perfil** para ver quando seus pontos de ação recarregam.").add_emoji_prefix(emojis::ERROR).set_ephemeral()).await?;
-        return Ok(());
-    }
-
-    character.action_points -= 1;
-    ctx.db().characters().save(character).await?;
-
     let embed = EmbedBuilder::new_common()
         .set_author_to_user(&author)
         .set_description(format!(
@@ -68,8 +47,7 @@ pub async fn skill_analyze(
             skill.data().identifier
         ));
 
-    ctx.followup_interaction(Response::from(embed).set_ephemeral())
-        .await?;
+    ctx.send(Response::from(embed)).await?;
 
     Ok(())
 }
