@@ -5,6 +5,7 @@ use super::*;
 pub const INSANE_FIGHTER: Enemy = Enemy {
     identifier: "insane_fighter",
     name: "Lutador Insano",
+    base_probability: Probability::ALWAYS,
     regions: &[
         (WorldRegion::Mudland, 1),
         (WorldRegion::Emerelis, 3),
@@ -40,6 +41,7 @@ pub const INSANE_FIGHTER: Enemy = Enemy {
 pub const WANDERING_MUTANT: Enemy = Enemy {
     identifier: "wandering_mutant_base",
     name: "Mutante Vagante",
+    base_probability: Probability::ALWAYS,
     regions: &[
         (WorldRegion::Mudland, 2),
         (WorldRegion::Emerelis, 1),
@@ -69,6 +71,7 @@ pub const WANDERING_MUTANT: Enemy = Enemy {
 pub const HUNTER: Enemy = Enemy {
     identifier: "hunter",
     name: "Caçador",
+    base_probability: Probability::ALWAYS,
     regions: &[
         (WorldRegion::Mudland, 3),
         (WorldRegion::Emerelis, 6),
@@ -103,6 +106,7 @@ pub const HUNTER: Enemy = Enemy {
 pub const TIRED_INSANE_WANDERER: Enemy = Enemy {
     identifier: "tired_insane_wanderer",
     name: "Vagante Insano Cansado",
+    base_probability: Probability::ALWAYS,
     regions: &[
         (WorldRegion::Mudland, 3),
         (WorldRegion::Murkswamp, 6),
@@ -144,6 +148,7 @@ pub const TIRED_INSANE_WANDERER: Enemy = Enemy {
 pub const MUMMIFIED_SWORDSMAN: Enemy = Enemy {
     identifier: "mummified_swordsman",
     name: "Espadachim Mumificado",
+    base_probability: Probability::ALWAYS,
     regions: &[(WorldRegion::Tenypt, 8), (WorldRegion::Sandywater, 2)],
     personalities: &[Personality::Arrogance, Personality::Courage],
     strength: 30,
@@ -173,6 +178,7 @@ pub const MUMMIFIED_SWORDSMAN: Enemy = Enemy {
 pub const LOOTER: Enemy = Enemy {
     identifier: "average_looter",
     name: "Saqueador",
+    base_probability: Probability::ALWAYS,
     regions: &[(WorldRegion::Tenypt, 6), (WorldRegion::Mudland, 3)],
     personalities: &[
         Personality::Aggressiveness,
@@ -217,6 +223,7 @@ pub const LOOTER: Enemy = Enemy {
 pub const CORRUPT_SHAMAN: Enemy = Enemy {
     identifier: "corrupt_shaman",
     name: "Xamã Corrupto",
+    base_probability: Probability::ALWAYS,
     regions: &[(WorldRegion::Ethergrove, 6), (WorldRegion::Wornpeaks, 1)],
     personalities: &[
         Personality::Intelligence,
