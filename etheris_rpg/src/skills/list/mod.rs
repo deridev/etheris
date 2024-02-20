@@ -28,6 +28,7 @@ use_skill!(water_blessing);
 use_skill!(refresh);
 use_skill!(icy_breath);
 use_skill!(blood_donation);
+use_skill!(wound_healing);
 use_skill!(tenku_kikan);
 use_skill!(yinyang);
 use_skill!(paralyzing_bet);
@@ -60,6 +61,7 @@ pub fn get_boxed_skill_from_kind(kind: SkillKind) -> Box<dyn super::Skill + Send
         SkillKind::Refresh => Box::<Refresh>::default(),
         SkillKind::WaterJet => Box::<WaterJet>::default(),
         SkillKind::BloodDonation => Box::<BloodDonation>::default(),
+        SkillKind::WoundHealing => Box::<WoundHealing>::default(),
         SkillKind::WaterBlessing => Box::<WaterBlessing>::default(),
         SkillKind::TenkuKikan(soul) => Box::new(TenkuKikan::new(soul)),
         SkillKind::YinYang => Box::<YinYang>::default(),

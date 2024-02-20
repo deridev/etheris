@@ -145,6 +145,40 @@ pub const TIRED_INSANE_WANDERER: Enemy = Enemy {
     },
 };
 
+pub const MARSH_MARAUDER: Enemy = Enemy {
+    identifier: "marsh_marauder",
+    name: "Saqueador do Pântaso",
+    base_probability: Probability::ALWAYS,
+    regions: &[(WorldRegion::Murkswamp, 8)],
+    personalities: &[
+        Personality::Arrogance,
+        Personality::Courage,
+        Personality::Aggressiveness,
+    ],
+    strength: 23,
+    intelligence: 8,
+    resistance: 100,
+    vitality: 250,
+    ether: 60,
+    weapon: Some(WeaponKind::Spear),
+    allies: Some(&[(Probability::new(50), "average_looter")]),
+    skills: &[
+        SkillKind::SimpleCut,
+        SkillKind::CyclonePush,
+        SkillKind::ElectricSlap,
+        SkillKind::WaterJet,
+    ],
+    drop: EnemyReward {
+        orbs: (50, 70),
+        xp: (50, 80),
+        items: &[EnemyRewardItem {
+            amount: (1, 1),
+            item: items::tool::UMBRELLA,
+            probability: Probability::new(30),
+        }],
+    },
+};
+
 pub const MUMMIFIED_SWORDSMAN: Enemy = Enemy {
     identifier: "mummified_swordsman",
     name: "Espadachim Mumificado",
@@ -219,6 +253,85 @@ pub const LOOTER: Enemy = Enemy {
                 probability: Probability::new(40),
             },
         ],
+    },
+};
+
+pub const MAD_SCIENTIST: Enemy = Enemy {
+    identifier: "mad_scientist",
+    name: "Cientista Louco",
+    base_probability: Probability::ALWAYS,
+    regions: &[(WorldRegion::Ethergrove, 3)],
+    personalities: &[Personality::Intelligence, Personality::Arrogance],
+    strength: 10,
+    intelligence: 40,
+    resistance: 120,
+    vitality: 300,
+    ether: 100,
+    weapon: None,
+    allies: None,
+    skills: &[
+        SkillKind::IcyShot,
+        SkillKind::WaterBlessing,
+        SkillKind::WaterJet,
+        SkillKind::ElectricSlap,
+        SkillKind::Refresh,
+        SkillKind::TenkuKikan(None),
+    ],
+    drop: EnemyReward {
+        orbs: (60, 130),
+        xp: (50, 100),
+        items: &[
+            EnemyRewardItem {
+                amount: (1, 1),
+                item: items::lore::ENTITY_039_REPORT,
+                probability: Probability::new(10),
+            },
+            EnemyRewardItem {
+                amount: (1, 2),
+                item: items::material::KNIFE,
+                probability: Probability::new(90),
+            },
+            EnemyRewardItem {
+                amount: (3, 5),
+                item: items::material::PAPER,
+                probability: Probability::new(70),
+            },
+            EnemyRewardItem {
+                amount: (1, 5),
+                item: items::material::STICK,
+                probability: Probability::new(40),
+            },
+        ],
+    },
+};
+
+pub const DESERT_MARAUDER: Enemy = Enemy {
+    identifier: "desert_marauder",
+    name: "Saqueador do Deserto",
+    base_probability: Probability::ALWAYS,
+    regions: &[(WorldRegion::Tenypt, 6), (WorldRegion::Sandywater, 1)],
+    personalities: &[
+        Personality::Intelligence,
+        Personality::Cowardice,
+        Personality::Arrogance,
+    ],
+    strength: 20,
+    intelligence: 5,
+    resistance: 150,
+    vitality: 200,
+    ether: 60,
+    weapon: None,
+    allies: None,
+    skills: &[
+        SkillKind::WoundHealing,
+        SkillKind::WaterJet,
+        SkillKind::ElectricSlap,
+        SkillKind::FirePunch,
+    ],
+    drop: EnemyReward {
+        orbs: (30, 70),
+        xp: (50, 85),
+        items: &[],
     },
 };
 

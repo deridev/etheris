@@ -41,6 +41,7 @@ pub async fn learn(mut ctx: CommandContext) -> anyhow::Result<()> {
         .learnable_skills
         .iter()
         .map(|s| get_boxed_skill_from_kind(s.clone()))
+        .rev()
         .take(10)
         .collect::<Vec<_>>();
 

@@ -93,8 +93,9 @@ pub struct RegionData {
     pub travel_price: i64,
 }
 
-#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[derive(Debug, Copy, Clone, PartialEq, PartialOrd)]
 pub struct RegionCity {
+    pub sell_multiplier: f32,
     pub wage: (i64, i64),
     pub work_strength_xp_gain: (u32, u32),
     pub work_health_xp_gain: (u32, u32),
@@ -163,6 +164,7 @@ impl WorldRegion {
     pub const fn city(&self) -> Option<RegionCity> {
         match self {
             Self::Metrolis => Some(RegionCity {
+                sell_multiplier: 0.8,
                 wage: (10, 30),
                 work_ap_cost: 1,
                 work_health_xp_gain: (2, 6),
@@ -170,6 +172,7 @@ impl WorldRegion {
                 work_intelligence_xp_gain: (1, 4),
             }),
             Self::SwordTown => Some(RegionCity {
+                sell_multiplier: 1.2,
                 wage: (25, 60),
                 work_ap_cost: 2,
                 work_health_xp_gain: (6, 10),

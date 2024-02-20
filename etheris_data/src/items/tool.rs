@@ -12,6 +12,7 @@ pub const TRANSLATOR: Item = Item {
     tags: TOOL_TAGS,
     purchase_properties: PurchaseProperties {
         base_price: 3000,
+        base_sell_price: 200,
         default_shop_sells: false,
         ..PurchaseProperties::default()
     },
@@ -26,6 +27,7 @@ pub const BAT: Item = Item {
     weapon: Some(WeaponKind::Bat),
     purchase_properties: PurchaseProperties {
         base_price: 700,
+        base_sell_price: 50,
         default_shop_sells: false,
         ..PurchaseProperties::default()
     },
@@ -40,6 +42,7 @@ pub const SPEAR: Item = Item {
     weapon: Some(WeaponKind::Spear),
     purchase_properties: PurchaseProperties {
         base_price: 1150,
+        base_sell_price: 80,
         default_shop_sells: false,
         ..PurchaseProperties::default()
     },
@@ -54,6 +57,7 @@ pub const KATANA: Item = Item {
     weapon: Some(WeaponKind::Katana),
     purchase_properties: PurchaseProperties {
         base_price: 3000,
+        base_sell_price: 125,
         default_shop_sells: false,
         ..PurchaseProperties::default()
     },
@@ -68,6 +72,7 @@ pub const UMBRELLA: Item = Item {
     weapon: Some(WeaponKind::Umbrella),
     purchase_properties: PurchaseProperties {
         base_price: 400,
+        base_sell_price: 30,
         default_shop_sells: false,
         ..PurchaseProperties::default()
     },

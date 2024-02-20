@@ -34,6 +34,7 @@ pub enum SkillKind {
     WaterBlessing,
     Refresh,
     BloodDonation,
+    WoundHealing,
     TenkuKikan(Option<Soul>),
     YinYang,
     ParalyzingBet,
@@ -60,6 +61,7 @@ impl SkillKind {
             Self::WaterBlessing,
             Self::Refresh,
             Self::BloodDonation,
+            Self::WoundHealing,
             Self::TenkuKikan(None),
             Self::YinYang,
             Self::ParalyzingBet,
@@ -85,6 +87,7 @@ impl SkillKind {
             Self::Refresh => 15,
             Self::WaterJet => 17,
             Self::FlamingBall => 20,
+            Self::WoundHealing => 22,
             Self::BloodDonation => 25,
             Self::YinYang => 30,
             Self::ParalyzingBet => 50,
@@ -105,7 +108,8 @@ impl SkillKind {
             | Self::FirePunch
             | Self::Suplex
             | Self::BloodDonation
-            | Self::Refresh => 2,
+            | Self::Refresh
+            | Self::WoundHealing => 2,
             Self::IcyShot
             | Self::ElectricSlap
             | Self::WaterBlessing

@@ -36,6 +36,7 @@ mod profile;
 mod read;
 mod register;
 mod rest;
+mod sell;
 mod skills;
 mod stats;
 mod study;
@@ -80,6 +81,7 @@ pub static COMMANDS: Lazy<CommandMap> = Lazy::new(|| {
     register_command!(map, consume::ConsumeCommand);
     register_command!(map, craft::CraftCommand);
     register_command!(map, owner::OwnerCommand);
+    register_command!(map, sell::SellCommand);
 
     send::register_commands(&mut map);
     skill::register_commands(&mut map);

@@ -289,6 +289,32 @@ pub const SHREDDER_WEAK: Enemy = Enemy {
     },
 };
 
+pub const MUD_GOLEM: Enemy = Enemy {
+    identifier: "mud_golem",
+    name: "Golem de Lama",
+    base_probability: Probability::ALWAYS,
+    regions: &[(WorldRegion::Mudland, 1), (WorldRegion::Murkswamp, 4)],
+    personalities: &[Personality::Calm, Personality::Insanity],
+    strength: 20,
+    intelligence: 15,
+    resistance: 130,
+    vitality: 200,
+    ether: 60,
+    weapon: None,
+    allies: None,
+    skills: &[
+        SkillKind::WaterBlessing,
+        SkillKind::WaterJet,
+        SkillKind::Bite,
+        SkillKind::Suplex,
+    ],
+    drop: EnemyReward {
+        orbs: (45, 60),
+        xp: (30, 60),
+        items: &[],
+    },
+};
+
 pub const STONE_GOLEM: Enemy = Enemy {
     identifier: "stone_golem",
     name: "Golem de Pedregulho",

@@ -345,6 +345,11 @@ impl Fighter {
     pub fn heal(&mut self, _culprit: FighterIndex, amount: i32) {
         let resistance_heal = amount - self.vitality.value;
         if resistance_heal > 0 {
+            if self.flags.contains(FighterFlags::RISKING_LIFE) {
+                self.flags.remove(FighterFlags::RISKING_LIFE);
+                self.flags.remove(FighterFlags::ASKED_TO_RISK_LIFE);
+            }
+
             self.vitality.value = self.vitality.max;
             self.resistance.value = self
                 .resistance

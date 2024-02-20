@@ -245,7 +245,9 @@ impl Battle {
                 .copied()
                 .unwrap_or(self.fighters[0].team);
             if teams.get(&winner_team).is_none() {
-                this_turn_history.messages.push(format!("ERRO: Time {winner_team} não encontrado."));
+                this_turn_history
+                    .messages
+                    .push(format!("ERRO: Time {winner_team} não encontrado."));
                 return;
             }
 

@@ -14,6 +14,7 @@ pub const STRAWHAT: Item = Item {
     purchase_properties: PurchaseProperties {
         default_shop_sells: false,
         base_price: 700,
+        base_sell_price: 300,
         ..PurchaseProperties::default()
     },
     cosmetic_properties: Some(CosmeticProperties {
@@ -32,6 +33,7 @@ pub const EYE_BANDANA: Item = Item {
     purchase_properties: PurchaseProperties {
         default_shop_sells: false,
         base_price: 500,
+        base_sell_price: 200,
         ..PurchaseProperties::default()
     },
     cosmetic_properties: Some(CosmeticProperties {
@@ -50,6 +52,7 @@ pub const GLASSES: Item = Item {
     purchase_properties: PurchaseProperties {
         default_shop_sells: false,
         base_price: 150,
+        base_sell_price: 80,
         ..PurchaseProperties::default()
     },
     cosmetic_properties: Some(CosmeticProperties {

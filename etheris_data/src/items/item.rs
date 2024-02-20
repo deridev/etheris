@@ -60,14 +60,16 @@ pub struct PurchaseProperties {
     pub is_buyable: bool,
     pub is_sellable: bool,
     pub base_price: i64,
+    pub base_sell_price: i64,
 }
 
 impl PurchaseProperties {
     pub const fn default() -> Self {
         Self {
             base_price: 1,
+            base_sell_price: 0,
             is_buyable: true,
-            is_sellable: true,
+            is_sellable: false,
             default_shop_sells: true,
         }
     }
@@ -127,6 +129,7 @@ impl Item {
             has_consumption_function: false,
             purchase_properties: PurchaseProperties {
                 base_price: 1,
+                base_sell_price: 0,
                 is_buyable: false,
                 is_sellable: false,
                 default_shop_sells: false,

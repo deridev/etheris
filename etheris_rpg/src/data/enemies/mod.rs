@@ -80,6 +80,7 @@ pub mod weaklings_2;
 pub mod weaks;
 pub const ALL_ENEMIES: &[Enemy] = &[
     special::MINIORBS,
+    special::AVEWORBS,
     weaklings::GREENAGIS_MUTANT,
     weaklings::GIANT_RAT,
     weaklings::BEGINNER_LOOTER,
@@ -91,13 +92,17 @@ pub const ALL_ENEMIES: &[Enemy] = &[
     weaklings::SHREDDER_WEAK,
     weaklings::WOOD_GOLEM,
     weaklings::STONE_GOLEM,
+    weaklings::MUD_GOLEM,
     weaklings_2::WANDERING_MUTANT,
     weaklings_2::INSANE_FIGHTER,
     weaklings_2::HUNTER,
+    weaklings_2::MARSH_MARAUDER,
+    weaklings_2::MAD_SCIENTIST,
     weaklings_2::LOOTER,
     weaklings_2::TIRED_INSANE_WANDERER,
     weaklings_2::MUMMIFIED_SWORDSMAN,
     weaklings_2::CORRUPT_SHAMAN,
+    weaklings_2::DESERT_MARAUDER,
     weaks::CONSCIOUS_BEAR,
     weaks::CORRUPT_MONK,
     weaks::ETHEREAL_HUNTER,
@@ -105,6 +110,7 @@ pub const ALL_ENEMIES: &[Enemy] = &[
     weaks::CACTOID,
     weaks::DESERT_NOMAD,
     weaks::BEAST_KILLER,
+    weaks::ETHERKING,
     Enemy {
         identifier: "insane_legend",
         name: "Lenda Insana",

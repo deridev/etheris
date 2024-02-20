@@ -22,6 +22,7 @@ pub const INTELLIGENCE_CRYSTAL: Item = Item {
     has_consumption_function: true,
     purchase_properties: PurchaseProperties {
         base_price: 3000,
+        base_sell_price: 450,
         default_shop_sells: false,
         ..PurchaseProperties::default()
     },
@@ -36,6 +37,7 @@ pub const INVIGORATING_CRYSTAL: Item = Item {
     has_consumption_function: true,
     purchase_properties: PurchaseProperties {
         base_price: 700,
+        base_sell_price: 300,
         ..PurchaseProperties::default()
     },
     ..Item::default()

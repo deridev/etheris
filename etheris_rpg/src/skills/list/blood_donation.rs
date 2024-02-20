@@ -34,7 +34,7 @@ impl Skill for BloodDonation {
             return Ok(());
         };
 
-        let hp = ((fighter.health().value as f32) * 0.1) as i32;
+        let hp = ((fighter.health().value as f32) * 0.3) as i32;
 
         api.fighter_mut().take_damage(
             fighter.index, 
