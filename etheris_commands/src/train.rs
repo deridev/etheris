@@ -82,8 +82,8 @@ fn random_xp_amount(level: u32) -> u32 {
     match level {
         0..=3 => StdRng::from_entropy().gen_range(50..=70),
         4..=10 => StdRng::from_entropy().gen_range(20..=45),
-        11..=30 => StdRng::from_entropy().gen_range(10..=30),
-        41..=100 => StdRng::from_entropy().gen_range(10..=15),
+        11..=60 => StdRng::from_entropy().gen_range(10..=30),
+        61..=100 => StdRng::from_entropy().gen_range(10..=15),
         _ => StdRng::from_entropy().gen_range(5..=10),
     }
 }

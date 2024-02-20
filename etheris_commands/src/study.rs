@@ -35,8 +35,8 @@ pub async fn study(mut ctx: CommandContext) -> anyhow::Result<()> {
     let xp = match character.stats.intelligence_level {
         0..=3 => StdRng::from_entropy().gen_range(50..=80),
         4..=10 => StdRng::from_entropy().gen_range(20..=40),
-        11..=30 => StdRng::from_entropy().gen_range(10..=25),
-        41..=100 => StdRng::from_entropy().gen_range(10..=15),
+        11..=60 => StdRng::from_entropy().gen_range(10..=30),
+        61..=100 => StdRng::from_entropy().gen_range(10..=15),
         _ => StdRng::from_entropy().gen_range(5..=10),
     };
 

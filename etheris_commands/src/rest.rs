@@ -11,14 +11,14 @@ pub async fn rest(mut ctx: CommandContext) -> anyhow::Result<()> {
     let ap_price = if character.region.kind() == RegionKind::City {
         0
     } else {
-        5
+        3
     };
 
     if ap_price != 0 && character.action_points < ap_price {
         ctx.reply(
             Response::new_user_reply(
                 &author,
-                "você precisa de 5 pontos de ação para descansar! Use **/perfil** para ver quando seus pontos de ações recarregam."
+                "você precisa de 3 pontos de ação para descansar! Use **/perfil** para ver quando seus pontos de ações recarregam."
             )
             .set_ephemeral(),
         )
