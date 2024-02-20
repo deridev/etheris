@@ -110,12 +110,13 @@ pub const ALL_ENEMIES: &[Enemy] = &[
     weaks::CACTOID,
     weaks::DESERT_NOMAD,
     weaks::BEAST_KILLER,
+    weaks::ICE_MASTER,
     weaks::ETHERKING,
     Enemy {
         identifier: "insane_legend",
         name: "Lenda Insana",
-        base_probability: Probability::new(50),
-        regions: &[(WorldRegion::Midgrass, 1), (WorldRegion::Wornpeaks, 1)],
+        base_probability: Probability::new(5),
+        regions: &[(WorldRegion::Midgrass, 1), (WorldRegion::Wornpeaks, 2)],
         personalities: &[
             Personality::Aggressiveness,
             Personality::Insanity,
@@ -142,17 +143,37 @@ pub const ALL_ENEMIES: &[Enemy] = &[
         ],
         allies: None,
         drop: EnemyReward {
-            orbs: (600, 800),
+            orbs: (600, 1000),
             xp: (400, 600),
             items: &[
                 EnemyRewardItem {
                     amount: (1, 1),
                     item: etheris_data::items::lore::OLD_ABANDONED_BASEMENT_DIARY,
-                    probability: Probability::new(50),
+                    probability: Probability::new(30),
                 },
                 EnemyRewardItem {
                     amount: (1, 1),
                     item: etheris_data::items::lore::ENTITY_039_REPORT,
+                    probability: Probability::new(100),
+                },
+                EnemyRewardItem {
+                    amount: (1, 1),
+                    item: etheris_data::items::tool::TRANSLATOR,
+                    probability: Probability::new(100),
+                },
+                EnemyRewardItem {
+                    amount: (2, 3),
+                    item: etheris_data::items::special::INTELLIGENCE_CRYSTAL,
+                    probability: Probability::new(100),
+                },
+                EnemyRewardItem {
+                    amount: (2, 3),
+                    item: etheris_data::items::special::INVIGORATING_CRYSTAL,
+                    probability: Probability::new(100),
+                },
+                EnemyRewardItem {
+                    amount: (1, 2),
+                    item: etheris_data::items::cosmetic::STRAWHAT,
                     probability: Probability::new(100),
                 },
             ],

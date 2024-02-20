@@ -258,6 +258,41 @@ pub const FRANTIC: Enemy = Enemy {
     },
 };
 
+pub const ICE_MASTER: Enemy = Enemy {
+    identifier: "ice_master",
+    name: "Mestre do Gelo",
+    base_probability: Probability::ALWAYS,
+    regions: &[(WorldRegion::Ethergrove, 2), (WorldRegion::Wornpeaks, 4)],
+    personalities: &[
+        Personality::Calm,
+        Personality::Intelligence,
+        Personality::Arrogance,
+    ],
+    strength: 5,
+    intelligence: 30,
+    resistance: 180,
+    vitality: 250,
+    ether: 80,
+    weapon: None,
+    skills: &[
+        SkillKind::IcyBreath,
+        SkillKind::IcyShot,
+        SkillKind::WaterBlessing,
+        SkillKind::WaterJet,
+        SkillKind::WoundHealing,
+    ],
+    allies: None,
+    drop: EnemyReward {
+        orbs: (40, 90),
+        xp: (50, 70),
+        items: &[EnemyRewardItem {
+            amount: (1, 1),
+            item: items::material::STONE,
+            probability: Probability::new(5),
+        }],
+    },
+};
+
 pub const ETHERKING: Enemy = Enemy {
     identifier: "etherking",
     name: "Etherking",

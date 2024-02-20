@@ -147,7 +147,7 @@ pub const TIRED_INSANE_WANDERER: Enemy = Enemy {
 
 pub const MARSH_MARAUDER: Enemy = Enemy {
     identifier: "marsh_marauder",
-    name: "Saqueador do Pântaso",
+    name: "Saqueador do Pântano",
     base_probability: Probability::ALWAYS,
     regions: &[(WorldRegion::Murkswamp, 8)],
     personalities: &[

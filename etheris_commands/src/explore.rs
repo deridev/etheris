@@ -230,7 +230,7 @@ async fn explore_enemy(mut ctx: CommandContext) -> anyhow::Result<()> {
             casual: false,
             has_consequences: true,
             is_risking_life_allowed: true,
-            max_intruders: 1,
+            max_intruders: 2,
         },
         fighters,
     )?;

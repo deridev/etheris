@@ -980,7 +980,7 @@ impl<'a> BattleController<'a> {
             BattleInput::ChangeTeam(team) => {
                 self.should_reinput = true;
                 self.battle.get_current_fighter_mut().team = team;
-                self.battle.reallocate_fighter_target(fighter.index);
+                self.battle.reallocate_all_targets();
 
                 return Ok(());
             }
