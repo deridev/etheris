@@ -332,3 +332,38 @@ pub const ETHERKING: Enemy = Enemy {
         }],
     },
 };
+
+pub const CORRUPTED_PHARAOH: Enemy = Enemy {
+    identifier: "corrupted_pharaoh",
+    name: "Faraó Corrompido",
+    base_probability: Probability::ALWAYS,
+    regions: &[(WorldRegion::Sandywater, 2)],
+    personalities: &[
+        Personality::Insanity,
+        Personality::Aggressiveness,
+        Personality::Arrogance,
+    ],
+    strength: 32,
+    intelligence: 21,
+    resistance: 250,
+    vitality: 600,
+    ether: 110,
+    weapon: None,
+    skills: &[
+        SkillKind::FirePunch,
+        SkillKind::FlamingBall,
+        SkillKind::TornadoKick,
+        SkillKind::WoundHealing,
+        SkillKind::SimpleCut,
+    ],
+    allies: None,
+    drop: EnemyReward {
+        orbs: (50, 250),
+        xp: (80, 150),
+        items: &[EnemyRewardItem {
+            amount: (1, 1),
+            item: items::tool::KATANA,
+            probability: Probability::new(30),
+        }],
+    },
+};

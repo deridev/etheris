@@ -112,6 +112,7 @@ pub const ALL_ENEMIES: &[Enemy] = &[
     weaks::BEAST_KILLER,
     weaks::ICE_MASTER,
     weaks::ETHERKING,
+    weaks::CORRUPTED_PHARAOH,
     Enemy {
         identifier: "insane_legend",
         name: "Lenda Insana",
