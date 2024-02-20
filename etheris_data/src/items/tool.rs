@@ -3,7 +3,7 @@ use etheris_discord::Emoji;
 
 const TOOL_TAGS: &[ItemTag] = &[ItemTag::Tool];
 
-pub const ALL_ITEMS: &[Item] = &[TRANSLATOR, BAT, SPEAR];
+pub const ALL_ITEMS: &[Item] = &[TRANSLATOR, BAT, SPEAR, KATANA, UMBRELLA];
 
 pub const TRANSLATOR: Item = Item {
     identifier: "translator",
