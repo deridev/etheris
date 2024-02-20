@@ -41,7 +41,7 @@ pub async fn study(mut ctx: CommandContext) -> anyhow::Result<()> {
     };
 
     character.intelligence_xp += xp;
-    character.knowledge_xp += xp;
+    character.knowledge_xp += xp + StdRng::from_entropy().gen_range(5..=10);
 
     let levels_upgraded = character.intelligence_xp / XP_REQUIRED_TO_LEVELUP;
     let new_xp = character.intelligence_xp % XP_REQUIRED_TO_LEVELUP;

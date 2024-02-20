@@ -269,11 +269,11 @@ impl Fighter {
     }
 
     pub fn strength_multiplier(&self) -> f32 {
-        1.0 + (self.strength_level as f32) * 0.3
+        1.0 + (self.strength_level as f32) * 0.25
     }
 
     pub fn intelligence_multiplier(&self) -> f32 {
-        1.0 + (self.intelligence_level as f32) * 0.3
+        1.0 + (self.intelligence_level as f32) * 0.225
     }
 
     pub fn mixed_multiplier(&self, strength_weight: f32, intelligence_weight: f32) -> f32 {

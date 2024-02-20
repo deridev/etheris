@@ -141,6 +141,13 @@ pub struct CharacterStats {
 }
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Deserialize, Serialize)]
+pub enum SoulControlLevel {
+    Rookie,
+    Beginner,
+    // TODO: /meditate
+}
+
+#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Deserialize, Serialize)]
 pub struct CharacterSettings {
     pub is_notifications_enabled: bool,
 }
