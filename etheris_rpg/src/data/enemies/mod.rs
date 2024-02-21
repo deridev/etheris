@@ -78,7 +78,7 @@ pub mod special;
 pub mod weaklings;
 pub mod weaklings_2;
 pub mod weaks;
-pub const ALL_ENEMIES: &[Enemy] = &[
+pub static ALL_ENEMIES: &[Enemy] = &[
     special::MINIORBS,
     special::AVEWORBS,
     weaklings::GREENAGIS_MUTANT,
@@ -113,6 +113,7 @@ pub const ALL_ENEMIES: &[Enemy] = &[
     weaks::ICE_MASTER,
     weaks::ETHERKING,
     weaks::CORRUPTED_PHARAOH,
+    weaks::GRASS_GOLEM,
     Enemy {
         identifier: "insane_legend",
         name: "Lenda Insana",

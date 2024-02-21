@@ -37,6 +37,7 @@ mod read;
 mod register;
 mod rest;
 mod sell;
+mod shop;
 mod skills;
 mod stats;
 mod study;
@@ -47,6 +48,8 @@ mod unequip;
 mod usecmd;
 mod work;
 
+mod test;
+
 mod rank;
 mod send;
 mod skill;
@@ -55,6 +58,8 @@ pub type CommandMap = HashMap<String, BoxedCommand>;
 
 pub static COMMANDS: Lazy<CommandMap> = Lazy::new(|| {
     let mut map: CommandMap = HashMap::new();
+
+    register_command!(map, test::TestCommand);
 
     register_command!(map, common::PingCommand);
     register_command!(map, tutorial::TutorialCommand);
@@ -71,6 +76,7 @@ pub static COMMANDS: Lazy<CommandMap> = Lazy::new(|| {
     register_command!(map, learn::LearnCommand);
     register_command!(map, work::WorkCommand);
     register_command!(map, stats::StatsCommand);
+    register_command!(map, shop::ShopCommand);
     register_command!(map, usecmd::UsecmdCommand);
     //register_command!(map, infos::HealthCommand);
     register_command!(map, inventory::InventoryCommand);

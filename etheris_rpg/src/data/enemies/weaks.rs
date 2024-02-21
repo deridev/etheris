@@ -229,11 +229,41 @@ pub const CORRUPT_MONK: Enemy = Enemy {
     },
 };
 
+pub const GRASS_GOLEM: Enemy = Enemy {
+    identifier: "grass_golem",
+    name: "Golem de Grama",
+    base_probability: Probability::ALWAYS,
+    regions: &[(WorldRegion::Midgrass, 2)],
+    personalities: &[Personality::Insanity, Personality::Aggressiveness],
+    strength: 40,
+    intelligence: 10,
+    resistance: 130,
+    vitality: 400,
+    ether: 50,
+    weapon: None,
+    skills: &[
+        SkillKind::FirePunch,
+        SkillKind::WaterBlessing,
+        SkillKind::CyclonePush,
+        SkillKind::WoundHealing,
+    ],
+    allies: None,
+    drop: EnemyReward {
+        orbs: (50, 112),
+        xp: (60, 90),
+        items: &[],
+    },
+};
+
 pub const FRANTIC: Enemy = Enemy {
     identifier: "frantic",
     name: "Frenético",
     base_probability: Probability::ALWAYS,
-    regions: &[(WorldRegion::Ethergrove, 3), (WorldRegion::Sandywater, 1)],
+    regions: &[
+        (WorldRegion::Ethergrove, 3),
+        (WorldRegion::Sandywater, 1),
+        (WorldRegion::Midgrass, 2),
+    ],
     personalities: &[Personality::Insanity, Personality::Aggressiveness],
     strength: 25,
     intelligence: 5,

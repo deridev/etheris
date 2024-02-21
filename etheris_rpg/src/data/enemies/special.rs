@@ -17,7 +17,7 @@ const ALL_REGIONS: &[(WorldRegion, i32)] = &[
 pub const MINIORBS: Enemy = Enemy {
     identifier: "miniorbs",
     name: "Miniorbs da Sorte",
-    base_probability: Probability::new(30),
+    base_probability: Probability::new(5),
     regions: ALL_REGIONS,
     personalities: &[Personality::Intelligence, Personality::Courage],
     strength: 6,
@@ -48,7 +48,7 @@ pub const MINIORBS: Enemy = Enemy {
 pub const AVEWORBS: Enemy = Enemy {
     identifier: "aveworbs",
     name: "Aveworbs da Fortuna",
-    base_probability: Probability::new(10),
+    base_probability: Probability::new(1),
     regions: ALL_REGIONS,
     personalities: &[Personality::Intelligence, Personality::Courage],
     strength: 17,

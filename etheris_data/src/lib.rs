@@ -13,7 +13,9 @@ pub use skill_kind::*;
 
 use items::{DefaultItemValue, DefaultItemValues};
 
-#[derive(Debug, Clone, PartialEq, serde::Deserialize, serde::Serialize)]
+#[derive(
+    Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, serde::Deserialize, serde::Serialize,
+)]
 pub struct ShopItem {
     pub identifier: String,
     pub quantity: i32,

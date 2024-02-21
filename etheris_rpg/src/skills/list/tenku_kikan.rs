@@ -36,6 +36,10 @@ impl Skill for TenkuKikan {
         self.default_can_use(api) && self.soul.is_some()
     }
 
+    fn ai_chance_to_pick(&self, _api: BattleApi<'_, '_>) -> Probability {
+        Probability::new(70)
+    }
+
     fn display(&self) -> SkillDisplay {
         let mut display = self.default_display();
 
