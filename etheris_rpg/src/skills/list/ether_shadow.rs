@@ -20,7 +20,7 @@ impl Skill for EtherShadow {
             description: "Invoca uma sombra sua feita de ether para ajudar na batlha. Um uso por batalha.",
             explanation: "Habilidade de materialização simples, mas requer entendimento profundo do seu próprio ether para invocar uma sombra sua.",
             complexity: SkillComplexity::Hard,
-            use_cost: SkillCost { ether: 1 },
+            use_cost: SkillCost { ether: 60 },
         }
     }
 
