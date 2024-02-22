@@ -255,6 +255,34 @@ pub const GRASS_GOLEM: Enemy = Enemy {
     },
 };
 
+pub const ICE_GOLEM: Enemy = Enemy {
+    identifier: "ice_golem",
+    name: "Golem de Gelo",
+    base_probability: Probability::ALWAYS,
+    regions: &[(WorldRegion::Wornpeaks, 3)],
+    personalities: &[Personality::Insanity, Personality::Aggressiveness],
+    strength: 120,
+    intelligence: 40,
+    resistance: 800,
+    vitality: 1900,
+    ether: 80,
+    weapon: None,
+    skills: &[
+        SkillKind::IcyBreath,
+        SkillKind::IcyShot,
+        SkillKind::InstinctiveReaction,
+        SkillKind::Earthquake,
+        SkillKind::WoundHealing,
+        SkillKind::Intimidation,
+    ],
+    allies: Some(&[(Probability::new(60), "ice_master")]),
+    drop: EnemyReward {
+        orbs: (50, 172),
+        xp: (60, 170),
+        items: &[],
+    },
+};
+
 pub const FRANTIC: Enemy = Enemy {
     identifier: "frantic",
     name: "Frenético",
@@ -298,10 +326,10 @@ pub const ICE_MASTER: Enemy = Enemy {
         Personality::Intelligence,
         Personality::Arrogance,
     ],
-    strength: 5,
-    intelligence: 30,
-    resistance: 180,
-    vitality: 250,
+    strength: 15,
+    intelligence: 40,
+    resistance: 250,
+    vitality: 550,
     ether: 80,
     weapon: None,
     skills: &[
@@ -310,11 +338,12 @@ pub const ICE_MASTER: Enemy = Enemy {
         SkillKind::WaterBlessing,
         SkillKind::WaterJet,
         SkillKind::WoundHealing,
+        SkillKind::Refresh,
     ],
     allies: None,
     drop: EnemyReward {
         orbs: (40, 90),
-        xp: (50, 170),
+        xp: (70, 170),
         items: &[EnemyRewardItem {
             amount: (1, 1),
             item: items::material::STONE,
@@ -363,7 +392,6 @@ pub const ETHERKING: Enemy = Enemy {
         }],
     },
 };
-
 
 pub const CORRUPTED_PHARAOH: Enemy = Enemy {
     identifier: "corrupted_pharaoh",

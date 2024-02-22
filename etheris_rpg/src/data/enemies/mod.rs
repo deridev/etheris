@@ -114,10 +114,11 @@ pub static ALL_ENEMIES: &[Enemy] = &[
     weaks::ETHERKING,
     weaks::CORRUPTED_PHARAOH,
     weaks::GRASS_GOLEM,
+    weaks::ICE_GOLEM,
     Enemy {
         identifier: "insane_legend",
         name: "Lenda Insana",
-        base_probability: Probability::new(2),
+        base_probability: Probability::new(5),
         regions: &[(WorldRegion::Midgrass, 1), (WorldRegion::Wornpeaks, 2)],
         personalities: &[
             Personality::Aggressiveness,
@@ -127,9 +128,9 @@ pub static ALL_ENEMIES: &[Enemy] = &[
         ],
         strength: 80,
         intelligence: 60,
-        resistance: 3000,
-        vitality: 5000,
-        ether: 250,
+        resistance: 5000,
+        vitality: 10000,
+        ether: 300,
         weapon: Some(WeaponKind::Katana),
         skills: &[
             SkillKind::ImbuedPunch,
@@ -147,8 +148,8 @@ pub static ALL_ENEMIES: &[Enemy] = &[
         ],
         allies: Some(&[(Probability::new(100), "legendary_helper")]),
         drop: EnemyReward {
-            orbs: (800, 2000),
-            xp: (400, 1600),
+            orbs: (800, 2500),
+            xp: (400, 2000),
             items: &[
                 EnemyRewardItem {
                     amount: (1, 1),
@@ -195,10 +196,10 @@ pub static ALL_ENEMIES: &[Enemy] = &[
             Personality::Intelligence,
             Personality::Courage,
         ],
-        strength: 1,
-        intelligence: 1,
-        resistance: 2000,
-        vitality: 2500,
+        strength: 10,
+        intelligence: 15,
+        resistance: 2500,
+        vitality: 4000,
         ether: 800,
         weapon: Some(WeaponKind::Katana),
         skills: &[
