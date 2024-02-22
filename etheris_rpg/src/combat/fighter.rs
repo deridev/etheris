@@ -41,6 +41,7 @@ pub enum Composure {
 pub struct FighterSkill {
     pub identifier: &'static str,
     pub dynamic_skill: Arc<Mutex<BoxedSkill>>,
+    pub base_kind: SkillKind
 }
 
 impl From<SkillKind> for FighterSkill {
@@ -54,6 +55,7 @@ impl FighterSkill {
     pub fn new(skill: BoxedSkill) -> Self {
         Self {
             identifier: skill.data().identifier,
+            base_kind: skill.kind(),
             dynamic_skill: Arc::new(Mutex::new(skill)),
         }
     }

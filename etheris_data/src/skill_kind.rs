@@ -22,6 +22,7 @@ pub enum SkillKind {
     Bite,
     MirrorDamage,
     ElectricSlap,
+    Intimidation,
     CyclonePush,
     Suplex,
     InstinctiveReaction,
@@ -33,11 +34,15 @@ pub enum SkillKind {
     WaterJet,
     WaterBlessing,
     Refresh,
+    ResplendentPunch,
+    Earthquake,
     BloodDonation,
     WoundHealing,
     TenkuKikan(Option<Soul>),
     YinYang,
     ParalyzingBet,
+    FinalCrucifix,
+    EtherShadow
 }
 
 impl SkillKind {
@@ -53,7 +58,10 @@ impl SkillKind {
             Self::Suplex,
             Self::FirePunch,
             Self::Charge,
+            Self::ResplendentPunch,
+            Self::Earthquake,
             Self::ElectricSlap,
+            Self::Intimidation,
             Self::FlamingBall,
             Self::IcyShot,
             Self::IcyBreath,
@@ -65,6 +73,8 @@ impl SkillKind {
             Self::TenkuKikan(None),
             Self::YinYang,
             Self::ParalyzingBet,
+            Self::FinalCrucifix,
+            Self::EtherShadow,
         ]
     }
 
@@ -81,17 +91,22 @@ impl SkillKind {
             Self::FirePunch => 8,
             Self::MirrorDamage => 9,
             Self::IcyBreath => 10,
+            Self::Intimidation => 11,
             Self::IcyShot => 12,
             Self::WaterBlessing => 13,
             Self::InstinctiveReaction => 14,
-            Self::Refresh => 15,
+            Self::ResplendentPunch => 15,
+            Self::Refresh => 16,
             Self::WaterJet => 17,
             Self::FlamingBall => 20,
+            Self::Earthquake => 21,
             Self::WoundHealing => 22,
             Self::BloodDonation => 25,
             Self::YinYang => 30,
+            Self::EtherShadow => 45,
             Self::ParalyzingBet => 50,
             Self::TenkuKikan(_) => 60,
+            Self::FinalCrucifix => 70
         }
     }
 
@@ -101,7 +116,7 @@ impl SkillKind {
             | Self::SimpleCut
             | Self::CyclonePush
             | Self::TornadoKick
-            | Self::Bite => 1,
+            | Self::Bite | Self::Intimidation => 1,
             Self::Charge
             | Self::IcyBreath
             | Self::MirrorDamage
@@ -109,15 +124,16 @@ impl SkillKind {
             | Self::Suplex
             | Self::BloodDonation
             | Self::Refresh
-            | Self::WoundHealing => 2,
+            | Self::WoundHealing | Self::ResplendentPunch => 2,
             Self::IcyShot
             | Self::ElectricSlap
             | Self::WaterBlessing
-            | Self::InstinctiveReaction => 3,
-            Self::WaterJet | Self::FlamingBall => 4,
+            | Self::InstinctiveReaction | Self::Earthquake => 3,
+            Self::WaterJet | Self::FlamingBall | Self::EtherShadow => 4,
             Self::YinYang => 5,
             Self::TenkuKikan(..) => 6,
             Self::ParalyzingBet => 6,
+            Self::FinalCrucifix => 7,
         }
     }
 }
