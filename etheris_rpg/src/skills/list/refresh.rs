@@ -30,6 +30,7 @@ impl Skill for Refresh {
         };
 
         let ally = api.battle_mut().get_fighter_mut(ally.index);
+        ally.balance = ally.balance.saturating_add(30).clamp(0, 100);
         ally.remove_effect(Effect::new(EffectKind::Bleeding, 50, fighter.index));
         ally.remove_effect(Effect::new(EffectKind::Flaming, 80, fighter.index));
         ally.remove_effect(Effect::new(EffectKind::Burning, 50, fighter.index));

@@ -38,6 +38,7 @@ pub const PLANK: Item = Item {
     tags: MATERIAL_TAGS,
     purchase_properties: PurchaseProperties {
         base_price: 10,
+        is_sellable: true,
         ..PurchaseProperties::default()
     },
     ..Item::default()
@@ -51,6 +52,7 @@ pub const STICK: Item = Item {
     purchase_properties: PurchaseProperties {
         base_price: 12,
         base_sell_price: 6,
+        is_sellable: true,
         ..PurchaseProperties::default()
     },
     weapon: Some(WeaponKind::Stick),
@@ -65,6 +67,7 @@ pub const KNIFE: Item = Item {
     purchase_properties: PurchaseProperties {
         base_price: 130,
         base_sell_price: 30,
+        is_sellable: true,
         ..PurchaseProperties::default()
     },
     weapon: Some(WeaponKind::Knife),
@@ -79,6 +82,7 @@ pub const PAPER: Item = Item {
     purchase_properties: PurchaseProperties {
         base_price: 20,
         base_sell_price: 5,
+        is_sellable: true,
         ..PurchaseProperties::default()
     },
     ..Item::default()
@@ -92,6 +96,7 @@ pub const TOOL_HANDLE: Item = Item {
     purchase_properties: PurchaseProperties {
         base_price: 75,
         base_sell_price: 40,
+        is_sellable: true,
         ..PurchaseProperties::default()
     },
     ..Item::default()

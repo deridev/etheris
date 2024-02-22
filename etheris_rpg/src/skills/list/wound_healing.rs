@@ -41,10 +41,15 @@ impl Skill for WoundHealing {
             return Ok(());
         };
         
-        let cure = api.rng().gen_range(2.0..=5.0);
-        let cure = 1 + (cure * (api.fighter().intelligence_multiplier() * 0.7)) as i32;
+        let cure = api.rng().gen_range(8.0..=10.0);
+        let cure = 1 + (cure * (api.fighter().intelligence_multiplier() * 0.8)) as i32;
 
-        api.battle_mut().get_fighter_mut(ally.index).heal(fighter_index, cure);
+        {
+            let ally = api.battle_mut().get_fighter_mut(ally.index);
+            ally.heal(fighter_index, cure);
+            ally.balance = ally.balance.saturating_add(20).clamp(0, 100);
+            ally.defense = 1;
+        }
 
         api.emit_message(format!("**{}** cicatrizou os ferimentos de **{}** e curou **{} vida**!", api.fighter().name, ally.name, cure));
 

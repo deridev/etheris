@@ -53,7 +53,7 @@ pub async fn select_a_input(mut api: BattleApi<'_, '_>) -> BattleInput {
         api.battle_mut().reallocate_fighter_target(fighter.index);
     }
 
-    if api.battle().get_fighter(fighter.target).is_defeated {
+    if api.battle().get_fighter(fighter.target).team == api.fighter().team || api.battle().get_fighter(fighter.target).is_defeated {
         api.battle_mut().reallocate_fighter_target(fighter.index);
     }
 

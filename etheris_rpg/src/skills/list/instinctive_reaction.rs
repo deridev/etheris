@@ -13,7 +13,7 @@ impl Skill for InstinctiveReaction {
         SkillData {
             identifier: "instinctive_reaction",
             name: "Reação Instintiva",
-            description: "Habilidade passiva. Quando alguém errar um ataque em você, tem 50% de chance de instintivamente dar um ataque de volta.",
+            description: "Habilidade passiva. Quando alguém errar um ataque em você, tem 80% de chance de instintivamente dar um ataque de volta.",
             explanation: "Essa habilidade requer extrema concentração e controle do ether. Se baseia em ter ether fluindo no corpo esperando a oportunidade de atacar antes mesmo do cérebro mandar o ataque.",
             complexity: SkillComplexity::Hard,
             use_cost: SkillCost { ether: 10 },

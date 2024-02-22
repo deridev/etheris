@@ -67,9 +67,9 @@ impl PurchaseProperties {
     pub const fn default() -> Self {
         Self {
             base_price: 1,
-            base_sell_price: 0,
+            base_sell_price: 1,
             is_buyable: true,
-            is_sellable: false,
+            is_sellable: true,
             default_shop_sells: true,
         }
     }

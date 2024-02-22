@@ -24,8 +24,8 @@ impl Skill for FirePunch {
         let fighter = api.fighter().clone();
         let target = api.target().clone();
 
-        let damage = api.rng().gen_range(15..=20);
-        let self_damage = api.rng().gen_range(4..=7);
+        let damage = api.rng().gen_range(20..=25);
+        let self_damage = api.rng().gen_range(3..=5);
 
         let multiplier = fighter.mixed_multiplier(0.7, 0.4);
         let damage = ((damage as f32) * multiplier) as i32;
