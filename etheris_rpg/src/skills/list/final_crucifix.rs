@@ -32,6 +32,8 @@ impl Skill for FinalCrucifix {
         let fighter_team = api.fighter().team;
         let multiplier = api.fighter().mixed_multiplier(0.1, 1.0);
 
+        api.fighter_mut().flags.insert(FighterFlags::CANNOT_REGEN_ETHER);
+
         let self_damage = (api.rng().gen_range(20..=30) as f32 * multiplier) as i32;
         let ally_damage = (api.rng().gen_range(10..=20) as f32 * multiplier) as i32;
         let enemy_damage = (api.rng().gen_range(35..=45) as f32 * multiplier) as i32;

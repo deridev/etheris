@@ -7,7 +7,7 @@ use rand::{
     SeedableRng,
 };
 
-use crate::{common::DamageSpecifier, Fighter, FighterData, FighterIndex};
+use crate::{common::DamageSpecifier, Fighter, FighterData, FighterFlags, FighterIndex};
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum BattleError {
@@ -283,7 +283,12 @@ impl Battle {
         for alive_fighter in self.alive_fighters.clone() {
             let fighter = &mut self.fighters[alive_fighter.0];
             let target = fighter.target;
-            let ether_rec = (fighter.ether.max as f32 * 0.05) as i32;
+
+            let ether_rec = if fighter.flags.contains(FighterFlags::CANNOT_REGEN_ETHER) { 
+                0 
+            } else {
+                (fighter.ether.max as f32 * 0.05) as i32
+            };
 
             fighter.balance = fighter.balance.add(3).min(100);
             fighter.defense = fighter.defense.saturating_sub(1);

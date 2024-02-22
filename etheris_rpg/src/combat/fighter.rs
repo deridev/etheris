@@ -23,7 +23,8 @@ bitflags! {
     pub struct FighterFlags: u8 {
         const ASKED_TO_RISK_LIFE = 1 << 0;
         const HAD_A_NEAR_DEATH_EXPERIENCE = 1 << 1;
-        const RISKING_LIFE = 1 << 1;
+        const RISKING_LIFE = 1 << 2;
+        const CANNOT_REGEN_ETHER = 1 << 3;
     }
 }
 
