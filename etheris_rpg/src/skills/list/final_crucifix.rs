@@ -21,8 +21,8 @@ impl Skill for FinalCrucifix {
     }
 
     fn ai_chance_to_pick(&self, api: BattleApi<'_, '_>) -> Probability {
-        if api.battle().turn_counter > 15 && api.fighter().health().value < api.fighter().health().max / 3 {
-            Probability::new(50)
+        if api.battle().turn_counter > 25 && api.fighter().health().value < api.fighter().health().max / 3 {
+            Probability::new(30)
         } else {
             Probability::NEVER
         }

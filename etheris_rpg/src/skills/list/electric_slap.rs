@@ -37,7 +37,7 @@ impl Skill for ElectricSlap {
                 amount: damage,
                 balance_effectiveness: 15,
                 accuracy: 80,
-                effect: Some(Effect::new(EffectKind::Shocked, 60, fighter.index))
+                effect: Some(Effect::new(EffectKind::Shocked, 45, fighter.index))
             },
         ).await;
 
