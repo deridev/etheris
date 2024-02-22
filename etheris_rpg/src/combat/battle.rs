@@ -1,4 +1,4 @@
-use std::{collections::HashMap, fmt::Display, ops::Add};
+use std::{collections::HashMap, fmt::Display, ops::{Add, Sub}};
 
 use etheris_data::world::regions::WorldRegion;
 use rand::{
@@ -284,11 +284,13 @@ impl Battle {
             let fighter = &mut self.fighters[alive_fighter.0];
             let target = fighter.target;
 
-            let ether_rec = if fighter.flags.contains(FighterFlags::CANNOT_REGEN_ETHER) { 
+            let ether_rec = if fighter.flags.contains(FighterFlags::CANNOT_REGEN_ETHER) || fighter.flags.contains(FighterFlags::CANNOT_REGEN_ETHER_OVERLOAD) { 
                 0 
             } else {
                 (fighter.ether.max as f32 * 0.05) as i32
             };
+
+            fighter.overload = fighter.overload.sub(0.3).clamp(0.0, 1000.0);
 
             fighter.balance = fighter.balance.add(3).min(100);
             fighter.defense = fighter.defense.saturating_sub(1);

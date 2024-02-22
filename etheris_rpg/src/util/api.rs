@@ -127,6 +127,61 @@ impl<'a, 'b> BattleApi<'a, 'b> {
         ally_team
     }
 
+    pub async fn add_overload(
+        &mut self,
+        target_index: FighterIndex,
+        amount: f64,
+    ) {
+        let fighter = self.battle_mut().get_fighter_mut(target_index);
+        let base_overload = fighter.overload;
+        fighter.overload += amount;
+
+        let fighter = fighter.clone();
+        if base_overload <= 5.0 && fighter.overload >= 5.0 {
+            self.emit_message(format!("O corpo de **{}** está sobrecarregando pelo uso de ether!", fighter.name));
+        } else if base_overload <= 15.0 && fighter.overload >= 15.0 {
+            self.emit_message(format!("**{}** sentiu os orgãos doerem de tanta sobrecarga!", fighter.name));
+        } else if base_overload <= 50.0 && fighter.overload >= 50.0 {
+            self.emit_message(format!("O cérebro de **{}** está sobreaquecendo!", fighter.name));
+        } else if base_overload <= 150.0 && fighter.overload >= 150.0 {
+            self.emit_message(format!("O ether de **{}** está totalmente fora de controle! A regeneração de ether está desativada até a sobrecarga baixar de 150%.", fighter.name));
+        } else if base_overload <= 400.0 && fighter.overload >= 400.0 {
+            self.emit_message(format!("**{}** está quase cedendo de tanta sobrecarga. 500% de sobrecarga é morte na hora!", fighter.name));
+        }
+
+        if fighter.overload >= 150.0 {
+            self.battle_mut().get_fighter_mut(target_index).flags.insert(FighterFlags::CANNOT_REGEN_ETHER_OVERLOAD);
+        } else {
+            self.battle_mut().get_fighter_mut(target_index).flags.remove(FighterFlags::CANNOT_REGEN_ETHER_OVERLOAD);
+        }
+
+        if base_overload <= 100.0 && fighter.overload >= 100.0 {
+            let overload_damage = self.rng().gen_range(30..=50);
+            let overload_damage = (overload_damage as f32 * fighter.intelligence_multiplier() * 0.9) as i32;
+
+            let dmg = self.apply_damage(fighter.index, DamageSpecifier { 
+                kind: DamageKind::Special, 
+                amount: overload_damage, 
+                balance_effectiveness: 20, 
+                accuracy: 100, 
+                effect: Some(Effect::new(EffectKind::Bleeding, 30, fighter.index)), 
+                culprit: fighter.index
+            }).await;
+
+            self.emit_message(format!("**{}** recebeu **{dmg}** de sobrecarga no ether.", fighter.name))
+        }
+
+        if fighter.overload >= 500.0 {
+            let fighter = self.battle_mut().get_fighter_mut(target_index);
+            fighter.vitality.value = 0;
+            fighter.resistance.value = 0;
+            fighter.ether.value = 0;
+
+            let fighter = fighter.clone();
+            self.emit_message(format!("**{}** morreu de tanta sobrecarga. Seu ether interno implodiu e destruiu todos seus orgãos.", fighter.name))
+        }
+    }
+
     pub async fn apply_damage(
         &mut self,
         target_index: FighterIndex,

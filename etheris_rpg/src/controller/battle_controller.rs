@@ -1188,6 +1188,10 @@ impl<'a> BattleController<'a> {
 
             displays.push(format!("{} {}", emojis::ETHER, fighter.ether.value));
 
+            if fighter.overload > 5.0 {
+                displays.push(format!("🧨 **Sobrecarga**: {}%", fighter.overload as i64));
+            }
+
             match fighter.balance {
                 0..=15 => displays.push("Equilíbrio Zero".to_string()),
                 16..=40 => displays.push("Nenhum Equilíbrio".to_string()),

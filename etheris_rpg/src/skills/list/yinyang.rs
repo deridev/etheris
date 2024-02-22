@@ -92,6 +92,9 @@ impl Skill for YinYang {
             }
         }
 
+        let overload = api.rng().gen_range(3.0..=6.0);
+        api.add_overload(api.fighter_index, overload).await;
+
         Ok(())
     }
 }

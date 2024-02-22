@@ -25,6 +25,7 @@ bitflags! {
         const HAD_A_NEAR_DEATH_EXPERIENCE = 1 << 1;
         const RISKING_LIFE = 1 << 2;
         const CANNOT_REGEN_ETHER = 1 << 3;
+        const CANNOT_REGEN_ETHER_OVERLOAD = 1 << 4;
     }
 }
 
@@ -172,6 +173,7 @@ pub struct Fighter {
 
     pub weapon: Option<FighterWeapon>,
 
+    pub overload: f64,
     pub resistance: Attribute,
     pub vitality: Attribute,
     pub ether: Attribute,
@@ -228,9 +230,10 @@ impl Fighter {
 
             strength_level: data.strength_level,
             intelligence_level: data.intelligence_level,
-
+            
             weapon: data.weapon.map(From::from),
-
+            
+            overload: 0.0,
             resistance: data.resistance,
             vitality: data.vitality,
             ether: data.ether,

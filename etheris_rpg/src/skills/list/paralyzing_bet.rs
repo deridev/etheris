@@ -45,6 +45,8 @@ impl Skill for ParalyzingBet {
         api.emit_message(format!("A sorte foi lançada e **{}** teve os músculos paralizados!", unlucky.name));
         api.apply_effect(unlucky.index, Effect::new(EffectKind::Paralyzed, 2, fighter.index)).await;
 
+        api.add_overload(api.fighter_index, 2.0).await;
+
         Ok(())
     }
 }

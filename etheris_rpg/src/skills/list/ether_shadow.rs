@@ -65,6 +65,9 @@ impl Skill for EtherShadow {
 
         api.emit_message(format!("**{}** invocou uma sompra de si mesmo para ajudar na batalha!", fighter.name));
 
+        let overload = api.rng().gen_range(3.0..=5.0);
+        api.add_overload(api.fighter_index, overload).await;
+
         Ok(())
     }
 }

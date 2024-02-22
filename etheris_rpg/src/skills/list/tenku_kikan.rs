@@ -112,6 +112,8 @@ impl Skill for TenkuKikan {
             skills: soul.skills,
         });
 
+        api.add_overload(api.fighter_index, 8.0).await;
+
         Ok(())
     }
 }

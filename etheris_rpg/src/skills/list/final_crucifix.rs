@@ -82,6 +82,9 @@ impl Skill for FinalCrucifix {
             ]);
         }
 
+        let overload = api.rng().gen_range(40.0..=60.0);
+        api.add_overload(api.fighter_index, overload).await;
+
         Ok(())
     }
 }
