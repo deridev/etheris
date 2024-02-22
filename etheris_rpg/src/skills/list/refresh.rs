@@ -20,6 +20,14 @@ impl Skill for Refresh {
         }
     }
 
+    fn ai_chance_to_pick(&self, api: BattleApi<'_, '_>) -> Probability {
+        if api.fighter().effects.is_empty() {
+            Probability::new(30)
+        } else {
+            Probability::new(70)
+        }
+    }
+
     async fn on_use(&mut self, mut api: BattleApi<'_, '_>) -> SkillResult<()> {
         let fighter = api.fighter().clone();
 
