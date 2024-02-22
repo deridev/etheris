@@ -242,6 +242,7 @@ impl<'a> BattleController<'a> {
                     character.add_orbs(orbs);
                     character.health_xp += (xp + 2) / 3;
                     character.intelligence_xp += (xp + 2) / 3;
+                    character.knowledge_xp += (xp + 2) / 5;
                     character.strength_xp += (xp + 2) / 3;
 
                     for item in items.iter() {

@@ -60,6 +60,8 @@ async fn explore_enemy(mut ctx: CommandContext) -> anyhow::Result<()> {
         return Ok(());
     };
 
+    let is_boss = enemy.identifier == "insane_legend";
+
     let enemy_allies = match enemy.allies {
         None => vec![],
         Some(allies) => allies
@@ -188,7 +190,8 @@ async fn explore_enemy(mut ctx: CommandContext) -> anyhow::Result<()> {
                 ),
                 inline: false,
             },
-        );
+        )
+        .add_footer_text(if is_boss { "4 invasores permitidos" } else { "2 invasores permitidos" });
 
     let confirmation = ctx
         .helper()
@@ -230,7 +233,7 @@ async fn explore_enemy(mut ctx: CommandContext) -> anyhow::Result<()> {
             casual: false,
             has_consequences: true,
             is_risking_life_allowed: true,
-            max_intruders: 2,
+            max_intruders: if is_boss { 4 } else { 2 },
         },
         fighters,
     )?;
