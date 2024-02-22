@@ -25,12 +25,16 @@ impl Skill for InstinctiveReaction {
     }
 
     async fn passive_on_damage_miss(&mut self, mut api: BattleApi<'_, '_>, _damage: DamageSpecifier) -> SkillResult<()> {
+        if api.fighter_index == api.target_index {
+            return Ok(());
+        }
+
         let fighter = api.fighter().clone();
         if fighter.ether.value < self.data().use_cost.ether {
             return Ok(());
         }
 
-        if Probability::new(50).generate_random_bool() {
+        if Probability::new(20).generate_random_bool() {
             return Ok(());
         }
 

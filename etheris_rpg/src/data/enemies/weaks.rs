@@ -154,8 +154,8 @@ pub const BEAST_KILLER: Enemy = Enemy {
     ],
     allies: None,
     drop: EnemyReward {
-        orbs: (30, 60),
-        xp: (60, 70),
+        orbs: (30, 70),
+        xp: (80, 100),
         items: &[],
     },
 };
@@ -187,8 +187,8 @@ pub const ETHEREAL_HUNTER: Enemy = Enemy {
     ],
     allies: None,
     drop: EnemyReward {
-        orbs: (30, 60),
-        xp: (30, 70),
+        orbs: (60, 100),
+        xp: (80, 130),
         items: &[],
     },
 };
@@ -219,8 +219,8 @@ pub const CORRUPT_MONK: Enemy = Enemy {
     ],
     allies: None,
     drop: EnemyReward {
-        orbs: (30, 60),
-        xp: (50, 70),
+        orbs: (30, 90),
+        xp: (50, 150),
         items: &[EnemyRewardItem {
             amount: (1, 1),
             item: items::special::INTELLIGENCE_CRYSTAL,
@@ -237,8 +237,8 @@ pub const GRASS_GOLEM: Enemy = Enemy {
     personalities: &[Personality::Insanity, Personality::Aggressiveness],
     strength: 40,
     intelligence: 10,
-    resistance: 130,
-    vitality: 400,
+    resistance: 150,
+    vitality: 500,
     ether: 50,
     weapon: None,
     skills: &[
@@ -250,7 +250,7 @@ pub const GRASS_GOLEM: Enemy = Enemy {
     allies: None,
     drop: EnemyReward {
         orbs: (50, 112),
-        xp: (60, 90),
+        xp: (60, 130),
         items: &[],
     },
 };
@@ -314,7 +314,7 @@ pub const ICE_MASTER: Enemy = Enemy {
     allies: None,
     drop: EnemyReward {
         orbs: (40, 90),
-        xp: (50, 70),
+        xp: (50, 170),
         items: &[EnemyRewardItem {
             amount: (1, 1),
             item: items::material::STONE,
@@ -333,11 +333,11 @@ pub const ETHERKING: Enemy = Enemy {
         Personality::Insanity,
         Personality::Arrogance,
     ],
-    strength: 25,
-    intelligence: 25,
-    resistance: 200,
-    vitality: 600,
-    ether: 150,
+    strength: 50,
+    intelligence: 70,
+    resistance: 500,
+    vitality: 800,
+    ether: 175,
     weapon: None,
     skills: &[
         SkillKind::WoundHealing,
@@ -353,8 +353,8 @@ pub const ETHERKING: Enemy = Enemy {
     ],
     allies: None,
     drop: EnemyReward {
-        orbs: (50, 300),
-        xp: (100, 150),
+        orbs: (150, 400),
+        xp: (150, 350),
         items: &[EnemyRewardItem {
             amount: (1, 1),
             item: items::special::INTELLIGENCE_CRYSTAL,
@@ -362,6 +362,7 @@ pub const ETHERKING: Enemy = Enemy {
         }],
     },
 };
+
 
 pub const CORRUPTED_PHARAOH: Enemy = Enemy {
     identifier: "corrupted_pharaoh",
