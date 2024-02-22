@@ -40,6 +40,7 @@ pub enum SkillKind {
     WoundHealing,
     TenkuKikan(Option<Soul>),
     YinYang,
+    AtomicHollow,
     ParalyzingBet,
     FinalCrucifix,
     EtherShadow
@@ -75,6 +76,7 @@ impl SkillKind {
             Self::ParalyzingBet,
             Self::FinalCrucifix,
             Self::EtherShadow,
+            Self::AtomicHollow,
         ]
     }
 
@@ -105,6 +107,7 @@ impl SkillKind {
             Self::YinYang => 30,
             Self::EtherShadow => 45,
             Self::ParalyzingBet => 50,
+            Self::AtomicHollow => 55,
             Self::TenkuKikan(_) => 60,
             Self::FinalCrucifix => 70
         }
@@ -128,8 +131,8 @@ impl SkillKind {
             Self::IcyShot
             | Self::ElectricSlap
             | Self::WaterBlessing
-            | Self::InstinctiveReaction | Self::Earthquake => 3,
-            Self::WaterJet | Self::FlamingBall | Self::EtherShadow => 4,
+            | Self::InstinctiveReaction | Self::Earthquake | Self::AtomicHollow => 3,
+            Self::WaterJet | Self::FlamingBall | Self::EtherShadow=> 4,
             Self::YinYang => 5,
             Self::TenkuKikan(..) => 6,
             Self::ParalyzingBet => 6,

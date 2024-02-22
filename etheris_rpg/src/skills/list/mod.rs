@@ -37,6 +37,7 @@ use_skill!(paralyzing_bet);
 use_skill!(final_crucifix);
 use_skill!(resplendent_punch);
 use_skill!(ether_shadow);
+use_skill!(atomic_hollow);
 
 pub static ALL_SKILLS: Lazy<Vec<Box<dyn super::Skill + Send + Sync>>> = Lazy::new(|| {
     SkillKind::list()
@@ -76,5 +77,6 @@ pub fn get_boxed_skill_from_kind(kind: SkillKind) -> Box<dyn super::Skill + Send
         SkillKind::ParalyzingBet => Box::<ParalyzingBet>::default(),
         SkillKind::FinalCrucifix => Box::<FinalCrucifix>::default(),
         SkillKind::EtherShadow => Box::<EtherShadow>::default(),
+        SkillKind::AtomicHollow => Box::<AtomicHollow>::default(),
     }
 }

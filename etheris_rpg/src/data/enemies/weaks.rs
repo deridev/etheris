@@ -350,6 +350,7 @@ pub const ETHERKING: Enemy = Enemy {
         SkillKind::ElectricSlap,
         SkillKind::Refresh,
         SkillKind::InstinctiveReaction,
+        SkillKind::AtomicHollow,
     ],
     allies: None,
     drop: EnemyReward {
