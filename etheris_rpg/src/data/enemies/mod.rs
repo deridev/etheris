@@ -117,7 +117,7 @@ pub static ALL_ENEMIES: &[Enemy] = &[
     Enemy {
         identifier: "insane_legend",
         name: "Lenda Insana",
-        base_probability: Probability::new(5),
+        base_probability: Probability::new(2),
         regions: &[(WorldRegion::Midgrass, 1), (WorldRegion::Wornpeaks, 2)],
         personalities: &[
             Personality::Aggressiveness,
