@@ -44,6 +44,7 @@ pub async fn select_a_input(mut api: BattleApi<'_, '_>) -> BattleInput {
         if wants_to_change_target
             && state.focused_in != fighter.target
             && !api.battle().get_fighter(state.focused_in).is_defeated
+            && api.battle().get_fighter(state.focused_in).team != fighter.team
         {
             api.fighter_mut().target = state.focused_in;
         }

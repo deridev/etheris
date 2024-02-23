@@ -179,12 +179,12 @@ impl Battle {
     }
 
     pub fn reallocate_fighter_target(&mut self, fighter_index: FighterIndex) {
+        let fighter = self.get_fighter(fighter_index).clone();
         let teams = self.teams();
 
-        let fighter = self.get_fighter(fighter_index).clone();
         let Some((.., enemies)) = teams
             .iter()
-            .filter(|(team, enemies)| !enemies.is_empty() && **team != fighter.team)
+            .filter(|(team, ..)| **team != fighter.team)
             .choose(&mut self.rng)
         else {
             return;
@@ -282,6 +282,8 @@ impl Battle {
         // Tick every fighter
         for alive_fighter in self.alive_fighters.clone() {
             let fighter = &mut self.fighters[alive_fighter.0];
+            let fighter_team = fighter.team;
+            let fighter_is_ai = fighter.ai_state.is_some();
             let target = fighter.target;
 
             let ether_rec = if fighter.flags.contains(FighterFlags::CANNOT_REGEN_ETHER) || fighter.flags.contains(FighterFlags::CANNOT_REGEN_ETHER_OVERLOAD) { 
@@ -296,7 +298,7 @@ impl Battle {
             fighter.defense = fighter.defense.saturating_sub(1);
             fighter.ether.add(ether_rec);
 
-            if self.get_fighter(target).is_defeated {
+            if self.get_fighter(target).is_defeated || (self.get_fighter(target).team == fighter_team && fighter_is_ai) {
                 self.reallocate_fighter_target(alive_fighter);
             }
         }
