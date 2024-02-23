@@ -224,7 +224,7 @@ pub const CORRUPT_MONK: Enemy = Enemy {
         items: &[EnemyRewardItem {
             amount: (1, 1),
             item: items::special::INTELLIGENCE_CRYSTAL,
-            probability: Probability::new(5),
+            probability: Probability::new(1),
         }],
     },
 };
@@ -388,7 +388,7 @@ pub const ETHERKING: Enemy = Enemy {
         items: &[EnemyRewardItem {
             amount: (1, 1),
             item: items::special::INTELLIGENCE_CRYSTAL,
-            probability: Probability::new(5),
+            probability: Probability::new(1),
         }],
     },
 };
