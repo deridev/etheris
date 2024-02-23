@@ -106,7 +106,7 @@ async fn explore_enemy(mut ctx: CommandContext) -> anyhow::Result<()> {
         _ => Color::GREEN,
     };
 
-    let warning = if character.stats.vitality.value < character.stats.vitality.max / 2 {
+    let warning = if character.stats.resistance.value < character.stats.resistance.max {
         "⚠️ **__Você não está com a vida cheia!__**\nTome cuidado ou descanse antes de explorar.\n"
     } else {
         ""
