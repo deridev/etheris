@@ -141,6 +141,7 @@ impl<'a> BattleController<'a> {
             match self.turn().await {
                 Ok(()) => (),
                 Err(e) => {
+                    eprintln!("battle_controller::run Error: {}", e);
                     // Error tolerancy of 5
                     if turn_errors < 5 {
                         turn_errors += 1;
