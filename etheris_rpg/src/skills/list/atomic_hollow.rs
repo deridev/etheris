@@ -60,12 +60,17 @@ impl Skill for AtomicHollow {
             },
         ).await;    
 
-        for kind in EFFECT_KINDS {
-            let amount = api.rng().gen_range(45..=70);
-            api.apply_effect(target.index, Effect::new(*kind, amount, fighter.index)).await;
+        if !damage.missed {
+            for kind in EFFECT_KINDS {
+                let amount = api.rng().gen_range(45..=70);
+                api.apply_effect(target.index, Effect::new(*kind, amount, fighter.index)).await;
+            }
+
+            api.emit_message(format!("**{}** lançou uma esfera de vazio atômico em **{}** que causou **{damage}** e aplicou diversos efeitos no corpo do alvo.", fighter.name, target.name));
+        } else {
+            api.emit_message(format!("**{}** lançou uma esfera de vazio atômico em **{}**, mas o vazio se descontrolou e errou.", fighter.name, target.name));
         }
 
-        api.emit_message(format!("**{}** lançou uma esfera de vazio atômico em **{}** que causou **{damage}** e aplicou diversos efeitos no corpo do alvo.", fighter.name, target.name));
 
         api.add_overload(api.fighter_index, 3.5).await;
 

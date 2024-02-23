@@ -192,7 +192,7 @@ pub static ALL_ENEMIES: &[Enemy] = &[
         regions: &[],
         personalities: &[
             Personality::Aggressiveness,
-            Personality::Insanity,
+            Personality::Calm,
             Personality::Intelligence,
             Personality::Courage,
         ],

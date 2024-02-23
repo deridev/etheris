@@ -21,10 +21,11 @@ impl Skill for Refresh {
     }
 
     fn ai_chance_to_pick(&self, api: BattleApi<'_, '_>) -> Probability {
-        if api.fighter().effects.is_empty() {
-            Probability::new(30)
-        } else {
+        let allies = api.get_fighter_allies(api.fighter_index);
+        if allies.iter().any(|a| !a.effects.is_empty()){
             Probability::new(70)
+        } else {
+            Probability::new(10)
         }
     }
 

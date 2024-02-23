@@ -1,3 +1,5 @@
+use std::mem::discriminant;
+
 use chrono::Duration;
 use etheris_common::{clear_string, config, Attribute};
 use etheris_data::{
@@ -300,7 +302,7 @@ impl CharacterModel {
     }
 
     pub fn learn_skill(&mut self, skill: SkillKind) {
-        if self.skills.contains(&skill) {
+        if self.skills.iter().any(|s| discriminant(s) == discriminant(&skill)) {
             return;
         }
 
@@ -309,7 +311,7 @@ impl CharacterModel {
     }
 
     pub fn equip_skill(&mut self, skill: SkillKind) {
-        if self.skills.contains(&skill) {
+        if self.skills.iter().any(|s| discriminant(s) == discriminant(&skill)) {
             return;
         }
 
@@ -327,7 +329,7 @@ impl CharacterModel {
     }
 
     pub fn aknowledge_skill(&mut self, skill: SkillKind) {
-        if self.learned_skills.contains(&skill) || self.learnable_skills.contains(&skill) {
+        if self.learned_skills.iter().any(|s| discriminant(s) == discriminant(&skill)) || self.learnable_skills.iter().any(|s| discriminant(s) == discriminant(&skill)) {
             return;
         }
 
