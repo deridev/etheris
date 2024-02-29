@@ -19,7 +19,7 @@ use etheris_discord::{
 
 use crate::{watcher::Watcher, CommandContextHelper, EtherisClient, OptionHandler, Response};
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct CommandContext {
     pub client: Arc<EtherisClient>,
     pub interaction: Box<Interaction>,

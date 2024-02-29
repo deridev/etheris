@@ -110,7 +110,7 @@ pub async fn battle(
         vec![character_fighter, opponent_fighter],
     )?;
 
-    let mut controller = BattleController::new(battle, &mut ctx);
+    let mut controller = BattleController::new(battle, ctx);
     controller.run().await?;
 
     Ok(())

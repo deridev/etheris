@@ -12,8 +12,10 @@ etheris_data = { path = "../etheris_data" }
 etheris_common = { path = "../etheris_common" }
 etheris_framework = { path = "../etheris_framework" }
 etheris_macros = { path = "../etheris_macros" }
+etheris_util = { path = "../etheris_util" }
 
 anyhow = { workspace = true }
+async-recursion = "1.0.5"
 tokio = { workspace = true }
 tokio-stream = { workspace = true }
 rand = { workspace = true }

@@ -21,11 +21,13 @@ macro_rules! register_command {
     }};
 }
 
+mod allocate;
 mod battle;
 mod common;
 mod consume;
 mod craft;
 mod daily;
+mod deallocate;
 mod equip;
 mod explore;
 mod infos;
@@ -68,6 +70,8 @@ pub static COMMANDS: Lazy<CommandMap> = Lazy::new(|| {
     register_command!(map, skills::SkillsCommand);
     register_command!(map, infos::WalletCommand);
     register_command!(map, train::TrainCommand);
+    register_command!(map, allocate::AllocateCommand);
+    register_command!(map, deallocate::DeallocateCommand);
     register_command!(map, daily::DailyCommand);
     register_command!(map, study::StudyCommand);
     register_command!(map, battle::BattleCommand);

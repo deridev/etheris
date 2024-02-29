@@ -9,10 +9,10 @@ use crate::*;
 
 use self::common::{DamageKind, DamageSpecifier};
 
-pub struct BattleApi<'a, 'b> {
+pub struct BattleApi<'a> {
     pub fighter_index: FighterIndex,
     pub target_index: FighterIndex,
-    pub controller: &'a mut BattleController<'b>,
+    pub controller: &'a mut BattleController,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
@@ -43,8 +43,8 @@ impl Display for EffectiveDamage {
     }
 }
 
-impl<'a, 'b> BattleApi<'a, 'b> {
-    pub fn new(controller: &'a mut BattleController<'b>) -> Self {
+impl<'a> BattleApi<'a> {
+    pub fn new(controller: &'a mut BattleController) -> Self {
         Self {
             fighter_index: controller.battle.get_current_fighter().index,
             target_index: controller.battle.get_target_fighter().index,
@@ -54,7 +54,7 @@ impl<'a, 'b> BattleApi<'a, 'b> {
 
     #[inline(always)]
     pub fn ctx(&mut self) -> &mut CommandContext {
-        self.controller.ctx
+        &mut self.controller.ctx
     }
 
     #[inline(always)]
@@ -100,6 +100,26 @@ impl<'a, 'b> BattleApi<'a, 'b> {
             .push(message.to_string());
     }
 
+    pub fn can_finish_target(&self) -> bool {
+        let mut finish_threshold = if self.target().balance < 50 {
+            0.3
+        } else {
+            0.15
+        };
+        if self.target().health().max > 1000 {
+            finish_threshold *= 0.5;
+        }
+
+        let can_finish = (self.target().vitality.value as f32)
+            <= ((self.target().vitality.max as f32) * finish_threshold);
+
+        can_finish
+            && self.target().composure == Composure::Standing
+            && self.target().defense < 1
+            && self.fighter().composure == Composure::Standing
+            && !self.fighter().finishers.is_empty()
+    }
+
     pub fn emit_random_message(&mut self, messages: &[impl ToString]) {
         self.controller.emit_random_turn_message(messages)
     }
@@ -127,22 +147,27 @@ impl<'a, 'b> BattleApi<'a, 'b> {
         ally_team
     }
 
-    pub async fn add_overload(
-        &mut self,
-        target_index: FighterIndex,
-        amount: f64,
-    ) {
+    pub async fn add_overload(&mut self, target_index: FighterIndex, amount: f64) {
         let fighter = self.battle_mut().get_fighter_mut(target_index);
         let base_overload = fighter.overload;
         fighter.overload += amount;
 
         let fighter = fighter.clone();
         if base_overload <= 5.0 && fighter.overload >= 5.0 {
-            self.emit_message(format!("O corpo de **{}** está sobrecarregando pelo uso de ether!", fighter.name));
+            self.emit_message(format!(
+                "O corpo de **{}** está sobrecarregando pelo uso de ether!",
+                fighter.name
+            ));
         } else if base_overload <= 15.0 && fighter.overload >= 15.0 {
-            self.emit_message(format!("**{}** sentiu os orgãos doerem de tanta sobrecarga!", fighter.name));
+            self.emit_message(format!(
+                "**{}** sentiu os orgãos doerem de tanta sobrecarga!",
+                fighter.name
+            ));
         } else if base_overload <= 50.0 && fighter.overload >= 50.0 {
-            self.emit_message(format!("O cérebro de **{}** está sobreaquecendo!", fighter.name));
+            self.emit_message(format!(
+                "O cérebro de **{}** está sobreaquecendo!",
+                fighter.name
+            ));
         } else if base_overload <= 150.0 && fighter.overload >= 150.0 {
             self.emit_message(format!("O ether de **{}** está totalmente fora de controle! A regeneração de ether está desativada até a sobrecarga baixar de 150%.", fighter.name));
         } else if base_overload <= 400.0 && fighter.overload >= 400.0 {
@@ -150,25 +175,40 @@ impl<'a, 'b> BattleApi<'a, 'b> {
         }
 
         if fighter.overload >= 150.0 {
-            self.battle_mut().get_fighter_mut(target_index).flags.insert(FighterFlags::CANNOT_REGEN_ETHER_OVERLOAD);
+            self.battle_mut()
+                .get_fighter_mut(target_index)
+                .flags
+                .insert(FighterFlags::CANNOT_REGEN_ETHER_OVERLOAD);
         } else {
-            self.battle_mut().get_fighter_mut(target_index).flags.remove(FighterFlags::CANNOT_REGEN_ETHER_OVERLOAD);
+            self.battle_mut()
+                .get_fighter_mut(target_index)
+                .flags
+                .remove(FighterFlags::CANNOT_REGEN_ETHER_OVERLOAD);
         }
 
         if base_overload <= 100.0 && fighter.overload >= 100.0 {
             let overload_damage = self.rng().gen_range(30..=50);
-            let overload_damage = (overload_damage as f32 * fighter.intelligence_multiplier() * 0.9) as i32;
+            let overload_damage =
+                (overload_damage as f32 * fighter.intelligence_multiplier() * 0.9) as i32;
 
-            let dmg = self.apply_damage(fighter.index, DamageSpecifier { 
-                kind: DamageKind::Special, 
-                amount: overload_damage, 
-                balance_effectiveness: 20, 
-                accuracy: 100, 
-                effect: Some(Effect::new(EffectKind::Bleeding, 30, fighter.index)), 
-                culprit: fighter.index
-            }).await;
+            let dmg = self
+                .apply_damage(
+                    fighter.index,
+                    DamageSpecifier {
+                        kind: DamageKind::Special,
+                        amount: overload_damage,
+                        balance_effectiveness: 20,
+                        accuracy: 100,
+                        effect: Some(Effect::new(EffectKind::Bleeding, 30, fighter.index)),
+                        culprit: fighter.index,
+                    },
+                )
+                .await;
 
-            self.emit_message(format!("**{}** recebeu **{dmg}** de sobrecarga no ether.", fighter.name))
+            self.emit_message(format!(
+                "**{}** recebeu **{dmg}** de sobrecarga no ether.",
+                fighter.name
+            ))
         }
 
         if fighter.overload >= 500.0 {
@@ -190,6 +230,11 @@ impl<'a, 'b> BattleApi<'a, 'b> {
         let culprit = self.battle().get_fighter(damage.culprit).clone();
         let culprit_index = culprit.index;
 
+        let modifiers_dmg = culprit.modifiers.overall_dmg_multiplier();
+        if modifiers_dmg != 1.0 {
+            damage.amount = ((damage.amount as f32) * modifiers_dmg) as i32;
+        }
+
         let mut missed = false;
         let mut dodged = false;
         let mut defended = false;
@@ -204,6 +249,11 @@ impl<'a, 'b> BattleApi<'a, 'b> {
         if target.has_effect(EffectKind::LowProtection) {
             defended = true;
             damage.amount = ((damage.amount as f32) * 0.6) as i32;
+        }
+
+        let modifiers_defense = target.modifiers.overall_defense_multiplier();
+        if modifiers_defense != 1.0 {
+            damage.amount = ((damage.amount as f32) * modifiers_defense) as i32;
         }
 
         if culprit.balance < 85 {
@@ -268,14 +318,18 @@ impl<'a, 'b> BattleApi<'a, 'b> {
         target.take_damage(culprit_index, damage);
         target.balance = target.balance.saturating_sub(damage.balance_effectiveness);
 
-        let falling_prob = match target.balance {
-            0..=10 => 0.7,
-            11..=30 => 0.5,
-            31..=50 => 0.3,
-            51..=80 => 0.1,
-            81..=90 => 0.02,
+        let mut falling_prob = match target.balance {
+            0..=10 => 0.5,
+            11..=30 => 0.4,
+            31..=50 => 0.25,
+            51..=80 => 0.15,
+            81..=90 => 0.01,
             _ => 0.0,
         };
+
+        if (culprit.pl as f32 * 1.5) < target.pl as f32 {
+            falling_prob *= 0.8;
+        }
 
         self.battle_mut()
             .turn_end_queues
@@ -321,10 +375,12 @@ impl<'a, 'b> BattleApi<'a, 'b> {
             self.apply_effect(target_index, effect).await;
         }
 
-        if matches!(
-            damage.kind,
-            DamageKind::Physical | DamageKind::PhysicalCut | DamageKind::SpecialPhysical
-        ) && target.has_effect(EffectKind::Shocked)
+        if !missed
+            && matches!(
+                damage.kind,
+                DamageKind::Physical | DamageKind::PhysicalCut | DamageKind::SpecialPhysical
+            )
+            && target.has_effect(EffectKind::Shocked)
         {
             self.battle_mut()
                 .get_fighter_mut(target.index)
@@ -347,6 +403,15 @@ impl<'a, 'b> BattleApi<'a, 'b> {
 
     pub async fn apply_effect(&mut self, target_index: FighterIndex, effect: Effect) {
         let target = self.battle_mut().get_fighter_mut(target_index);
+        if target
+            .modifiers
+            .list
+            .iter()
+            .any(|m| m.kind == ModKind::EffectImmunity(effect.kind))
+        {
+            return;
+        }
+
         let target_name = target.name.clone();
         let should_emit_message = target.apply_effect(effect);
 

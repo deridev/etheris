@@ -4,7 +4,7 @@ use rand::Rng;
 
 use crate::list::prelude::*;
 
-async fn weapon_stick(mut api: BattleApi<'_, '_>) -> anyhow::Result<()> {
+async fn weapon_stick(mut api: BattleApi<'_>) -> anyhow::Result<()> {
     let damage = api.rng().gen_range(3..=9);
     let damage = (damage as f32 * api.fighter().weapon_multiplier()) as i32;
 
@@ -32,7 +32,7 @@ async fn weapon_stick(mut api: BattleApi<'_, '_>) -> anyhow::Result<()> {
     Ok(())
 }
 
-async fn weapon_knife(mut api: BattleApi<'_, '_>) -> anyhow::Result<()> {
+async fn weapon_knife(mut api: BattleApi<'_>) -> anyhow::Result<()> {
     let damage = api.rng().gen_range(4..=9);
     let damage = (damage as f32 * api.fighter().weapon_multiplier()) as i32;
 
@@ -60,7 +60,7 @@ async fn weapon_knife(mut api: BattleApi<'_, '_>) -> anyhow::Result<()> {
     Ok(())
 }
 
-async fn weapon_katana(mut api: BattleApi<'_, '_>) -> anyhow::Result<()> {
+async fn weapon_katana(mut api: BattleApi<'_>) -> anyhow::Result<()> {
     let damage_1 = api.rng().gen_range(2..=5);
     let damage_2 = api.rng().gen_range(2..=5);
 
@@ -105,7 +105,7 @@ async fn weapon_katana(mut api: BattleApi<'_, '_>) -> anyhow::Result<()> {
     Ok(())
 }
 
-async fn weapon_spear(mut api: BattleApi<'_, '_>) -> anyhow::Result<()> {
+async fn weapon_spear(mut api: BattleApi<'_>) -> anyhow::Result<()> {
     let damage = api.rng().gen_range(3..=13);
     let damage = (damage as f32 * api.fighter().weapon_multiplier()) as i32;
 
@@ -133,7 +133,7 @@ async fn weapon_spear(mut api: BattleApi<'_, '_>) -> anyhow::Result<()> {
     Ok(())
 }
 
-async fn weapon_bat(mut api: BattleApi<'_, '_>) -> anyhow::Result<()> {
+async fn weapon_bat(mut api: BattleApi<'_>) -> anyhow::Result<()> {
     let damage = api.rng().gen_range(5..=13);
     let damage = (damage as f32 * api.fighter().weapon_multiplier()) as i32;
 
@@ -187,7 +187,7 @@ async fn weapon_bat(mut api: BattleApi<'_, '_>) -> anyhow::Result<()> {
     Ok(())
 }
 
-async fn weapon_umbrella(mut api: BattleApi<'_, '_>) -> anyhow::Result<()> {
+async fn weapon_umbrella(mut api: BattleApi<'_>) -> anyhow::Result<()> {
     let damage = api.rng().gen_range(5..=10);
     let damage = (damage as f32 * api.fighter().weapon_multiplier()) as i32;
 
@@ -254,7 +254,7 @@ async fn weapon_umbrella(mut api: BattleApi<'_, '_>) -> anyhow::Result<()> {
 }
 
 pub async fn execute_weapon_attack(
-    api: BattleApi<'_, '_>,
+    api: BattleApi<'_>,
     weapon: FighterWeapon,
 ) -> anyhow::Result<()> {
     match weapon.kind {

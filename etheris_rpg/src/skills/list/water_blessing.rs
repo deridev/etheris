@@ -20,7 +20,7 @@ impl Skill for WaterBlessing {
         }
     }
 
-    async fn on_use(&mut self, mut api: BattleApi<'_, '_>) -> SkillResult<()> {
+    async fn on_use(&mut self, mut api: BattleApi<'_>) -> SkillResult<()> {
         let fighter = api.fighter().clone();
         
         let ally = api_input::select_ally(&mut api).await?;

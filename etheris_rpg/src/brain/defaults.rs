@@ -4,32 +4,28 @@ use rand::{seq::SliceRandom, Rng};
 
 use crate::*;
 
-pub async fn should_risk_life(api: BattleApi<'_, '_>) -> bool {
+pub async fn default_should_risk_life(api: BattleApi<'_>) -> bool {
     let fighter = api.fighter();
-    let enemy = api.target();
-    let is_enemy_low_health = enemy.health().value < enemy.health().max / 4;
 
-    if fighter.has_personality(Personality::Insanity) {
-        true
-    } else if fighter.has_personality(Personality::Courage) {
-        Probability::new(80).generate_random_bool()
-    } else if fighter.has_personality(Personality::Cowardice) {
-        Probability::new(10).generate_random_bool()
-    } else if fighter.has_personality(Personality::Aggressiveness) && is_enemy_low_health {
-        Probability::new(80).generate_random_bool()
-    } else {
-        Probability::new(20).generate_random_bool()
-    }
+    let probs = fighter
+        .personalities
+        .iter()
+        .map(|p| p.prob_of_risking_life());
+    let prob = probs.map(|p| p.value() as i32).sum::<i32>() / fighter.personalities.len() as i32;
+
+    let prob = u8::try_from(prob).unwrap_or(50);
+
+    Probability::new(prob).generate_random_bool()
 }
 
 pub async fn allow_fighter_to_enter_his_team(
-    mut _api: BattleApi<'_, '_>,
+    mut _api: BattleApi<'_>,
     _index: FighterIndex,
 ) -> bool {
     false
 }
 
-pub async fn select_a_input(mut api: BattleApi<'_, '_>) -> BattleInput {
+pub async fn select_target(api: &mut BattleApi<'_>) {
     let fighter = api.fighter().clone();
 
     if let Some(state) = fighter.ai_state {
@@ -54,8 +50,22 @@ pub async fn select_a_input(mut api: BattleApi<'_, '_>) -> BattleInput {
         api.battle_mut().reallocate_fighter_target(fighter.index);
     }
 
-    if api.battle().get_fighter(fighter.target).team == api.fighter().team || api.battle().get_fighter(fighter.target).is_defeated {
+    if api.battle().get_fighter(fighter.target).team == api.fighter().team
+        || api.battle().get_fighter(fighter.target).is_defeated
+    {
         api.battle_mut().reallocate_fighter_target(fighter.index);
+    }
+}
+
+pub async fn select_a_input(mut api: BattleApi<'_>) -> BattleInput {
+    let fighter = api.fighter().clone();
+
+    if api.can_finish_target() {
+        let finisher = fighter
+            .finishers
+            .choose_weighted(api.rng(), |f| if f.is_fatal() { 1 } else { 5 })
+            .expect("Finishers should not be empty");
+        return BattleInput::Finish(*finisher);
     }
 
     if fighter.composure == Composure::OnGround {

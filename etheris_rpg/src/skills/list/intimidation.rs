@@ -20,7 +20,7 @@ impl Skill for Intimidation {
         }
     }
 
-    async fn on_use(&mut self, mut api: BattleApi<'_, '_>) -> SkillResult<()> {
+    async fn on_use(&mut self, mut api: BattleApi<'_>) -> SkillResult<()> {
         let ally_team = api.fighter().team;
         let fighter_index = api.fighter().index;
 

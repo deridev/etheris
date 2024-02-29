@@ -74,8 +74,9 @@ pub async fn execute_command(
         if let Some(death_info) = character.check_for_death() {
             ctx.db().characters().save(character.clone()).await?;
             let cause = match death_info.cause {
-                DeathCause::Vitality => "Vitalidade Acabou",
-                DeathCause::Age => "Idade",
+                DeathCause::Vitality => "Sem vitalidade".to_string(),
+                DeathCause::KilledBy(killer_name) => format!("Morto(a) por {killer_name}"),
+                DeathCause::Age => "Idade".to_string(),
             };
 
             ctx.reply(
@@ -92,6 +93,16 @@ pub async fn execute_command(
             .await?;
             return Ok(());
         }
+    }
+
+    if client.is_user_fighting(author.id).await {
+        ctx.reply(
+            Response::new_user_reply(&author, "termine sua batalha antes de usar um comando!")
+                .add_emoji_prefix(emojis::ERROR)
+                .set_ephemeral(),
+        )
+        .await?;
+        return Ok(());
     }
 
     let result = command.run(ctx).await;

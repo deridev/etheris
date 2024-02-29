@@ -3,28 +3,21 @@ use etheris_discord::Emoji;
 
 use crate::weapon::WeaponKind;
 
-#[derive(Debug, Copy, Clone, PartialEq, PartialOrd)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct ConsumptionProperties {
-    pub thirst_regeneration: i32,
-    pub hunger_regeneration: i32,
-    pub stamina_regeneration: i32,
-    pub salt_level: f32,
-    pub sugar_level: f32,
-    pub calories: f32,
+    pub health_regenation: i32,
+    pub ether_regeneration: i32,
+    pub scale_factor: u8,
 }
 
 impl std::ops::Mul<i32> for ConsumptionProperties {
     type Output = ConsumptionProperties;
 
     fn mul(self, rhs: i32) -> Self::Output {
-        let rhs_f32 = rhs as f32;
         Self {
-            hunger_regeneration: self.hunger_regeneration * rhs,
-            thirst_regeneration: self.thirst_regeneration * rhs,
-            stamina_regeneration: self.stamina_regeneration * rhs,
-            salt_level: self.salt_level * rhs_f32,
-            sugar_level: self.sugar_level * rhs_f32,
-            calories: self.calories * rhs_f32,
+            health_regenation: self.health_regenation * rhs,
+            ether_regeneration: self.ether_regeneration * rhs,
+            scale_factor: self.scale_factor.saturating_mul(rhs as u8),
         }
     }
 }
@@ -32,12 +25,9 @@ impl std::ops::Mul<i32> for ConsumptionProperties {
 impl ConsumptionProperties {
     pub const fn default() -> Self {
         Self {
-            hunger_regeneration: 0,
-            thirst_regeneration: 0,
-            stamina_regeneration: 0,
-            salt_level: 0.0,
-            sugar_level: 0.0,
-            calories: 0.0,
+            health_regenation: 0,
+            ether_regeneration: 0,
+            scale_factor: 100,
         }
     }
 }
@@ -56,7 +46,6 @@ pub struct CosmeticProperties {
 }
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct PurchaseProperties {
-    pub default_shop_sells: bool,
     pub is_buyable: bool,
     pub is_sellable: bool,
     pub base_price: i64,
@@ -70,7 +59,6 @@ impl PurchaseProperties {
             base_sell_price: 1,
             is_buyable: true,
             is_sellable: true,
-            default_shop_sells: true,
         }
     }
 }
@@ -83,6 +71,7 @@ pub enum ItemTag {
     Ore,
     Cosmetic,
     Special,
+    Specific,
 }
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
@@ -96,7 +85,7 @@ pub struct Page {
 pub enum DefaultItemValue {
     AlternativeName(&'static str),
     Recipes(&'static [&'static str]),
-    Durability(u16),
+    Durability(u32),
 }
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
@@ -111,6 +100,7 @@ pub struct Item {
     pub emoji: Emoji<'static>,
     pub stackable: bool,
     pub has_consumption_function: bool,
+    pub consumption_properties: Option<ConsumptionProperties>,
     pub purchase_properties: PurchaseProperties,
     pub cosmetic_properties: Option<CosmeticProperties>,
     pub weapon: Option<WeaponKind>,
@@ -127,12 +117,12 @@ impl Item {
             emoji: Emoji::from_unicode("❔"),
             stackable: true,
             has_consumption_function: false,
+            consumption_properties: None,
             purchase_properties: PurchaseProperties {
                 base_price: 1,
                 base_sell_price: 0,
                 is_buyable: false,
                 is_sellable: false,
-                default_shop_sells: false,
             },
             weapon: None,
             tags: &[],
@@ -140,5 +130,9 @@ impl Item {
             pages: &[],
             default_values: DefaultItemValues { values: &[] },
         }
+    }
+
+    pub const fn useable_in_battle(&self) -> bool {
+        self.consumption_properties.is_some()
     }
 }

@@ -35,8 +35,9 @@ impl CharacterCommands {
                 weight += (cost as f64) / 0.2;
             }
 
-            weight / (character.skills.len() as f64)
+            weight / 5.0
         };
+
         character.pl = calculate_power_level(
             character.stats.vitality.into(),
             character.stats.resistance.into(),
@@ -177,6 +178,8 @@ impl CharacterCommands {
                 ],
             }),
         );
+
+        character.add_item(items::consumable::SLICE_OF_BREAD, 5, None);
 
         self.collection.insert_one(character.clone(), None).await?;
 

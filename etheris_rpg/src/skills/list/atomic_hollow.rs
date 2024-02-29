@@ -30,11 +30,11 @@ impl Skill for AtomicHollow {
         display
     }
 
-    fn can_use(&self, api: BattleApi<'_, '_>) -> bool {
+    fn can_use(&self, api: BattleApi<'_>) -> bool {
         api.fighter().ether.value >= calculate_cost(api.fighter()) && self.default_can_use(api)
     }
 
-    async fn on_use(&mut self, mut api: BattleApi<'_, '_>) -> SkillResult<()> {
+    async fn on_use(&mut self, mut api: BattleApi<'_>) -> SkillResult<()> {
         let fighter = api.fighter().clone();
         let target = api.target().clone();
 

@@ -1,10 +1,11 @@
 use serde::{Deserialize, Serialize};
 
-use crate::personality::Personality;
+use crate::{personality::Personality, BrainKind};
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
 pub struct Soul {
     pub name: String,
+    pub brain: Option<BrainKind>,
     pub strength: u32,
     pub intelligence: u32,
     pub ether: i32,
@@ -43,7 +44,7 @@ pub enum SkillKind {
     AtomicHollow,
     ParalyzingBet,
     FinalCrucifix,
-    EtherShadow
+    EtherShadow,
 }
 
 impl SkillKind {
@@ -80,6 +81,75 @@ impl SkillKind {
         ]
     }
 
+    pub fn personalities_affinity(&self) -> &'static [Personality] {
+        match self {
+            Self::ImbuedPunch => &[
+                Personality::Calm,
+                Personality::Intelligence,
+                Personality::Courage,
+            ],
+            Self::SimpleCut => &[
+                Personality::Aggressiveness,
+                Personality::Cowardice,
+                Personality::Insanity,
+            ],
+            Self::TornadoKick => &[
+                Personality::Intelligence,
+                Personality::Arrogance,
+                Personality::Aggressiveness,
+            ],
+            Self::Bite => &[Personality::Aggressiveness, Personality::Insanity],
+            Self::Charge => &[
+                Personality::Intelligence,
+                Personality::Insanity,
+                Personality::Calm,
+            ],
+            Self::MirrorDamage => &[
+                Personality::Arrogance,
+                Personality::Intelligence,
+                Personality::Calm,
+            ],
+            Self::ElectricSlap => &[
+                Personality::Insanity,
+                Personality::Aggressiveness,
+                Personality::Courage,
+            ],
+            Self::Intimidation => &[Personality::Courage],
+            Self::Suplex => &[
+                Personality::Aggressiveness,
+                Personality::Courage,
+                Personality::Arrogance,
+            ],
+            Self::FirePunch => &[Personality::Intelligence, Personality::Calm],
+            Self::IcyBreath => &[
+                Personality::Calm,
+                Personality::Intelligence,
+                Personality::Cowardice,
+            ],
+            Self::IcyShot => &[Personality::Aggressiveness, Personality::Cowardice],
+            Self::WaterBlessing => &[Personality::Calm, Personality::Intelligence],
+            Self::Refresh => &[Personality::Cowardice],
+            Self::InstinctiveReaction => &[Personality::Calm, Personality::Arrogance],
+            Self::CyclonePush => &[],
+            Self::FlamingBall => &[Personality::Aggressiveness],
+            Self::Earthquake => &[Personality::Arrogance],
+            Self::WaterJet => &[Personality::Intelligence, Personality::Cowardice],
+            Self::ResplendentPunch => &[Personality::Insanity, Personality::Aggressiveness],
+            Self::BloodDonation => &[Personality::Calm, Personality::Courage],
+            Self::WoundHealing => &[Personality::Intelligence, Personality::Calm],
+            Self::YinYang => &[Personality::Calm, Personality::Intelligence],
+            Self::ParalyzingBet => &[Personality::Insanity],
+            Self::FinalCrucifix => &[Personality::Insanity, Personality::Courage],
+            Self::EtherShadow => &[
+                Personality::Calm,
+                Personality::Intelligence,
+                Personality::Cowardice,
+            ],
+            Self::AtomicHollow => &[Personality::Aggressiveness, Personality::Arrogance],
+            Self::TenkuKikan(_) => &[Personality::Arrogance],
+        }
+    }
+
     pub fn intelligence_requirement(&self) -> u32 {
         match self {
             Self::ImbuedPunch => 0,
@@ -109,7 +179,7 @@ impl SkillKind {
             Self::ParalyzingBet => 50,
             Self::AtomicHollow => 55,
             Self::TenkuKikan(_) => 60,
-            Self::FinalCrucifix => 70
+            Self::FinalCrucifix => 70,
         }
     }
 
@@ -119,7 +189,8 @@ impl SkillKind {
             | Self::SimpleCut
             | Self::CyclonePush
             | Self::TornadoKick
-            | Self::Bite | Self::Intimidation => 1,
+            | Self::Bite
+            | Self::Intimidation => 1,
             Self::Charge
             | Self::IcyBreath
             | Self::MirrorDamage
@@ -127,12 +198,15 @@ impl SkillKind {
             | Self::Suplex
             | Self::BloodDonation
             | Self::Refresh
-            | Self::WoundHealing | Self::ResplendentPunch => 2,
+            | Self::WoundHealing
+            | Self::ResplendentPunch => 2,
             Self::IcyShot
             | Self::ElectricSlap
             | Self::WaterBlessing
-            | Self::InstinctiveReaction | Self::Earthquake | Self::AtomicHollow => 3,
-            Self::WaterJet | Self::FlamingBall | Self::EtherShadow=> 4,
+            | Self::InstinctiveReaction
+            | Self::Earthquake
+            | Self::AtomicHollow => 3,
+            Self::WaterJet | Self::FlamingBall | Self::EtherShadow => 4,
             Self::YinYang => 5,
             Self::TenkuKikan(..) => 6,
             Self::ParalyzingBet => 6,

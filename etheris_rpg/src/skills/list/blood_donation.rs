@@ -20,12 +20,12 @@ impl Skill for BloodDonation {
         }
     }
 
-    fn can_use(&self, api: BattleApi<'_, '_>) -> bool {
+    fn can_use(&self, api: BattleApi<'_>) -> bool {
         let allies = api.get_fighter_allies(api.fighter_index);
         allies.len() > 1 && self.default_can_use(api)
     }
 
-    async fn on_use(&mut self, mut api: BattleApi<'_, '_>) -> SkillResult<()> {
+    async fn on_use(&mut self, mut api: BattleApi<'_>) -> SkillResult<()> {
         let fighter = api.fighter().clone();
 
         let ally = api_input::select_ally(&mut api).await?;

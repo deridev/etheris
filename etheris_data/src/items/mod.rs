@@ -1,5 +1,6 @@
 mod item;
 
+pub mod consumable;
 pub mod cosmetic;
 pub mod lore;
 pub mod material;
@@ -16,7 +17,8 @@ use once_cell::sync::Lazy;
 use crate::weapon::WeaponKind;
 
 pub static ALL_ITEMS: Lazy<Vec<Item>> = Lazy::new(|| {
-    let mut all_items = material::ALL_ITEMS.to_vec();
+    let mut all_items = consumable::ALL_ITEMS.to_vec();
+    all_items.extend_from_slice(material::ALL_ITEMS);
     all_items.extend_from_slice(ore::ALL_ITEMS);
     all_items.extend_from_slice(cosmetic::ALL_ITEMS);
     all_items.extend_from_slice(lore::ALL_ITEMS);

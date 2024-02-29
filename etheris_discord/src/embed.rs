@@ -177,6 +177,16 @@ impl EmbedBuilder {
         self
     }
 
+    pub fn add_description_text(mut self, description: impl ToString) -> Self {
+        if let Some(description) = &mut self.embed.description {
+            description.push_str(&description.to_string());
+        } else {
+            self = self.set_description(description);
+        }
+
+        self
+    }
+
     pub fn add_footer_text(mut self, text: impl ToString) -> Self {
         if let Some(footer) = &self.embed.footer {
             let new_footer = EmbedFooter {

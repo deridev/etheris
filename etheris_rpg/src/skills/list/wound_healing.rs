@@ -22,7 +22,7 @@ impl Skill for WoundHealing {
         }
     }
 
-    fn ai_chance_to_pick(&self, api: BattleApi<'_, '_>) -> Probability {
+    fn ai_chance_to_pick(&self, api: BattleApi<'_>) -> Probability {
         let fighter = api.fighter();
         let higher_chance = fighter.has_personality(Personality::Calm) || fighter.has_personality(Personality::Intelligence);
 
@@ -33,7 +33,7 @@ impl Skill for WoundHealing {
         }
     }
 
-    async fn on_use(&mut self, mut api: BattleApi<'_, '_>) -> SkillResult<()> {
+    async fn on_use(&mut self, mut api: BattleApi<'_>) -> SkillResult<()> {
         let fighter_index = api.fighter_index;
         let ally = api_input::select_ally(&mut api).await?;
         let Some(ally) = ally else {

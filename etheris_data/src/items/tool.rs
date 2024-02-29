@@ -3,7 +3,9 @@ use etheris_discord::Emoji;
 
 const TOOL_TAGS: &[ItemTag] = &[ItemTag::Tool];
 
-pub const ALL_ITEMS: &[Item] = &[TRANSLATOR, BAT, SPEAR, KATANA, UMBRELLA];
+pub const ALL_ITEMS: &[Item] = &[
+    TRANSLATOR, SHOVEL, PICKAXE, HAMMER, AXE, BAT, SPEAR, KATANA, UMBRELLA,
+];
 
 pub const TRANSLATOR: Item = Item {
     identifier: "translator",
@@ -13,8 +15,72 @@ pub const TRANSLATOR: Item = Item {
     purchase_properties: PurchaseProperties {
         base_price: 3000,
         base_sell_price: 200,
-        default_shop_sells: false,
+
         ..PurchaseProperties::default()
+    },
+    ..Item::default()
+};
+
+pub const SHOVEL: Item = Item {
+    identifier: "shovel",
+    display_name: "Pá",
+    emoji: Emoji::from_emote(Some("shovel"), 1212034121958686822),
+    tags: TOOL_TAGS,
+    purchase_properties: PurchaseProperties {
+        base_price: 100,
+        base_sell_price: 50,
+        ..PurchaseProperties::default()
+    },
+    default_values: DefaultItemValues {
+        values: &[DefaultItemValue::Durability(15)],
+    },
+    ..Item::default()
+};
+
+pub const PICKAXE: Item = Item {
+    identifier: "pickaxe",
+    display_name: "Picareta",
+    emoji: Emoji::from_emote(Some("pickaxe"), 1212036853117489213),
+    tags: TOOL_TAGS,
+    purchase_properties: PurchaseProperties {
+        base_price: 350,
+        base_sell_price: 150,
+        ..PurchaseProperties::default()
+    },
+    default_values: DefaultItemValues {
+        values: &[DefaultItemValue::Durability(30)],
+    },
+    ..Item::default()
+};
+
+pub const HAMMER: Item = Item {
+    identifier: "hammer",
+    display_name: "Martelo",
+    emoji: Emoji::from_emote(Some("hammer"), 1212390855705362465),
+    tags: TOOL_TAGS,
+    purchase_properties: PurchaseProperties {
+        base_price: 500,
+        base_sell_price: 200,
+        ..PurchaseProperties::default()
+    },
+    default_values: DefaultItemValues {
+        values: &[DefaultItemValue::Durability(15)],
+    },
+    ..Item::default()
+};
+
+pub const AXE: Item = Item {
+    identifier: "axe",
+    display_name: "Machado",
+    emoji: Emoji::from_emote(Some("axe"), 1212806414402060419),
+    tags: TOOL_TAGS,
+    purchase_properties: PurchaseProperties {
+        base_price: 300,
+        base_sell_price: 100,
+        ..PurchaseProperties::default()
+    },
+    default_values: DefaultItemValues {
+        values: &[DefaultItemValue::Durability(20)],
     },
     ..Item::default()
 };
@@ -28,7 +94,7 @@ pub const BAT: Item = Item {
     purchase_properties: PurchaseProperties {
         base_price: 700,
         base_sell_price: 50,
-        default_shop_sells: false,
+
         ..PurchaseProperties::default()
     },
     ..Item::default()
@@ -43,7 +109,7 @@ pub const SPEAR: Item = Item {
     purchase_properties: PurchaseProperties {
         base_price: 1150,
         base_sell_price: 80,
-        default_shop_sells: false,
+
         ..PurchaseProperties::default()
     },
     ..Item::default()
@@ -58,7 +124,7 @@ pub const KATANA: Item = Item {
     purchase_properties: PurchaseProperties {
         base_price: 3000,
         base_sell_price: 125,
-        default_shop_sells: false,
+
         ..PurchaseProperties::default()
     },
     ..Item::default()
@@ -73,7 +139,7 @@ pub const UMBRELLA: Item = Item {
     purchase_properties: PurchaseProperties {
         base_price: 400,
         base_sell_price: 30,
-        default_shop_sells: false,
+
         ..PurchaseProperties::default()
     },
     ..Item::default()

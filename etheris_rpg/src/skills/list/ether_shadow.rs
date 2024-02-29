@@ -1,5 +1,7 @@
 use etheris_common::Attribute;
 
+use self::brain::BrainKind;
+
 use super::prelude::*;
 
 #[derive(Debug, Clone, Default)]
@@ -25,11 +27,11 @@ impl Skill for EtherShadow {
     }
 
     
-    fn can_use(&self, api: BattleApi<'_, '_>) -> bool {
+    fn can_use(&self, api: BattleApi<'_>) -> bool {
         !self.used && self.default_can_use(api)
     }
 
-    async fn on_use(&mut self, mut api: BattleApi<'_, '_>) -> SkillResult<()> {
+    async fn on_use(&mut self, mut api: BattleApi<'_>) -> SkillResult<()> {
         self.used = true;
 
         let fighter = api.fighter().clone();
@@ -46,24 +48,26 @@ impl Skill for EtherShadow {
 
         let resistance = (fighter.resistance.max as f32 * 0.4) as i32;
         let vitality = (fighter.vitality.max as f32 * 0.4) as i32;
-        let ether = (fighter.ether.max as f32 * 0.  ) as i32;
+        let ether = (fighter.ether.max as f32 * 0.5) as i32;
 
         api.battle_mut().join_fighter(FighterData { 
             team: fighter.team, 
             name: format!("Sombra de {}", fighter.name), 
             user: None, 
+            brain: Some(BrainKind::Simple),
+            inventory: vec![],
             personalities: fighter.personalities.clone(), 
             skills, 
             strength_level: 1 + (fighter.strength_level as f32 * 0.3) as u32, 
             intelligence_level: 1 + (fighter.intelligence_level as f32 * 0.3) as u32, 
-            weapon: None, 
+            weapon: fighter.weapon.map(|w| w.kind), 
             resistance: Attribute::from(resistance), 
             vitality: Attribute::from(vitality),
             ether: Attribute::from(ether), 
             drop: Default::default()
         });
 
-        api.emit_message(format!("**{}** invocou uma sompra de si mesmo para ajudar na batalha!", fighter.name));
+        api.emit_message(format!("**{}** invocou uma sombra de si mesmo para ajudar na batalha!", fighter.name));
 
         let overload = api.rng().gen_range(3.0..=5.0);
         api.add_overload(api.fighter_index, overload).await;

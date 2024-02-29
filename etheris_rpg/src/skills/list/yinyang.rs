@@ -52,7 +52,7 @@ impl Skill for YinYang {
         display
     }
 
-    fn ai_chance_to_pick(&self, api: BattleApi<'_, '_>) -> Probability {
+    fn ai_chance_to_pick(&self, api: BattleApi<'_>) -> Probability {
         if self.state == YinYangState::Neutral {
             return Probability::new(60);
         }
@@ -68,7 +68,14 @@ impl Skill for YinYang {
         Probability::new(10)
     }
 
-    async fn on_use(&mut self, mut api: BattleApi<'_, '_>) -> SkillResult<()> {
+    async fn passive_fighter_tick(&mut self, mut api: BattleApi<'_>) -> SkillResult<()> {
+        if self.state != YinYangState::Neutral {
+            api.add_overload(api.fighter_index, 2.5).await;
+        }
+        Ok(())
+    }
+
+    async fn on_use(&mut self, mut api: BattleApi<'_>) -> SkillResult<()> {
         let next_state = match self.state {
             YinYangState::Neutral => YinYangState::Yin,
             YinYangState::Yin => YinYangState::Yang,
@@ -81,14 +88,14 @@ impl Skill for YinYang {
         let fighter = api.fighter_mut();
         match next_state {
             YinYangState::Neutral => {
-                fighter.defense = 0;
+                fighter.modifiers.remove_all_with_tag("yan_defense");
             },
             YinYangState::Yin => {
-                fighter.strength_level *= 2;
+                fighter.modifiers.add(Modifier::new(ModKind::DmgMultiplier(2.0), None).with_tag("yin_dmg_boost"));
             },
             YinYangState::Yang => {
-                fighter.strength_level /= 2;
-                api.fighter_mut().defense = 1_000_000; // arbitrary large number
+                fighter.modifiers.remove_all_with_tag("yin_dmg_boost");
+                fighter.modifiers.add(Modifier::new(ModKind::DefenseMultiplier(0.5), None).with_tag("yan_defense"));
             }
         }
 

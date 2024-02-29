@@ -32,11 +32,11 @@ impl Skill for TenkuKikan {
         }
     }
 
-    fn can_use(&self, api: BattleApi<'_, '_>) -> bool {
+    fn can_use(&self, api: BattleApi<'_>) -> bool {
         self.default_can_use(api) && self.soul.is_some()
     }
 
-    fn ai_chance_to_pick(&self, _api: BattleApi<'_, '_>) -> Probability {
+    fn ai_chance_to_pick(&self, _api: BattleApi<'_>) -> Probability {
         Probability::new(70)
     }
 
@@ -50,8 +50,12 @@ impl Skill for TenkuKikan {
         display
     }
 
-    async fn passive_on_kill(&mut self, mut api: BattleApi<'_, '_>, killed: FighterIndex) -> SkillResult<()> {
+    async fn passive_on_kill(&mut self, mut api: BattleApi<'_>, killed: FighterIndex) -> SkillResult<()> {
         let killed = api.battle().get_fighter(killed);
+        if self.soul.is_some() {
+            api.defer_message(format!("**{}** não conseguiu armazenar a alma de **{}** no {} pois já há uma alma armazenada!", api.fighter().name, killed.name, self.data().name));
+            return Ok(());
+        }
 
         let mut skills = Vec::with_capacity(killed.skills.len());
         for skill in killed.skills.iter() {
@@ -61,6 +65,7 @@ impl Skill for TenkuKikan {
 
         let soul = Soul {
             name: killed.name.to_owned(),
+            brain: killed.brain.as_ref().map(|b| b.kind),
             ether: killed.ether.max,
             resistance: killed.resistance.max,
             vitality: killed.vitality.max,
@@ -77,7 +82,7 @@ impl Skill for TenkuKikan {
         Ok(())
     }
 
-    async fn on_use(&mut self, mut api: BattleApi<'_, '_>) -> SkillResult<()> {
+    async fn on_use(&mut self, mut api: BattleApi<'_>) -> SkillResult<()> {
         let Some(mut soul) = self.soul.clone() else {
             api.emit_message(format!("**{}** tentou usar Tenkū Kikan sem nenhuma alma armazenada e desperdiçou ether.", api.fighter().name));
             return Ok(());
@@ -97,7 +102,9 @@ impl Skill for TenkuKikan {
             team,
             name: format!("{} (Réplica)", soul.name),
             user: None,
+            brain: Some(soul.brain.unwrap_or_default()),
 
+            inventory: vec![],
             drop: Default::default(),
             personalities: soul.personalities.clone(),
 

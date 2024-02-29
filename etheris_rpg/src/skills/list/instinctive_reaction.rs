@@ -20,11 +20,11 @@ impl Skill for InstinctiveReaction {
         }
     }
 
-    fn can_use(&self, _api: BattleApi<'_, '_>) -> bool {
+    fn can_use(&self, _api: BattleApi<'_>) -> bool {
         false
     }
 
-    async fn passive_on_damage_miss(&mut self, mut api: BattleApi<'_, '_>, _damage: DamageSpecifier) -> SkillResult<()> {
+    async fn passive_on_damage_miss(&mut self, mut api: BattleApi<'_>, _damage: DamageSpecifier) -> SkillResult<()> {
         if api.fighter_index == api.target_index {
             return Ok(());
         }
@@ -40,7 +40,7 @@ impl Skill for InstinctiveReaction {
 
         api.fighter_mut().ether.value -= self.data().use_cost.ether;
 
-        let damage = api.rng().gen_range(2..=3);
+        let damage = api.rng().gen_range(5..=7);
         let damage = (damage as f32 * api.fighter().mixed_multiplier(0.9, 0.1)) as i32;
 
         let damage = api
@@ -62,7 +62,7 @@ impl Skill for InstinctiveReaction {
         Ok(())
     }
 
-    async fn on_use(&mut self, mut _api: BattleApi<'_, '_>) -> SkillResult<()> {
+    async fn on_use(&mut self, mut _api: BattleApi<'_>) -> SkillResult<()> {
         Ok(())
     }
 }

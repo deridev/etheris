@@ -1,3 +1,4 @@
+use etheris_data::items::Item;
 use etheris_discord::{
     twilight_model::channel::message::component::ButtonStyle, ButtonBuilder, Emoji,
 };
@@ -17,6 +18,7 @@ pub enum BattleInput {
     Finish(Finisher),
     GetUp,
     Upkick,
+    UseItem(Item),
 }
 
 #[derive(List, Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
@@ -29,27 +31,19 @@ pub enum BattleInputKind {
     Finish,
     GetUp,
     Upkick,
+    UseItem,
 }
 
 impl BattleInputKind {
-    pub fn can_use(&self, api: BattleApi<'_, '_>) -> bool {
+    pub fn can_use(&self, api: BattleApi<'_>) -> bool {
         let is_standing = api.fighter().composure == Composure::Standing;
-
-        let finish_threshold = if api.target().balance < 50 { 0.3 } else { 0.15 };
-        let can_finish = (api.target().vitality.value as f32)
-            <= ((api.target().vitality.max as f32) * finish_threshold);
-
         match self {
             Self::ChangeTarget | Self::ChangeTeam => api.battle().alive_fighters.len() > 2,
             Self::Attack | Self::Defend => is_standing,
             Self::UseSkill => is_standing && !api.fighter().skills.is_empty(),
-            Self::Finish => {
-                !api.fighter().finishers.is_empty()
-                    && can_finish
-                    && api.target().defense < 1
-                    && api.fighter().composure == Composure::Standing
-            }
+            Self::Finish => api.can_finish_target(),
             Self::GetUp | Self::Upkick => api.fighter().composure == Composure::OnGround,
+            Self::UseItem => !api.fighter().inventory.is_empty(),
         }
     }
 
@@ -67,6 +61,7 @@ impl BattleInputKind {
             Self::Finish => "finish",
             Self::GetUp => "get_up",
             Self::Upkick => "upkick",
+            Self::UseItem => "use_item",
         }
     }
 
@@ -80,6 +75,7 @@ impl BattleInputKind {
             Self::Finish => "Finalizar",
             Self::GetUp => "Levantar",
             Self::Upkick => "Upkick (chutar)",
+            Self::UseItem => "Usar Item",
         }
     }
 
@@ -93,10 +89,11 @@ impl BattleInputKind {
             Self::Finish => Emoji::Unicode("⚔️"),
             Self::GetUp => Emoji::Unicode("🏋️"),
             Self::Upkick => Emoji::Unicode("🦵"),
+            Self::UseItem => Emoji::Unicode("🎒"),
         }
     }
 
-    pub fn button(&self, api: BattleApi<'_, '_>) -> ButtonBuilder {
+    pub fn button(&self, api: BattleApi<'_>) -> ButtonBuilder {
         if *self == Self::Attack {
             if let Some(weapon) = api.fighter().weapon {
                 return weapon

@@ -1,4 +1,4 @@
-use std::mem::discriminant;
+use std::{collections::HashSet, mem::discriminant, ops::Add};
 
 use chrono::Duration;
 use etheris_common::{clear_string, config, Attribute};
@@ -38,12 +38,15 @@ const fn _default_attribute() -> StatAttribute {
     StatAttribute { max: 25, value: 25 }
 }
 const fn _default_resistance() -> StatAttribute {
-    StatAttribute { max: 50, value: 50 }
+    StatAttribute {
+        max: 100,
+        value: 100,
+    }
 }
 const fn _default_vitality() -> StatAttribute {
     StatAttribute {
-        max: 150,
-        value: 150,
+        max: 200,
+        value: 200,
     }
 }
 const fn _default_ether() -> StatAttribute {
@@ -77,6 +80,7 @@ fn _default_stats() -> CharacterStats {
 pub enum DeathCause {
     Vitality,
     Age,
+    KilledBy(String),
 }
 
 #[derive(Debug, Clone, PartialEq, PartialOrd, Deserialize, Serialize)]
@@ -154,6 +158,11 @@ pub struct CharacterSettings {
     pub is_notifications_enabled: bool,
 }
 
+#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Deserialize, Serialize)]
+pub enum CharacterFlag {
+    CanAknowledgeSkill,
+}
+
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
 pub struct CharacterModel {
     #[serde(rename = "_id")]
@@ -161,9 +170,14 @@ pub struct CharacterModel {
     pub user_id: String,
     pub name: String,
     pub settings: CharacterSettings,
+    pub flags: HashSet<CharacterFlag>,
     pub orbs: i64,
+
     pub inventory: Vec<InventoryItem>,
+    pub battle_inventory: Vec<InventoryItem>,
     pub personalities: Vec<Personality>,
+
+    pub study_skills_cache: Vec<SkillKind>,
     pub skills: Vec<SkillKind>,
     pub learned_skills: Vec<SkillKind>,
     pub learnable_skills: Vec<SkillKind>,
@@ -227,9 +241,14 @@ impl CharacterModel {
             },
             orbs: 0,
             life_expectancy,
+            flags: HashSet::new(),
             alive: true,
             death_info: None,
+
             inventory: vec![],
+            battle_inventory: vec![],
+
+            study_skills_cache: vec![],
             learned_skills: skills.clone(),
             learnable_skills: vec![SkillKind::ImbuedPunch],
             skills,
@@ -238,7 +257,7 @@ impl CharacterModel {
             region: WorldRegion::Greenagis,
             weapon: None,
 
-            action_points: 10,
+            action_points: 30, // Start with a lot of action points to keep engagement at the start
             max_action_points: 10,
 
             warnings: Vec::default(),
@@ -275,6 +294,42 @@ impl CharacterModel {
         }
     }
 
+    pub fn has_flag(&self, flag: CharacterFlag) -> bool {
+        self.flags.contains(&flag)
+    }
+
+    pub fn insert_flag(&mut self, flag: CharacterFlag) {
+        self.flags.insert(flag);
+    }
+
+    pub fn remove_flag(&mut self, flag: CharacterFlag) {
+        self.flags.remove(&flag);
+    }
+
+    pub fn heal(&mut self, amount: i32) {
+        let resistance_heal = (amount + self.stats.vitality.value) - self.stats.vitality.max;
+        if resistance_heal > 0 {
+            self.stats.vitality.value = self.stats.vitality.max;
+            self.stats.resistance.value = self
+                .stats
+                .resistance
+                .value
+                .add(resistance_heal)
+                .min(self.stats.resistance.max);
+        } else {
+            self.stats.vitality.value = self
+                .stats
+                .vitality
+                .value
+                .add(amount)
+                .min(self.stats.vitality.max);
+        }
+    }
+
+    pub fn add_ether(&mut self, amount: i32) {
+        self.stats.ether.value = self.stats.ether.value.add(amount).min(self.stats.ether.max);
+    }
+
     pub fn check_for_death(&mut self) -> Option<DeathInfo> {
         match &self.death_info {
             Some(info) => Some(info.clone()),
@@ -301,8 +356,23 @@ impl CharacterModel {
         self.region = region;
     }
 
+    pub fn already_knows_skill(&self, skill: SkillKind) -> bool {
+        let skill = discriminant(&skill);
+
+        self.learned_skills.iter().any(|s| skill == discriminant(s))
+            || self.skills.iter().any(|s| skill == discriminant(s))
+            || self
+                .learnable_skills
+                .iter()
+                .any(|s| skill == discriminant(s))
+    }
+
     pub fn learn_skill(&mut self, skill: SkillKind) {
-        if self.skills.iter().any(|s| discriminant(s) == discriminant(&skill)) {
+        if self
+            .skills
+            .iter()
+            .any(|s| discriminant(s) == discriminant(&skill))
+        {
             return;
         }
 
@@ -311,7 +381,11 @@ impl CharacterModel {
     }
 
     pub fn equip_skill(&mut self, skill: SkillKind) {
-        if self.skills.iter().any(|s| discriminant(s) == discriminant(&skill)) {
+        if self
+            .skills
+            .iter()
+            .any(|s| discriminant(s) == discriminant(&skill))
+        {
             return;
         }
 
@@ -329,7 +403,15 @@ impl CharacterModel {
     }
 
     pub fn aknowledge_skill(&mut self, skill: SkillKind) {
-        if self.learned_skills.iter().any(|s| discriminant(s) == discriminant(&skill)) || self.learnable_skills.iter().any(|s| discriminant(s) == discriminant(&skill)) {
+        if self
+            .learned_skills
+            .iter()
+            .any(|s| discriminant(s) == discriminant(&skill))
+            || self
+                .learnable_skills
+                .iter()
+                .any(|s| discriminant(s) == discriminant(&skill))
+        {
             return;
         }
 
@@ -350,28 +432,24 @@ impl CharacterModel {
             .find(|it| it.identifier == item.identifier)
     }
 
+    pub fn get_inventory_item_mut(&mut self, item: &Item) -> Option<&mut InventoryItem> {
+        self.inventory
+            .iter_mut()
+            .find(|it| it.identifier == item.identifier)
+    }
+
+    pub fn get_battle_inventory_item(&self, item: &Item) -> Option<&InventoryItem> {
+        self.battle_inventory
+            .iter()
+            .find(|it| it.identifier == item.identifier)
+    }
+
     pub fn get_inventory_item_by_name(&self, name: &str) -> Option<&InventoryItem> {
-        let item_name = clear_string(name);
+        internal_get_inventory_item_by_name(&self.inventory, name)
+    }
 
-        for inventory_item in self.inventory.iter() {
-            let alternative_names = inventory_item.values.alternative_names();
-            if !alternative_names.is_empty()
-                && alternative_names
-                    .iter()
-                    .map(|n| clear_string(n))
-                    .any(|n| n == item_name)
-            {
-                return Some(inventory_item);
-            }
-
-            if let Some(item) = items::get_item(&inventory_item.identifier) {
-                if clear_string(item.display_name) == item_name {
-                    return Some(inventory_item);
-                }
-            }
-        }
-
-        None
+    pub fn get_battle_inventory_item_by_name(&self, name: &str) -> Option<&InventoryItem> {
+        internal_get_inventory_item_by_name(&self.battle_inventory, name)
     }
 
     pub fn add_recipe(&mut self, recipe: String) {
@@ -401,45 +479,94 @@ impl CharacterModel {
     }
 
     pub fn add_item(&mut self, item: Item, quantity: usize, values: Option<ItemValues>) {
-        if !item.stackable {
-            for _ in 0..quantity {
-                self.inventory.push(InventoryItem {
-                    identifier: item.identifier.to_string(),
-                    quantity: 1,
-                    values: values.clone().unwrap_or(item.default_values.into()),
-                });
-            }
-
-            return;
-        }
-
-        if let Some(inv_item) = self
-            .inventory
-            .iter_mut()
-            .find(|i| i.identifier == item.identifier)
-        {
-            inv_item.quantity += quantity;
-        } else {
-            self.inventory.push(InventoryItem {
-                identifier: item.identifier.to_string(),
-                quantity,
-                values: values.unwrap_or(item.default_values.into()),
-            });
-        }
+        internal_add_item(&mut self.inventory, item, quantity, values);
     }
 
     pub fn remove_item(&mut self, item: Item, quantity: usize) {
-        if let Some((index, inv_item)) = self
-            .inventory
-            .iter_mut()
-            .enumerate()
-            .find(|(_, i)| i.identifier == item.identifier)
-        {
-            inv_item.quantity = inv_item.quantity.saturating_sub(quantity);
+        internal_remove_item(&mut self.inventory, item, quantity);
+    }
 
-            if inv_item.quantity == 0 {
-                self.inventory.remove(index);
+    pub fn add_battle_item(&mut self, item: Item, quantity: usize, values: Option<ItemValues>) {
+        internal_add_item(&mut self.battle_inventory, item, quantity, values);
+    }
+
+    pub fn remove_battle_item(&mut self, item: Item, quantity: usize) {
+        internal_remove_item(&mut self.battle_inventory, item, quantity);
+    }
+}
+
+pub(crate) fn internal_get_inventory_item_by_name<'a>(
+    inventory: &'a [InventoryItem],
+    item_name: &str,
+) -> Option<&'a InventoryItem> {
+    let item_name = clear_string(item_name);
+    for inventory_item in inventory.iter() {
+        let alternative_names = inventory_item.values.alternative_names();
+        if !alternative_names.is_empty()
+            && alternative_names
+                .iter()
+                .map(|n| clear_string(n))
+                .any(|n| n == item_name)
+        {
+            return Some(inventory_item);
+        }
+
+        if let Some(item) = items::get_item(&inventory_item.identifier) {
+            if clear_string(item.display_name) == item_name {
+                return Some(inventory_item);
             }
+        }
+    }
+
+    None
+}
+
+pub(crate) fn internal_add_item(
+    inventory: &mut Vec<InventoryItem>,
+    item: Item,
+    quantity: usize,
+    values: Option<ItemValues>,
+) {
+    if !item.stackable {
+        for _ in 0..quantity {
+            inventory.push(InventoryItem {
+                identifier: item.identifier.to_string(),
+                quantity: 1,
+                values: values.clone().unwrap_or(item.default_values.into()),
+            });
+        }
+
+        return;
+    }
+
+    if let Some(inv_item) = inventory
+        .iter_mut()
+        .find(|i| i.identifier == item.identifier)
+    {
+        inv_item.quantity += quantity;
+    } else {
+        inventory.push(InventoryItem {
+            identifier: item.identifier.to_string(),
+            quantity,
+            values: values.unwrap_or(item.default_values.into()),
+        });
+    }
+}
+
+pub(crate) fn internal_remove_item(
+    inventory: &mut Vec<InventoryItem>,
+    item: Item,
+    quantity: usize,
+) {
+    if let Some((index, inv_item)) = inventory
+        .iter_mut()
+        .enumerate()
+        .find(|(_, i)| i.identifier == item.identifier)
+    {
+        inv_item.quantity = inv_item.quantity.saturating_sub(quantity);
+
+        if inv_item.quantity == 0 {
+            inventory.remove(index);
         }
     }
 }

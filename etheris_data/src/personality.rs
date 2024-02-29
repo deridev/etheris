@@ -1,5 +1,6 @@
 use std::fmt::Display;
 
+use etheris_common::Probability;
 use etheris_macros::List;
 use serde::{Deserialize, Serialize};
 
@@ -33,6 +34,17 @@ impl Display for Personality {
 }
 
 impl Personality {
+    pub fn prob_of_risking_life(&self) -> Probability {
+        match self {
+            Self::Insanity => Probability::ALWAYS,
+            Self::Courage => Probability::new(80),
+            Self::Aggressiveness => Probability::new(60),
+            Self::Arrogance => Probability::new(70),
+            Self::Cowardice => Probability::new(10),
+            _ => Probability::new(30),
+        }
+    }
+
     pub fn exclusive_personality(&self) -> &'static [Personality] {
         const EMPTY: &[Personality] = &[];
 

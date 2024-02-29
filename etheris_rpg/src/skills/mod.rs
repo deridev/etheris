@@ -46,15 +46,15 @@ impl Display for SkillComplexity {
 impl SkillComplexity {
     pub fn prob_of_aknowleding(&self) -> Probability {
         match self {
-            Self::VerySimple => Probability::new(80),
-            Self::Simple => Probability::new(60),
-            Self::Normal => Probability::new(50),
-            Self::Hard => Probability::new(40),
-            Self::VeryHard => Probability::new(20),
-            Self::UltraHard => Probability::new(10),
-            Self::BeginnerMaster => Probability::new(8),
-            Self::Master => Probability::new(5),
-            Self::SuperMaster => Probability::new(2),
+            Self::VerySimple => Probability::new(50),
+            Self::Simple => Probability::new(40),
+            Self::Normal => Probability::new(30),
+            Self::Hard => Probability::new(10),
+            Self::VeryHard => Probability::new(5),
+            Self::UltraHard => Probability::new(3),
+            Self::BeginnerMaster => Probability::new(2),
+            Self::Master => Probability::new(1),
+            Self::SuperMaster => Probability::new(1),
         }
     }
 }
@@ -97,15 +97,15 @@ pub trait Skill {
         self.default_display()
     }
 
-    fn default_can_use(&self, api: BattleApi<'_, '_>) -> bool {
+    fn default_can_use(&self, api: BattleApi<'_>) -> bool {
         api.fighter().ether.value >= self.data().use_cost.ether
     }
 
-    fn can_use(&self, api: BattleApi<'_, '_>) -> bool {
+    fn can_use(&self, api: BattleApi<'_>) -> bool {
         self.default_can_use(api)
     }
 
-    fn ai_chance_to_pick(&self, api: BattleApi<'_, '_>) -> Probability {
+    fn ai_chance_to_pick(&self, api: BattleApi<'_>) -> Probability {
         if self.can_use(api) {
             Probability::new(50)
         } else {
@@ -113,13 +113,13 @@ pub trait Skill {
         }
     }
 
-    async fn passive_fighter_tick(&mut self, _api: BattleApi<'_, '_>) -> SkillResult<()> {
+    async fn passive_fighter_tick(&mut self, _api: BattleApi<'_>) -> SkillResult<()> {
         Ok(())
     }
 
     async fn passive_on_kill(
         &mut self,
-        _api: BattleApi<'_, '_>,
+        _api: BattleApi<'_>,
         _killed: FighterIndex,
     ) -> SkillResult<()> {
         Ok(())
@@ -127,7 +127,7 @@ pub trait Skill {
 
     async fn passive_on_damage(
         &mut self,
-        _api: BattleApi<'_, '_>,
+        _api: BattleApi<'_>,
         _damage: DamageSpecifier,
     ) -> SkillResult<()> {
         Ok(())
@@ -135,13 +135,13 @@ pub trait Skill {
 
     async fn passive_on_damage_miss(
         &mut self,
-        _api: BattleApi<'_, '_>,
+        _api: BattleApi<'_>,
         _damage: DamageSpecifier,
     ) -> SkillResult<()> {
         Ok(())
     }
 
-    async fn on_use(&mut self, _: BattleApi<'_, '_>) -> SkillResult<()> {
+    async fn on_use(&mut self, _: BattleApi<'_>) -> SkillResult<()> {
         Ok(())
     }
 }

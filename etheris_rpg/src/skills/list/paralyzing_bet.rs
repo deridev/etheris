@@ -22,7 +22,7 @@ impl Skill for ParalyzingBet {
         }
     }
 
-    fn ai_chance_to_pick(&self, api: BattleApi<'_, '_>) -> Probability {
+    fn ai_chance_to_pick(&self, api: BattleApi<'_>) -> Probability {
         if api.fighter().has_personality(Personality::Insanity) {
             Probability::new(60)
         } else {
@@ -30,7 +30,7 @@ impl Skill for ParalyzingBet {
         }
     }
 
-    async fn on_use(&mut self, mut api: BattleApi<'_, '_>) -> SkillResult<()> {
+    async fn on_use(&mut self, mut api: BattleApi<'_>) -> SkillResult<()> {
         let fighter = api.fighter().clone();
         let target = api.target().clone();
 

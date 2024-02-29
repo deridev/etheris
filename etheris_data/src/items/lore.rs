@@ -12,7 +12,6 @@ pub const GOLDEN_ROBOT_POEM: Item = Item {
     display_name: "Poema do Robô Dourado",
     emoji: Emoji::from_unicode("📜"),
     purchase_properties: PurchaseProperties {
-        default_shop_sells: false,
         base_price: 750,
         ..PurchaseProperties::default()
     },
@@ -55,7 +54,6 @@ pub const OLD_ABANDONED_BASEMENT_DIARY: Item = Item {
     display_name: "Diário Antigo de um Porão Abandonado",
     emoji: Emoji::from_unicode("�"),
     purchase_properties: PurchaseProperties {
-        default_shop_sells: false,
         base_price: 1250,
         ..PurchaseProperties::default()
     },
@@ -102,7 +100,6 @@ pub const ENTITY_039_REPORT: Item = Item {
     display_name: "Relatório da ENTIDADE-039",
     emoji: Emoji::from_unicode("📋"),
     purchase_properties: PurchaseProperties {
-        default_shop_sells: false,
         base_price: 3000,
         ..PurchaseProperties::default()
     },

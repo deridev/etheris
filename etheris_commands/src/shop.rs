@@ -25,7 +25,6 @@ pub async fn shop(mut ctx: CommandContext) -> anyhow::Result<()> {
 
     let mut items: Vec<ShopItem> = ALL_ITEMS
         .iter()
-        .filter(|i| i.purchase_properties.default_shop_sells)
         .map(|i| ShopItem {
             identifier: i.identifier.to_string(),
             price: i.purchase_properties.base_price,
@@ -42,20 +41,16 @@ pub async fn shop(mut ctx: CommandContext) -> anyhow::Result<()> {
         items.push(ShopItem {
             identifier: "katana".into(),
             price: 150,
-            quantity: 500
+            quantity: 500,
         });
         items.push(ShopItem {
             identifier: "intelligence_crystal".into(),
             price: 2500,
-            quantity: 1
+            quantity: 1,
         });
     }
 
-    let shop = Shop::new(
-        format!("{} Shop", region),
-        None,
-        items,
-    );
+    let shop = Shop::new(format!("{} Shop", region), None, items);
 
     shop.prompt(author, &mut ctx).await?;
 

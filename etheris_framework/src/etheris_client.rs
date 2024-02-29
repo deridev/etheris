@@ -15,6 +15,7 @@ use std::{
 };
 use tokio::sync::RwLock;
 
+#[derive(Debug)]
 pub struct EtherisClient {
     pub http: Arc<DiscordHttpClient>,
     pub is_ready: AtomicBool,

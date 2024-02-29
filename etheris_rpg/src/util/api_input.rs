@@ -18,7 +18,7 @@ pub struct ApiInput<T: Identifiable + Clone> {
 }
 
 pub async fn select_input<T: Identifiable + Clone>(
-    api: &mut BattleApi<'_, '_>,
+    api: &mut BattleApi<'_>,
     embed: Option<EmbedBuilder>,
     inputs: Vec<ApiInput<T>>,
 ) -> anyhow::Result<Option<ApiInput<T>>> {
@@ -119,7 +119,7 @@ pub async fn select_input<T: Identifiable + Clone>(
     Ok(action)
 }
 
-pub async fn select_ally(api: &mut BattleApi<'_, '_>) -> anyhow::Result<Option<Fighter>> {
+pub async fn select_ally(api: &mut BattleApi<'_>) -> anyhow::Result<Option<Fighter>> {
     let teams = api.battle().teams();
     let fighter = api.fighter().clone();
 

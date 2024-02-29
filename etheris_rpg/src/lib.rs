@@ -1,7 +1,9 @@
+pub mod brain;
 pub mod combat;
 pub mod common;
 pub mod controller;
 pub mod data;
+pub mod events;
 pub mod skills;
 mod util;
 

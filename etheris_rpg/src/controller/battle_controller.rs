@@ -1,11 +1,15 @@
 use std::{
-    ops::{Add, Mul, Sub},
+    ops::{Add, Sub},
     time::Duration,
 };
 
 use anyhow::bail;
 use etheris_common::{Color, Probability};
-use etheris_data::emojis;
+use etheris_data::{emojis, items::get_item_by_weapon, ItemValues};
+use etheris_database::{
+    character_model::{DeathCause, DeathInfo},
+    common::{DatabaseDateTime, InventoryItem},
+};
 use etheris_discord::{
     twilight_model::{
         channel::{message::component::ButtonStyle, *},
@@ -14,6 +18,7 @@ use etheris_discord::{
     *,
 };
 use etheris_framework::{watcher::WatcherOptions, CommandContext, EmbedPagination, Response};
+use etheris_util::math;
 use rand::{seq::SliceRandom, Rng};
 
 use crate::{common::*, get_input, *};
@@ -26,9 +31,9 @@ pub struct BattleResult {
     pub winners: Vec<Fighter>,
 }
 
-pub struct BattleController<'a> {
+pub struct BattleController {
     pub battle: Battle,
-    pub ctx: &'a mut CommandContext,
+    pub ctx: CommandContext,
     pub last_message: Option<Message>,
     pub last_interaction: Option<Interaction>,
     pub current_turn_history: TurnHistory,
@@ -36,8 +41,8 @@ pub struct BattleController<'a> {
     should_reinput: bool,
 }
 
-impl<'a> BattleController<'a> {
-    pub fn new(battle: Battle, ctx: &'a mut CommandContext) -> Self {
+impl BattleController {
+    pub fn new(battle: Battle, ctx: CommandContext) -> Self {
         Self {
             battle,
             ctx,
@@ -276,6 +281,7 @@ impl<'a> BattleController<'a> {
                 }
             }
         }
+
         let history_button = ButtonBuilder::new()
             .set_label("Ver Histórico")
             .set_custom_id("show_history");
@@ -292,39 +298,50 @@ impl<'a> BattleController<'a> {
             .filter_map(|u| u.user.as_ref().map(|u| u.id))
             .collect::<Vec<_>>();
 
-        let allowed = allowed_users.clone();
-        let Ok(Some(component)) = self
-            .ctx
-            .watcher
-            .await_single_component(
-                message.id,
-                move |interaction| {
-                    interaction
-                        .author_id()
-                        .is_some_and(|id| allowed.contains(&id))
-                },
-                WatcherOptions {
-                    timeout: Duration::from_secs(120),
-                },
-            )
-            .await
-        else {
-            return Ok(());
-        };
+        {
+            let allowed = allowed_users.clone();
+            let ctx = self.ctx.clone();
+            let battle = self.battle.clone();
+            tokio::spawn(async move {
+                let controller_ctx = ctx.clone();
+                let mut controller = Self::new(battle, controller_ctx);
 
-        let mut temp_ctx = CommandContext::from_with_interaction(self.ctx, Box::new(component));
-        temp_ctx
-            .update_message(Response::default().set_components(
-                vec![ActionRowBuilder::new().add_button(
-                    history_button
-                        .clone()
-                        .set_disabled(true)
-                        .set_style(ButtonStyle::Success),
-                )],
-            ))
-            .await?;
+                let Ok(Some(component)) = controller
+                    .ctx
+                    .watcher
+                    .await_single_component(
+                        message.id,
+                        move |interaction| {
+                            interaction
+                                .author_id()
+                                .is_some_and(|id| allowed.contains(&id))
+                        },
+                        WatcherOptions {
+                            timeout: Duration::from_secs(120),
+                        },
+                    )
+                    .await
+                else {
+                    return Ok::<(), anyhow::Error>(());
+                };
 
-        self.send_full_history(allowed_users).await?;
+                let mut temp_ctx =
+                    CommandContext::from_with_interaction(&controller.ctx, Box::new(component));
+                temp_ctx
+                    .update_message(Response::default().set_components(
+                        vec![ActionRowBuilder::new().add_button(
+                            history_button
+                                .clone()
+                                .set_disabled(true)
+                                .set_style(ButtonStyle::Success),
+                        )],
+                    ))
+                    .await?;
+
+                controller.send_full_history(allowed_users).await?;
+                Ok(())
+            });
+        }
 
         Ok(())
     }
@@ -409,6 +426,17 @@ impl<'a> BattleController<'a> {
                 continue;
             };
 
+            // Kill the character
+            if character.alive && fighter.killed_by.is_some() {
+                let killer = fighter.killed_by.unwrap();
+                let killer_name = self.battle.get_fighter(killer).name.clone();
+                character.alive = false;
+                character.death_info = Some(DeathInfo {
+                    cause: DeathCause::KilledBy(killer_name),
+                    date: DatabaseDateTime::now(),
+                });
+            }
+
             for fighter in self.battle.fighters.clone() {
                 if fighter.is_defeated {
                     continue;
@@ -422,7 +450,7 @@ impl<'a> BattleController<'a> {
                         .complexity
                         .prob_of_aknowleding()
                         .generate_random_bool()
-                        && Probability::new(50).generate_random_bool()
+                        && Probability::new(30).generate_random_bool()
                     {
                         character.aknowledge_skill(kind);
                     }
@@ -434,9 +462,19 @@ impl<'a> BattleController<'a> {
                 skills.push(skill.dynamic_skill.lock().await.save_kind());
             }
 
+            character.weapon = fighter.weapon.map(|w| w.kind);
             character.stats.resistance = fighter.resistance.into();
             character.stats.vitality = fighter.vitality.into();
             character.stats.ether = fighter.ether.into();
+            character.battle_inventory = fighter
+                .inventory
+                .iter()
+                .map(|i| InventoryItem {
+                    identifier: i.item.identifier.to_string(),
+                    quantity: i.quantity,
+                    values: i.values.clone(),
+                })
+                .collect();
             character.skills = skills;
             self.ctx.db().characters().save(character).await?;
         }
@@ -540,416 +578,19 @@ impl<'a> BattleController<'a> {
     }
 
     pub async fn next_turn(&mut self) -> anyhow::Result<()> {
-        let fighter = self.battle.get_current_fighter();
+        let alive_fighters = self.battle.alive_fighters.clone();
 
-        if fighter.vitality.value <= 0 {
-            let fighter = self.battle.get_current_fighter_mut();
-            fighter.is_defeated = true;
-        }
+        controller_helper::tick_every_effect(&alive_fighters, self).await?;
+        controller_helper::passives(self).await?;
 
-        let before_message_len = self.current_turn_history.messages.len();
+        // Ask every fighter to check if it should risk life
+        controller_helper::should_risk_life(&alive_fighters, self).await?;
 
-        // Effects
-        let fighters = self.battle.alive_fighters.clone();
-        for fighter in fighters {
-            let fighter = self.battle.get_fighter_mut(fighter);
-            let fighter_name = fighter.name.clone();
-            let fighter_index = fighter.index;
-
-            let effects = fighter.effects.clone();
-            for effect in effects {
-                let mut api = BattleApi::new(self);
-                api.target_index = fighter_index;
-
-                match effect.kind {
-                    EffectKind::Flaming => {
-                        api.fighter_mut().remove_effect(Effect::new(
-                            effect.kind,
-                            5,
-                            Default::default(),
-                        ));
-                        api.fighter_mut().remove_effect(Effect::new(
-                            EffectKind::Frozen,
-                            10,
-                            Default::default(),
-                        ));
-
-                        if api.fighter().has_effect(EffectKind::Ice) {
-                            api.apply_effect(
-                                api.fighter_index,
-                                Effect::new(EffectKind::Wet, 5, api.fighter_index),
-                            )
-                            .await;
-                        }
-                        api.fighter_mut().remove_effect(Effect::new(
-                            EffectKind::Ice,
-                            5,
-                            Default::default(),
-                        ));
-
-                        let dmg = api
-                            .apply_damage(
-                                api.fighter_index,
-                                DamageSpecifier {
-                                    kind: DamageKind::Fire,
-                                    amount: (api.fighter().health().max as f32 * 0.01) as i32,
-                                    balance_effectiveness: 1,
-                                    accuracy: 100,
-                                    ..Default::default()
-                                },
-                            )
-                            .await;
-
-                        api.defer_message(format!(
-                            "***{}** queimou e recebeu **{dmg}***",
-                            fighter_name
-                        ));
-                    }
-                    EffectKind::Burning => {
-                        api.fighter_mut().remove_effect(Effect::new(
-                            effect.kind,
-                            5,
-                            Default::default(),
-                        ));
-                        api.fighter_mut().remove_effect(Effect::new(
-                            EffectKind::Frozen,
-                            20,
-                            Default::default(),
-                        ));
-                        api.fighter_mut().remove_effect(Effect::new(
-                            EffectKind::Ice,
-                            10,
-                            Default::default(),
-                        ));
-
-                        let dmg = api
-                            .apply_damage(
-                                api.fighter_index,
-                                DamageSpecifier {
-                                    kind: DamageKind::Fire,
-                                    amount: (api.fighter().health().max as f32 * 0.04) as i32,
-                                    balance_effectiveness: 3,
-                                    accuracy: 100,
-                                    ..Default::default()
-                                },
-                            )
-                            .await;
-
-                        api.defer_message(format!(
-                            "***{}** está em combustão e recebeu **{dmg}***",
-                            fighter_name
-                        ));
-                    }
-                    EffectKind::Shocked => {
-                        api.fighter_mut().remove_effect(Effect::new(
-                            effect.kind,
-                            10,
-                            Default::default(),
-                        ));
-                    }
-                    EffectKind::Paralyzed => {}
-                    EffectKind::LowProtection => {
-                        let unprotected = api.fighter_mut().remove_effect(Effect::new(
-                            effect.kind,
-                            1,
-                            Default::default(),
-                        ));
-
-                        if unprotected {
-                            api.emit_message(format!(
-                                "***{}** perdeu a proteção leve extra!*",
-                                api.fighter().name
-                            ));
-                        }
-                    }
-                    EffectKind::Ice => {
-                        api.fighter_mut().remove_effect(Effect::new(
-                            effect.kind,
-                            5,
-                            Default::default(),
-                        ));
-                        api.fighter_mut().remove_effect(Effect::new(
-                            EffectKind::Flaming,
-                            10,
-                            Default::default(),
-                        ));
-                        api.fighter_mut().remove_effect(Effect::new(
-                            EffectKind::Burning,
-                            5,
-                            Default::default(),
-                        ));
-                    }
-                    EffectKind::Wet => {
-                        api.fighter_mut().remove_effect(Effect::new(
-                            effect.kind,
-                            15,
-                            Default::default(),
-                        ));
-                        api.fighter_mut().remove_effect(Effect::new(
-                            EffectKind::Flaming,
-                            60,
-                            Default::default(),
-                        ));
-                        api.fighter_mut().remove_effect(Effect::new(
-                            EffectKind::Burning,
-                            40,
-                            Default::default(),
-                        ));
-
-                        api.fighter_mut().remove_effect(Effect::new(
-                            EffectKind::Frozen,
-                            3,
-                            Default::default(),
-                        ));
-                        api.fighter_mut().remove_effect(Effect::new(
-                            EffectKind::Ice,
-                            1,
-                            Default::default(),
-                        ));
-
-                        if let Some(shock) = api.fighter().get_effect(EffectKind::Shocked) {
-                            let dmg = match shock.amount {
-                                0..=30 => 0.05,
-                                31..=60 => 0.08,
-                                61..=90 => 0.1,
-                                _ => 0.2,
-                            };
-
-                            let dmg = ((api.fighter().health().max as f32) * dmg).floor() as i32;
-
-                            api.fighter_mut().remove_effect(shock);
-                            let dmg = api
-                                .apply_damage(
-                                    api.fighter_index,
-                                    DamageSpecifier {
-                                        culprit: effect.culprit,
-                                        kind: DamageKind::Special,
-                                        amount: dmg,
-                                        balance_effectiveness: 10,
-                                        accuracy: 100,
-                                        effect: None,
-                                    },
-                                )
-                                .await;
-
-                            api.emit_message(format!(
-                                "**{}** eletrocutou devido a água e recebeu **{dmg}**!",
-                                api.fighter().name
-                            ));
-
-                            if Probability::new(20).generate_random_bool() {
-                                api.apply_effect(
-                                    api.fighter().index,
-                                    Effect::new(EffectKind::Paralyzed, 1, effect.culprit),
-                                )
-                                .await;
-                            }
-                        }
-                    }
-                    EffectKind::Frozen => {
-                        let melted = api.fighter_mut().remove_effect(Effect::new(
-                            effect.kind,
-                            5,
-                            Default::default(),
-                        ));
-                        api.fighter_mut().remove_effect(Effect::new(
-                            EffectKind::Flaming,
-                            20,
-                            Default::default(),
-                        ));
-                        api.fighter_mut().remove_effect(Effect::new(
-                            EffectKind::Burning,
-                            10,
-                            Default::default(),
-                        ));
-
-                        if melted {
-                            api.emit_message(format!("***{}** descongelou*", api.fighter().name));
-                        }
-                    }
-                    EffectKind::Bleeding => {
-                        if effect.amount >= 100 {
-                            api.fighter_mut().remove_effect(Effect::new(
-                                effect.kind,
-                                effect.amount,
-                                Default::default(),
-                            ));
-
-                            let dmg = (api.fighter().health().max as f32).mul(0.1) as i32;
-                            api.fighter_mut().take_damage(
-                                effect.culprit,
-                                DamageSpecifier {
-                                    culprit: effect.culprit,
-                                    kind: DamageKind::Special,
-                                    amount: dmg,
-                                    balance_effectiveness: 0,
-                                    accuracy: 100,
-                                    effect: None,
-                                },
-                            );
-                            api.defer_message(format!(
-                                "**{fighter_name}** teve uma hemorragia que causou **{dmg} dano**!"
-                            ));
-                        } else {
-                            api.fighter_mut().remove_effect(Effect::new(
-                                effect.kind,
-                                5,
-                                Default::default(),
-                            ));
-                        }
-                    }
-                }
-            }
-        }
-
-        // Passives: on_damage
-        for (damage, fighter) in self.battle.turn_end_queues.damages.clone() {
-            let fighter_index = fighter;
-            let target_index = damage.culprit;
-
-            let skills = self.battle.get_fighter(fighter).skills.clone();
-            for skill in skills {
-                let mut api = BattleApi::new(self);
-                api.fighter_index = fighter_index;
-                api.target_index = target_index;
-
-                skill
-                    .dynamic_skill
-                    .lock()
-                    .await
-                    .passive_on_damage(api, damage)
-                    .await
-                    .ok();
-            }
-        }
-
-        // Passives: on_damage_miss
-        for (damage, fighter) in self.battle.turn_end_queues.damage_misses.clone() {
-            let fighter_index = fighter;
-            let target_index = damage.culprit;
-
-            let skills = self.battle.get_fighter(fighter).skills.clone();
-            for skill in skills {
-                let mut api = BattleApi::new(self);
-                api.fighter_index = fighter_index;
-                api.target_index = target_index;
-
-                skill
-                    .dynamic_skill
-                    .lock()
-                    .await
-                    .passive_on_damage_miss(api, damage)
-                    .await
-                    .ok();
-            }
-        }
-
-        // Passives: tick fighter skills
-        for fighter in self.battle.alive_fighters.clone() {
-            let fighter = self.battle.get_fighter_mut(fighter);
-            let fighter_index = fighter.index;
-            let target_index = fighter.target;
-
-            for skill in fighter.skills.clone() {
-                let mut api = BattleApi::new(self);
-                api.fighter_index = fighter_index;
-                api.target_index = target_index;
-
-                skill
-                    .dynamic_skill
-                    .lock()
-                    .await
-                    .passive_fighter_tick(api)
-                    .await
-                    .ok();
-            }
-        }
-
-        // Passives: on_kill
-        for fighter_index in self.battle.alive_fighters.clone() {
-            let fighter = self.battle.get_fighter(fighter_index).clone();
-            let Some(killer) = fighter.killed_by else {
-                continue;
-            };
-
-            let killer_skills = self.battle.get_fighter(killer).skills.clone();
-
-            for skill in killer_skills {
-                let mut api = BattleApi::new(self);
-                api.fighter_index = killer;
-                api.target_index = fighter.index;
-                skill
-                    .dynamic_skill
-                    .lock()
-                    .await
-                    .passive_on_kill(api, fighter.index)
-                    .await
-                    .ok();
-            }
-        }
-
-        if before_message_len != self.current_turn_history.messages.len() {
-            tokio::time::sleep(Duration::from_secs(1)).await;
-            self.update_turn_history_message().await?;
-            tokio::time::sleep(Duration::from_secs(2)).await;
-        }
-
-        for fighter_index in self.battle.alive_fighters.clone() {
-            let fighter = self.battle.get_fighter(fighter_index).clone();
-            if fighter.is_defeated {
-                continue;
-            }
-
-            if fighter.resistance.value > 0
-                || fighter.flags.contains(FighterFlags::ASKED_TO_RISK_LIFE)
-            {
-                continue;
-            }
-
-            let confirmation = if !self.battle.settings.is_risking_life_allowed {
-                false
-            } else if let Some(user) = &fighter.user {
-                self.ctx.helper()
-                .create_confirmation(user.id, true,
-                    Response::new_user_reply(user,
-                        if self.battle.settings.casual {
-                            "sua resistência chegou a zero! Quer apostar sua vida na batalha? (Essa é uma batalha CASUAL. Seu personagem não vai morrer de verdade)"
-                        } else {
-                        "sua resistência chegou a zero! Isso significa que seu personagem está perto do nocaute. Você deseja continuar lutando e apostar sua vida nessa batalha?\nSe não aceitar, você perderá por nocaute. Se aceitar, você continuará lutando mas perderá **vitalidade** ao invés de resistência. Se a vitalidade zerar seu personagem morre pra sempre."
-                        }))
-                        .await?
-            } else {
-                let mut api = BattleApi::new(self);
-                api.fighter_index = fighter_index;
-                api.target_index = fighter.target;
-                ai::should_risk_life(api).await
-            };
-
-            let fighter = self.battle.get_fighter_mut(fighter_index);
-            let fighter_name = fighter.name.clone();
-            fighter.flags.insert(FighterFlags::ASKED_TO_RISK_LIFE);
-
-            if confirmation {
-                fighter.flags.insert(FighterFlags::RISKING_LIFE);
-                fighter.defeated_by = None;
-                self.defer_message(format!(
-                    "**{}** agora está arriscando sua vida.",
-                    fighter_name
-                ));
-            } else {
-                fighter.is_defeated = true;
-                self.defer_message(format!(
-                    "**{}** não teve motivação o suficiente e perdeu a consciência.",
-                    fighter_name
-                ));
-            }
-        }
-
-        // Next turn
+        // Move to next turn
         let before_message_len = self.current_turn_history.messages.len();
         self.battle.next_turn(&mut self.current_turn_history);
 
-        // Update turn message
+        // Update the turn message
         if before_message_len != self.current_turn_history.messages.len() {
             tokio::time::sleep(Duration::from_secs(1)).await;
             self.update_turn_history_message().await?;
@@ -1059,11 +700,18 @@ impl<'a> BattleController<'a> {
                 dynamic_skill.on_use(BattleApi::new(self)).await?;
             }
             BattleInput::Finish(finisher) => {
+                if finisher.fail_probability().generate_random_bool() {
+                    self.emit_turn_message(format!(
+                        "**{}** tentou executar uma finalização mas não conseguiu!",
+                        fighter.name
+                    ));
+                    return Ok(());
+                }
+
                 finisher.execute_finisher(BattleApi::new(self)).await?;
                 tokio::time::sleep(Duration::from_millis(300)).await;
                 self.update_turn_history_message().await?;
                 tokio::time::sleep(Duration::from_secs(1)).await;
-                return Ok(());
             }
             BattleInput::GetUp => {
                 let fighter = self.battle.get_current_fighter_mut();
@@ -1090,6 +738,82 @@ impl<'a> BattleController<'a> {
                         format!("**{}** levantou do chão!", fighter_name),
                     ]);
                 }
+            }
+            BattleInput::UseItem(item) => {
+                if !fighter
+                    .inventory
+                    .iter()
+                    .any(|i| i.item.identifier == item.identifier)
+                {
+                    self.emit_turn_message(format!(
+                        "**{}** não possui o item {}!",
+                        fighter.name, item.display_name
+                    ));
+                    return Ok(());
+                }
+
+                if let Some(weapon) = item.weapon {
+                    {
+                        let fighter = self.battle.get_fighter_mut(fighter.index);
+                        if let Some(weapon) = fighter.weapon {
+                            let weapon_item = get_item_by_weapon(weapon.kind);
+                            fighter.inventory.push(BattleItem {
+                                item: weapon_item,
+                                quantity: 1,
+                                values: ItemValues::empty(),
+                            });
+                        }
+
+                        fighter.weapon = Some(FighterWeapon { kind: weapon });
+                    }
+
+                    let weapon_item = get_item_by_weapon(weapon);
+                    self.battle
+                        .get_fighter_mut(fighter.index)
+                        .remove_item(weapon_item, 1);
+
+                    self.emit_turn_message(format!(
+                        "**{}** equipou a arma **{}**",
+                        fighter.name, weapon_item.display_name
+                    ));
+                    return Ok(());
+                }
+
+                let Some(consumption_properties) = item.consumption_properties else {
+                    self.emit_turn_message(format!(
+                        "**{}** tentou usar um item que não pode ser usado em batalha!",
+                        fighter.name
+                    ));
+                    return Ok(());
+                };
+
+                let health_regeneration =
+                    math::calculate_health_regeneration(consumption_properties, 1, fighter.pl);
+                let ether_regeneration =
+                    math::calculate_ether_regeneration(consumption_properties, 1, fighter.pl);
+
+                let mut messages = vec![];
+                if health_regeneration > 0 {
+                    messages.push(format!("**{health_regeneration} vida**"));
+                }
+
+                if ether_regeneration > 0 {
+                    messages.push(format!("**{ether_regeneration} ether**"));
+                }
+
+                {
+                    let fighter = self.battle.get_fighter_mut(fighter.index);
+                    fighter.heal(fighter.index, health_regeneration);
+                    fighter.ether.add(ether_regeneration);
+                    fighter.remove_item(item, 1);
+                }
+
+                self.emit_turn_message(format!(
+                    "**{}** usou o item **{}** e regenerou {}!",
+                    fighter.name,
+                    item.display_name,
+                    messages.join(" e ")
+                ));
             }
         }
 

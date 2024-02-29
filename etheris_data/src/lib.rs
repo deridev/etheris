@@ -11,6 +11,9 @@ pub mod world;
 mod skill_kind;
 pub use skill_kind::*;
 
+mod brain;
+pub use brain::*;
+
 use items::{DefaultItemValue, DefaultItemValues};
 
 #[derive(
@@ -22,11 +25,13 @@ pub struct ShopItem {
     pub price: i64,
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, serde::Deserialize, serde::Serialize)]
+#[derive(
+    Debug, Clone, PartialEq, Eq, PartialOrd, Ord, serde::Deserialize, serde::Serialize, Hash,
+)]
 pub enum ItemValue {
     AlternativeName(String),
     Recipes(Vec<String>),
-    Durability(u16),
+    Durability(u32),
 }
 
 impl From<DefaultItemValue> for ItemValue {
@@ -40,7 +45,9 @@ impl From<DefaultItemValue> for ItemValue {
         }
     }
 }
-#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, serde::Deserialize, serde::Serialize)]
+#[derive(
+    Debug, Clone, PartialEq, Eq, PartialOrd, Ord, serde::Deserialize, serde::Serialize, Hash,
+)]
 pub struct ItemValues {
     pub values: Vec<ItemValue>,
 }

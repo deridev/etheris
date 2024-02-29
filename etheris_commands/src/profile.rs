@@ -86,9 +86,12 @@ pub async fn profile(
             EmbedField {
                 name: "Pontos de Ação".into(),
                 value: format!(
-                    "**{}**/{}{}",
-                    character.action_points,
-                    character.max_action_points,
+                    "{}{}",
+                    if character.action_points <= character.max_action_points {
+                        format!("**{}**/{}", character.action_points, character.max_action_points)
+                    } else {
+                        bold(&character.action_points.to_string())
+                    },
                     if character.action_points < character.max_action_points {
                         format!("\nRecarrega em: `{}`",
                         crate::util::format_duration(

@@ -13,7 +13,7 @@ use crate::{BattleController, FighterData};
 pub async fn await_component_allowing_intruders(
     message_id: Id<MessageMarker>,
     ctx: &mut CommandContext,
-    controller: &mut BattleController<'_>,
+    controller: &mut BattleController,
 ) -> anyhow::Result<Interaction> {
     let current_fighter_user_id = match &controller.battle.get_current_fighter().user {
         Some(u) => u.id,
@@ -47,7 +47,7 @@ pub async fn await_component_allowing_intruders(
         }
 
         let mut ctx =
-            CommandContext::from_with_interaction(controller.ctx, Box::new(collected.clone()));
+            CommandContext::from_with_interaction(&controller.ctx, Box::new(collected.clone()));
 
         let Some(author_id) = collected.author_id() else {
             continue;

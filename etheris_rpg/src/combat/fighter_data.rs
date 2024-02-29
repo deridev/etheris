@@ -1,9 +1,13 @@
 use etheris_common::{calculate_power_level, Attribute};
-use etheris_data::{personality::Personality, weapon::WeaponKind, SkillKind};
+use etheris_data::{items, personality::Personality, weapon::WeaponKind, SkillKind};
 use etheris_database::character_model::CharacterModel;
 use etheris_discord::twilight_model::user::User;
 
-use crate::data::{enemies::Enemy, Reward};
+use crate::{
+    brain::BrainKind,
+    data::{enemies::Enemy, Reward},
+    list::prelude::BattleItem,
+};
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct FighterData {
@@ -11,6 +15,9 @@ pub struct FighterData {
     pub name: String,
     pub user: Option<User>,
 
+    pub brain: Option<BrainKind>,
+
+    pub inventory: Vec<BattleItem>,
     pub personalities: Vec<Personality>,
     pub skills: Vec<SkillKind>,
 
@@ -38,6 +45,17 @@ impl FighterData {
             name: character.name.to_owned(),
             user: Some(user),
 
+            brain: None,
+
+            inventory: character
+                .battle_inventory
+                .iter()
+                .map(|i| BattleItem {
+                    item: items::get_item(&i.identifier).unwrap(),
+                    quantity: i.quantity,
+                    values: i.values.clone(),
+                })
+                .collect(),
             personalities: character.personalities.clone(),
             skills: character.skills.clone(),
 
@@ -59,8 +77,10 @@ impl FighterData {
             team,
             personalities: enemy.personalities.to_owned(),
             drop,
+            brain: Some(enemy.brain),
             user: None,
             name: enemy.name.to_string(),
+            inventory: vec![],
             intelligence_level: enemy.intelligence,
             strength_level: enemy.strength,
             ether: Attribute::from(enemy.ether),
@@ -79,7 +99,7 @@ impl FighterData {
                 weight += (cost as f64) / 0.2;
             }
 
-            weight / (self.skills.len() as f64)
+            weight / 5.0
         };
 
         calculate_power_level(

@@ -1,3 +1,5 @@
+use etheris_data::{items::Item, ItemValues};
+
 use crate::{skills::Skill, Effect, FighterIndex};
 
 pub type BoxedSkill = Box<dyn Skill + Send + 'static>;
@@ -42,5 +44,26 @@ impl DamageKind {
             self,
             Self::PhysicalCut | Self::Physical | Self::SpecialPhysical
         )
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub struct BattleItem {
+    pub item: Item,
+    pub quantity: usize,
+    pub values: ItemValues,
+}
+
+#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Default)]
+pub struct XpReward {
+    pub strength: (i32, i32),
+    pub health: (i32, i32),
+    pub intelligence: (i32, i32),
+    pub knowledge: (i32, i32),
+}
+
+impl XpReward {
+    pub fn is_empty(&self) -> bool {
+        self == &Default::default()
     }
 }

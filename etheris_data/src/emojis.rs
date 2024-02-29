@@ -8,6 +8,7 @@ pub const ETHER: Emoji = Emoji::from_emote(Some("ether"), 1195317407464554556);
 pub const ORB: Emoji = Emoji::from_emote(Some("orb"), 1156629935553781880);
 
 pub const SHIELD: Emoji = Emoji::from_unicode("🛡️");
+pub const XP: Emoji = Emoji::from_unicode("🌀");
 
 pub const STAMINA: Emoji = Emoji::from_unicode("⚡");
 pub const RESISTANCE: Emoji = Emoji::from_emote(Some("resistance"), 1197367383669612586);

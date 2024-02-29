@@ -91,7 +91,7 @@ pub const PAPER: Item = Item {
 pub const TOOL_HANDLE: Item = Item {
     identifier: "tool_handle",
     display_name: "Cabo de Ferramenta",
-    emoji: Emoji::from_emote(Some("tool_handle"), 1098384072155336779),
+    emoji: Emoji::from_emote(Some("tool_handle"), 1212034381514809395),
     tags: MATERIAL_TAGS,
     purchase_properties: PurchaseProperties {
         base_price: 75,

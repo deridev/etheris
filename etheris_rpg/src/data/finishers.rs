@@ -27,12 +27,12 @@ impl Finisher {
 
     pub fn fail_probability(&self) -> Probability {
         match self {
-            Self::Knockout => Probability::new(25),
-            Self::BreakNeck => Probability::new(40),
-            Self::StabNeck => Probability::new(50),
-            Self::SmashSkull => Probability::new(50),
-            Self::PierceHeart => Probability::new(60),
-            Self::Decapitate => Probability::new(60),
+            Self::Knockout => Probability::new(10),
+            Self::BreakNeck => Probability::new(30),
+            Self::StabNeck => Probability::new(30),
+            Self::SmashSkull => Probability::new(40),
+            Self::PierceHeart => Probability::new(40),
+            Self::Decapitate => Probability::new(40),
         }
     }
 
@@ -51,7 +51,7 @@ impl Finisher {
         }
     }
 
-    pub async fn execute_finisher(&self, mut api: BattleApi<'_, '_>) -> anyhow::Result<()> {
+    pub async fn execute_finisher(&self, mut api: BattleApi<'_>) -> anyhow::Result<()> {
         api.target_mut().is_defeated = true;
         api.target_mut().defeated_by = Some(api.fighter_index);
         api.target_mut().resistance.value = 0;

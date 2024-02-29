@@ -40,6 +40,24 @@ pub async fn register(
     skills.sort_unstable();
     skills.dedup();
 
+    if ctx
+        .db()
+        .characters()
+        .get_by_user(&author.id.to_string())
+        .await?
+        .is_some()
+    {
+        ctx.reply(
+            Response::new_user_reply(
+                &author,
+                "você já possui um personagem registrado! Use **/perfil** para ver ele.",
+            )
+            .add_emoji_prefix(emojis::ERROR),
+        )
+        .await?;
+        return Ok(());
+    }
+
     ctx.db()
         .characters()
         .register_character(author.id, name.clone(), personalities, skills)

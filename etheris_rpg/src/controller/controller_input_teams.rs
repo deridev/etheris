@@ -10,7 +10,7 @@ use etheris_framework::{util::make_multiple_rows, *};
 use crate::*;
 
 pub async fn get_change_team_input(
-    controller: &mut BattleController<'_>,
+    controller: &mut BattleController,
     interaction: Interaction,
     message: Message,
 ) -> anyhow::Result<BattleInput> {
@@ -104,7 +104,7 @@ pub async fn get_change_team_input(
     }
 
     let mut ctx =
-        CommandContext::from_with_interaction(controller.ctx, Box::new(interaction.clone()));
+        CommandContext::from_with_interaction(&controller.ctx, Box::new(interaction.clone()));
 
     ctx.update_message(
         Response::from(embed.clone()).set_components(make_multiple_rows(buttons.clone())),
@@ -175,16 +175,20 @@ pub async fn get_change_team_input(
                 fighter_that_disallowed = Some(fighter);
                 break;
             }
-        } else {
-            let confirmation = ai::allow_fighter_to_enter_his_team(
-                BattleApi::new(controller),
-                current_fighter.index,
-            )
-            .await;
+        } else if let Some(brain) = fighter.brain.clone() {
+            let confirmation = brain
+                .dynamic_brain
+                .lock()
+                .await
+                .allow_fighter_to_enter_his_team(BattleApi::new(controller), current_fighter.index)
+                .await;
             if !confirmation {
                 fighter_that_disallowed = Some(fighter);
                 break;
             }
+        } else {
+            fighter_that_disallowed = Some(fighter);
+            break;
         }
     }
 
@@ -202,7 +206,7 @@ pub async fn get_change_team_input(
 }
 
 pub async fn get_change_target_input(
-    controller: &mut BattleController<'_>,
+    controller: &mut BattleController,
     interaction: Interaction,
     message: Message,
 ) -> anyhow::Result<BattleInput> {
@@ -273,7 +277,7 @@ pub async fn get_change_target_input(
     );
 
     let mut ctx =
-        CommandContext::from_with_interaction(controller.ctx, Box::new(interaction.clone()));
+        CommandContext::from_with_interaction(&controller.ctx, Box::new(interaction.clone()));
 
     ctx.update_message(
         Response::from(embed.clone()).set_components(make_multiple_rows(buttons.clone())),

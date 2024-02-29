@@ -1,4 +1,8 @@
-use std::{collections::HashMap, fmt::Display, ops::{Add, Sub}};
+use std::{
+    collections::{HashMap, VecDeque},
+    fmt::Display,
+    ops::{Add, Sub},
+};
 
 use etheris_data::world::regions::WorldRegion;
 use rand::{
@@ -72,6 +76,7 @@ pub struct Battle {
     pub fighters: Vec<Fighter>,
     pub alive_fighters: Vec<FighterIndex>,
     pub defeated_fighters: Vec<FighterIndex>,
+    pub fighters_queue: VecDeque<FighterIndex>,
     pub current_fighter: FighterIndex,
     pub region: WorldRegion,
 
@@ -116,9 +121,10 @@ impl Battle {
             settings,
             rng: StdRng::from_entropy(),
             fighters,
+            fighters_queue: alive_fighters.clone().into(),
             alive_fighters,
             defeated_fighters: vec![],
-            current_fighter: FighterIndex(0),
+            current_fighter: FighterIndex(usize::MAX / 2), // Dummy value
             region,
             history: vec![],
             turn_counter: 0,
@@ -136,6 +142,9 @@ impl Battle {
                 fighter.regenerate_all();
             }
         }
+
+        // Set the current fighter
+        battle.next_fighter();
 
         Ok(battle)
     }
@@ -222,6 +231,14 @@ impl Battle {
         }
 
         for fighter in fighters_defeated_in_this_turn {
+            // Check if this fighter is the last alive: If it is, don't make it lose. This is to prevent the game from ending in a tie.
+            {
+                let alive_fighters = self.alive_fighters.to_vec();
+                if alive_fighters.contains(&fighter) && alive_fighters.len() == 1 {
+                    continue;
+                }
+            }
+
             self.defeated_fighters.push(fighter);
             self.alive_fighters.retain(|f| f.0 != fighter.0);
 
@@ -286,8 +303,12 @@ impl Battle {
             let fighter_is_ai = fighter.ai_state.is_some();
             let target = fighter.target;
 
-            let ether_rec = if fighter.flags.contains(FighterFlags::CANNOT_REGEN_ETHER) || fighter.flags.contains(FighterFlags::CANNOT_REGEN_ETHER_OVERLOAD) { 
-                0 
+            let ether_rec = if fighter.flags.contains(FighterFlags::CANNOT_REGEN_ETHER)
+                || fighter
+                    .flags
+                    .contains(FighterFlags::CANNOT_REGEN_ETHER_OVERLOAD)
+            {
+                0
             } else {
                 (fighter.ether.max as f32 * 0.05) as i32
             };
@@ -298,7 +319,9 @@ impl Battle {
             fighter.defense = fighter.defense.saturating_sub(1);
             fighter.ether.add(ether_rec);
 
-            if self.get_fighter(target).is_defeated || (self.get_fighter(target).team == fighter_team && fighter_is_ai) {
+            if self.get_fighter(target).is_defeated
+                || (self.get_fighter(target).team == fighter_team && fighter_is_ai)
+            {
                 self.reallocate_fighter_target(alive_fighter);
             }
         }
@@ -308,18 +331,16 @@ impl Battle {
     }
 
     pub fn next_fighter(&mut self) {
-        // Next fighter
-        if let Some(alive_index) = self
-            .alive_fighters
-            .iter()
-            .position(|alive| alive == &self.current_fighter)
-        {
-            let new_alive_index = (alive_index + 1) % self.alive_fighters.len();
-            self.current_fighter = self.alive_fighters[new_alive_index];
-        } else if !self.alive_fighters.is_empty() {
-            let new_fighter = self.alive_fighters.choose(&mut self.rng.clone()).unwrap();
-            self.current_fighter = *new_fighter;
+        if self.fighters_queue.is_empty() {
+            self.fighters_queue = self.alive_fighters.clone().into();
         }
+
+        if self.fighters_queue.is_empty() {
+            return;
+        }
+
+        let new_fighter = self.fighters_queue.pop_front().unwrap();
+        self.current_fighter = new_fighter;
     }
 
     pub fn get_fighter(&self, index: FighterIndex) -> &Fighter {

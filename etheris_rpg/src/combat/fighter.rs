@@ -1,22 +1,29 @@
 use std::{
-    collections::HashSet,
     fmt::Debug,
     ops::{Add, Sub},
     sync::Arc,
 };
 
 use bitflags::bitflags;
-use etheris_common::{calculate_power_level, Attribute, Probability};
-use etheris_data::{items, personality::Personality, weapon::WeaponKind, SkillKind};
+use etheris_common::{Attribute, Probability};
+use etheris_data::{
+    items::{self, Item},
+    personality::Personality,
+    weapon::WeaponKind,
+    SkillKind,
+};
 use etheris_discord::{twilight_model::user::User, ButtonBuilder, Emoji};
 use tokio::sync::Mutex;
 
 use crate::{
+    brain::{make_brain, Brain, BrainKind},
     common::{BoxedSkill, DamageSpecifier},
     data::{finishers::Finisher, Reward},
     list::*,
-    FighterData,
+    FighterData, Modifiers,
 };
+
+use self::prelude::BattleItem;
 
 bitflags! {
     #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Default)]
@@ -43,7 +50,7 @@ pub enum Composure {
 pub struct FighterSkill {
     pub identifier: &'static str,
     pub dynamic_skill: Arc<Mutex<BoxedSkill>>,
-    pub base_kind: SkillKind
+    pub base_kind: SkillKind,
 }
 
 impl From<SkillKind> for FighterSkill {
@@ -72,6 +79,33 @@ impl Debug for FighterSkill {
 impl PartialEq for FighterSkill {
     fn eq(&self, other: &Self) -> bool {
         self.identifier == other.identifier
+    }
+}
+
+#[derive(Clone)]
+pub struct FighterBrain {
+    pub kind: BrainKind,
+    pub dynamic_brain: Arc<Mutex<Box<dyn Brain + Send + 'static>>>,
+}
+
+impl FighterBrain {
+    pub fn new(brain: Box<dyn Brain + Send + 'static>) -> Self {
+        Self {
+            kind: brain.kind(),
+            dynamic_brain: Arc::new(Mutex::new(brain)),
+        }
+    }
+}
+
+impl Debug for FighterBrain {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "[dyn Brain]")
+    }
+}
+
+impl PartialEq for FighterBrain {
+    fn eq(&self, other: &Self) -> bool {
+        self.kind == other.kind
     }
 }
 
@@ -153,16 +187,19 @@ pub struct Fighter {
     pub name: String,
     pub user: Option<User>,
     pub ai_state: Option<AiState>,
+    pub brain: Option<FighterBrain>,
 
+    pub pl: i64,
     pub finishers: Vec<Finisher>,
 
     pub image: Option<Arc<Vec<u8>>>,
 
     pub flags: FighterFlags,
+    pub inventory: Vec<BattleItem>,
     pub personalities: Vec<Personality>,
     pub skills: Vec<FighterSkill>,
     pub effects: Vec<Effect>,
-    pub tags: HashSet<String>,
+    pub modifiers: Modifiers,
 
     pub is_defeated: bool,
     pub defeated_by: Option<FighterIndex>,
@@ -196,12 +233,13 @@ impl Fighter {
             finishers.extend_from_slice(Finisher::get_weapon_finishers(weapon));
         }
 
-        let is_ai = data.user.is_none();
+        let is_ai = data.brain.is_some();
 
         Self {
             team,
             index,
             target,
+            pl: data.power_level(),
             name: data.name,
             user: data.user,
             ai_state: if is_ai {
@@ -209,6 +247,7 @@ impl Fighter {
             } else {
                 None
             },
+            brain: data.brain.map(|b| FighterBrain::new(make_brain(b))),
 
             image: None,
 
@@ -220,19 +259,20 @@ impl Fighter {
 
             flags: FighterFlags::empty(),
             personalities: data.personalities.clone(),
+            inventory: data.inventory.clone(),
             skills: data
                 .skills
                 .iter()
                 .map(|s| FighterSkill::from(s.clone()))
                 .collect(),
             effects: Vec::new(),
-            tags: HashSet::new(),
+            modifiers: Modifiers::new(),
 
             strength_level: data.strength_level,
             intelligence_level: data.intelligence_level,
-            
+
             weapon: data.weapon.map(From::from),
-            
+
             overload: 0.0,
             resistance: data.resistance,
             vitality: data.vitality,
@@ -250,27 +290,6 @@ impl Fighter {
         Attribute::new(
             self.resistance.value + self.vitality.value,
             self.resistance.max + self.vitality.max,
-        )
-    }
-
-    pub async fn power_level(&self) -> i64 {
-        let weighted_skills = {
-            let mut weight = 0.0;
-            for skill in self.skills.iter() {
-                let cost = skill.dynamic_skill.lock().await.kind().knowledge_cost();
-                weight += (cost as f64) / 0.2;
-            }
-
-            weight / (self.skills.len() as f64)
-        };
-
-        calculate_power_level(
-            self.vitality,
-            self.resistance,
-            self.ether,
-            self.strength_level,
-            self.intelligence_level,
-            weighted_skills,
         )
     }
 
@@ -306,6 +325,12 @@ impl Fighter {
 
     pub fn has_effect(&self, kind: EffectKind) -> bool {
         self.effects.iter().any(|e| e.kind == kind)
+    }
+
+    pub fn convert_effect(&mut self, from: EffectKind, to: Effect) {
+        if let Some(effect) = self.effects.iter_mut().find(|e| e.kind == from) {
+            *effect = to;
+        }
     }
 
     pub fn apply_effect(&mut self, effect: Effect) -> bool {
@@ -348,8 +373,18 @@ impl Fighter {
         self.ether.value = self.ether.max;
     }
 
+    pub fn remove_item(&mut self, item: Item, amount: usize) {
+        self.inventory.iter_mut().for_each(|i| {
+            if i.item.identifier == item.identifier {
+                i.quantity = i.quantity.saturating_sub(amount);
+            }
+        });
+
+        self.inventory.retain(|i| i.quantity > 0);
+    }
+
     pub fn heal(&mut self, _culprit: FighterIndex, amount: i32) {
-        let resistance_heal = amount - self.vitality.value;
+        let resistance_heal = (amount + self.vitality.value) - self.vitality.max;
         if resistance_heal > 0 {
             if self.flags.contains(FighterFlags::RISKING_LIFE) {
                 self.flags.remove(FighterFlags::RISKING_LIFE);

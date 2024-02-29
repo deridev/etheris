@@ -33,7 +33,7 @@ impl Skill for MirrorDamage {
         }
     }
 
-    fn can_use(&self, api: BattleApi<'_, '_>) -> bool {
+    fn can_use(&self, api: BattleApi<'_>) -> bool {
         self.accumulated_damage > 0 && self.default_can_use(api)
     }
 
@@ -45,11 +45,11 @@ impl Skill for MirrorDamage {
         display
     }
 
-    fn ai_chance_to_pick(&self, _api: BattleApi<'_, '_>) -> Probability {
+    fn ai_chance_to_pick(&self, _api: BattleApi<'_>) -> Probability {
         Probability::new(self.accumulated_damage.clamp(0, 100).saturating_sub(5) as u8)
     }
 
-    async fn passive_fighter_tick(&mut self, mut api: BattleApi<'_, '_>) -> SkillResult<()> {
+    async fn passive_fighter_tick(&mut self, mut api: BattleApi<'_>) -> SkillResult<()> {
         if self.accumulated_damage > 0 && api.fighter().ether.value <= 0 {
             api.emit_message(format!("***{}** ficou sem ether e perdeu o dano acumulado na habilidade **{}***", api.fighter().name, self.data().name));
             self.accumulated_damage = 0;
@@ -58,7 +58,7 @@ impl Skill for MirrorDamage {
         Ok(())
     }
 
-    async fn passive_on_damage(&mut self, mut api: BattleApi<'_, '_>, damage: DamageSpecifier) -> SkillResult<()> {
+    async fn passive_on_damage(&mut self, mut api: BattleApi<'_>, damage: DamageSpecifier) -> SkillResult<()> {
         let damage = match damage.kind {
             DamageKind::Physical | DamageKind::PhysicalCut => (damage.amount as f32 * 0.25) as i32,
             DamageKind::SpecialPhysical => (damage.amount as f32 * 0.2) as i32,
@@ -80,7 +80,7 @@ impl Skill for MirrorDamage {
         Ok(())
     }
 
-    async fn on_use(&mut self, mut api: BattleApi<'_, '_>) -> SkillResult<()> {
+    async fn on_use(&mut self, mut api: BattleApi<'_>) -> SkillResult<()> {
         let damage = DamageSpecifier {
             kind: DamageKind::Physical,
             amount: self.accumulated_damage,

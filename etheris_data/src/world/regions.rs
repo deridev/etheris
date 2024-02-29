@@ -13,8 +13,11 @@ pub enum WorldRegion {
     Metrolis,
     Mudland,
     Murkswamp,
+    Sunreach,
     Tenypt,
     Ethergrove,
+    Starbreeze,
+    Icefields,
     SwordTown,
     Sandywater,
     Midgrass,
@@ -30,6 +33,8 @@ pub enum RegionKind {
     EtherealForest,
     City,
     Mountains,
+    Savannah,
+    Tundra,
 }
 
 impl Display for RegionKind {
@@ -42,6 +47,8 @@ impl Display for RegionKind {
             Self::EtherealForest => f.write_str("Floresta Etérea"),
             Self::City => f.write_str("Cidade"),
             Self::Mountains => f.write_str("Montanhas"),
+            Self::Savannah => f.write_str("Savana"),
+            Self::Tundra => f.write_str("Tundra"),
         }
     }
 }
@@ -56,6 +63,8 @@ impl RegionKind {
             Self::EtherealForest => "🎄",
             Self::City => "🏙️",
             Self::Mountains => "⛰️",
+            Self::Savannah => "🌳",
+            Self::Tundra => "🌫️",
         }
     }
 }
@@ -77,12 +86,15 @@ impl Display for WorldRegion {
             Self::Metrolis => f.write_str("Metrolis"),
             Self::Mudland => f.write_str("Mudland"),
             Self::Murkswamp => f.write_str("Murkswamp"),
+            Self::Sunreach => f.write_str("Sunreach"),
             Self::Tenypt => f.write_str("Tenypt"),
             Self::Ethergrove => f.write_str("Ethergrove"),
+            Self::Starbreeze => f.write_str("Starbreeze"),
             Self::SwordTown => f.write_str("Sword Town"),
             Self::Sandywater => f.write_str("Sandywater"),
             Self::Midgrass => f.write_str("Midgrass"),
             Self::Wornpeaks => f.write_str("Wornpeaks"),
+            Self::Icefields => f.write_str("Icefields"),
         }
     }
 }
@@ -130,13 +142,21 @@ impl WorldRegion {
                 kind: RegionKind::Swamp,
                 travel_price: 550,
             },
+            Self::Sunreach => RegionData {
+                kind: RegionKind::Savannah,
+                travel_price: 700,
+            },
             Self::Tenypt => RegionData {
                 kind: RegionKind::Desert,
-                travel_price: 700,
+                travel_price: 900,
             },
             Self::Ethergrove => RegionData {
                 kind: RegionKind::EtherealForest,
                 travel_price: 1000,
+            },
+            Self::Starbreeze => RegionData {
+                kind: RegionKind::EtherealForest,
+                travel_price: 1300,
             },
             Self::SwordTown => RegionData {
                 kind: RegionKind::City,
@@ -153,6 +173,10 @@ impl WorldRegion {
             Self::Wornpeaks => RegionData {
                 kind: RegionKind::Mountains,
                 travel_price: 3000,
+            },
+            Self::Icefields => RegionData {
+                kind: RegionKind::Tundra,
+                travel_price: 2500,
             },
         }
     }
@@ -202,23 +226,23 @@ impl WorldRegion {
             },
 
             Gloomwood => RegionNeighbors {
-                up: Some(Tenypt),
+                up: Some(Sunreach),
                 left: Some(Greenagis),
-                right: None,
+                right: Some(Starbreeze),
                 down: Some(Metrolis),
             },
 
             Metrolis => RegionNeighbors {
                 up: Some(Gloomwood),
                 left: Some(Emerelis),
-                right: None,
+                right: Some(Icefields),
                 down: None,
             },
 
             Mudland => RegionNeighbors {
                 up: None,
                 left: Some(SwordTown),
-                right: Some(Tenypt),
+                right: Some(Sunreach),
                 down: Some(Greenagis),
             },
 
@@ -229,11 +253,18 @@ impl WorldRegion {
                 down: Some(Ethergrove),
             },
 
-            Tenypt => RegionNeighbors {
+            Sunreach => RegionNeighbors {
                 up: None,
                 left: Some(Mudland),
-                right: None,
+                right: Some(Tenypt),
                 down: Some(Gloomwood),
+            },
+
+            Tenypt => RegionNeighbors {
+                up: None,
+                left: Some(Sunreach),
+                right: None,
+                down: Some(Starbreeze),
             },
 
             Ethergrove => RegionNeighbors {
@@ -241,6 +272,13 @@ impl WorldRegion {
                 left: Some(Wornpeaks),
                 right: Some(Emerelis),
                 down: None,
+            },
+
+            Starbreeze => RegionNeighbors {
+                up: Some(Tenypt),
+                left: Some(Gloomwood),
+                right: None,
+                down: Some(Icefields),
             },
 
             SwordTown => RegionNeighbors {
@@ -268,6 +306,13 @@ impl WorldRegion {
                 up: Some(Sandywater),
                 left: None,
                 right: Some(Ethergrove),
+                down: None,
+            },
+
+            Icefields => RegionNeighbors {
+                up: Some(Starbreeze),
+                left: Some(Metrolis),
+                right: None,
                 down: None,
             },
         }

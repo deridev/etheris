@@ -20,7 +20,7 @@ impl Skill for FinalCrucifix {
         }
     }
 
-    fn ai_chance_to_pick(&self, api: BattleApi<'_, '_>) -> Probability {
+    fn ai_chance_to_pick(&self, api: BattleApi<'_>) -> Probability {
         if api.battle().turn_counter > 25 && api.fighter().health().value < api.fighter().health().max / 3 {
             Probability::new(30)
         } else {
@@ -28,14 +28,14 @@ impl Skill for FinalCrucifix {
         }
     }
 
-    async fn on_use(&mut self, mut api: BattleApi<'_, '_>) -> SkillResult<()> {
+    async fn on_use(&mut self, mut api: BattleApi<'_>) -> SkillResult<()> {
         let fighter_team = api.fighter().team;
         let multiplier = api.fighter().mixed_multiplier(0.1, 1.0);
 
         api.fighter_mut().flags.insert(FighterFlags::CANNOT_REGEN_ETHER);
 
-        let self_damage = (api.rng().gen_range(20..=30) as f32 * multiplier) as i32;
-        let ally_damage = (api.rng().gen_range(10..=20) as f32 * multiplier) as i32;
+        let self_damage = (api.rng().gen_range(15..=20) as f32 * multiplier) as i32;
+        let ally_damage = (api.rng().gen_range(10..=15) as f32 * multiplier) as i32;
         let enemy_damage = (api.rng().gen_range(35..=45) as f32 * multiplier) as i32;
 
         let self_damage = api.apply_damage(api.fighter_index, DamageSpecifier {
@@ -50,6 +50,7 @@ impl Skill for FinalCrucifix {
         let fighter_died = api.fighter().killed_by.is_some();
         if fighter_died {
             api.emit_message(format!("**{}** sacrificou toda sua vitalidade para invocar um Crucifixo Final, mas não sobreviveu ao próprio poder.", api.fighter().name));
+            return Ok(());
         } else {
             api.emit_message(format!("**{}** sacrificou sua vitalidade e recebeu **{self_damage}** para invocar um magnífico Crucifixo Final!", api.fighter().name));
         }

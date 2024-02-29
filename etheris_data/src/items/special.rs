@@ -7,6 +7,7 @@ pub const RECIPE_BOOK: Item = Item {
     identifier: "recipe_book",
     display_name: "Livro de Receitas",
     emoji: Emoji::from_unicode("📙"),
+    tags: &[ItemTag::Specific, ItemTag::Special],
     stackable: false,
     default_values: DefaultItemValues {
         values: &[DefaultItemValue::Recipes(&[])],
@@ -23,7 +24,7 @@ pub const INTELLIGENCE_CRYSTAL: Item = Item {
     purchase_properties: PurchaseProperties {
         base_price: 3000,
         base_sell_price: 450,
-        default_shop_sells: false,
+
         ..PurchaseProperties::default()
     },
     ..Item::default()

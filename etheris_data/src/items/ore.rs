@@ -19,7 +19,6 @@ pub const COAL_ORE: Item = Item {
     emoji: Emoji::from_emote(Some("coal_ore"), 1104795286129352774),
     tags: ORE_TAGS,
     purchase_properties: PurchaseProperties {
-        default_shop_sells: false,
         base_price: 30,
         ..PurchaseProperties::default()
     },
@@ -32,7 +31,6 @@ pub const IRON_ORE: Item = Item {
     emoji: Emoji::from_emote(Some("iron_ore"), 1098586725799952522),
     tags: ORE_TAGS,
     purchase_properties: PurchaseProperties {
-        default_shop_sells: false,
         base_price: 90,
         ..PurchaseProperties::default()
     },
@@ -45,7 +43,6 @@ pub const LEAD_ORE: Item = Item {
     emoji: Emoji::from_emote(Some("lead_ore"), 1104794112252715068),
     tags: ORE_TAGS,
     purchase_properties: PurchaseProperties {
-        default_shop_sells: false,
         base_price: 75,
         ..PurchaseProperties::default()
     },
@@ -58,7 +55,6 @@ pub const COPPER_ORE: Item = Item {
     emoji: Emoji::from_emote(Some("copper_ore"), 1098586777511526420),
     tags: ORE_TAGS,
     purchase_properties: PurchaseProperties {
-        default_shop_sells: false,
         base_price: 70,
         ..PurchaseProperties::default()
     },
@@ -71,7 +67,6 @@ pub const TIN_ORE: Item = Item {
     emoji: Emoji::from_emote(Some("tin_ore"), 1104794061191249920),
     tags: ORE_TAGS,
     purchase_properties: PurchaseProperties {
-        default_shop_sells: false,
         base_price: 90,
         ..PurchaseProperties::default()
     },
@@ -84,7 +79,6 @@ pub const GOLD_ORE: Item = Item {
     emoji: Emoji::from_emote(Some("gold_ore"), 1104794155261100092),
     tags: ORE_TAGS,
     purchase_properties: PurchaseProperties {
-        default_shop_sells: false,
         base_price: 520,
         ..PurchaseProperties::default()
     },
@@ -97,7 +91,6 @@ pub const DIAMOND_ORE: Item = Item {
     emoji: Emoji::from_emote(Some("diamond_ore"), 1104794226933375099),
     tags: ORE_TAGS,
     purchase_properties: PurchaseProperties {
-        default_shop_sells: false,
         base_price: 2300,
         ..PurchaseProperties::default()
     },

@@ -20,12 +20,14 @@ impl Skill for Earthquake {
         }
     }
 
-    async fn on_use(&mut self, mut api: BattleApi<'_, '_>) -> SkillResult<()> {
+    async fn on_use(&mut self, mut api: BattleApi<'_>) -> SkillResult<()> {
         let fighter_team = api.fighter().team;
         let multiplier = api.fighter().mixed_multiplier(0.3, 0.7);
 
-        let ally_damage = (api.rng().gen_range(8..=10) as f32 * multiplier) as i32;
+        let ally_damage = (api.rng().gen_range(6..=8) as f32 * multiplier) as i32;
         let enemy_damage = (api.rng().gen_range(15..=19) as f32 * multiplier) as i32;
+
+        api.emit_message(format!("**{}** invocou um poderoso terremoto na arena!", api.fighter().name));
 
         for index in api.battle().alive_fighters.clone() {
             let fighter = api.battle().get_fighter(index).clone();

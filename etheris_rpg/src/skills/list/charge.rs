@@ -28,7 +28,7 @@ impl Skill for Charge {
         display
     }
 
-    fn ai_chance_to_pick(&self, _api: BattleApi<'_, '_>) -> Probability {
+    fn ai_chance_to_pick(&self, _api: BattleApi<'_>) -> Probability {
         if self.charged {
             Probability::new(95)
         } else {
@@ -36,7 +36,7 @@ impl Skill for Charge {
         }
     }
 
-    async fn on_use(&mut self, mut api: BattleApi<'_, '_>) -> SkillResult<()> {
+    async fn on_use(&mut self, mut api: BattleApi<'_>) -> SkillResult<()> {
         if !self.charged {
             api.fighter_mut().add_balance(10);
             self.charged = true;
