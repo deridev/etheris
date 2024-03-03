@@ -1,7 +1,7 @@
 use etheris_data::{
     items::{self, get_item, ItemTag},
     personality::Personality,
-    BrainKind, SkillKind,
+    BrainKind, ShopItem, SkillKind,
 };
 
 use super::prelude::*;
@@ -10,7 +10,7 @@ pub fn basic_plains_exploration(state: EventBuildState) -> Event {
     Event {
         identifier: "basic_plains_exploration",
         spawn: EventSpawn {
-            weighted_regions: vec![(WorldRegion::Greenagis, 6), (WorldRegion::Emerelis, 6)],
+            weighted_regions: vec![(WorldRegion::Greenagis, 10), (WorldRegion::Emerelis, 10)],
             ..Default::default()
         },
         emoji: Emoji::from_unicode("🗺️"),
@@ -23,7 +23,7 @@ pub fn basic_plains_exploration(state: EventBuildState) -> Event {
                 name: "Procurar Ameaças",
                 emoji: Some(Emoji::from_unicode("⚔️")),
                 consequences: vec![
-                    common::consequence_didnt_find_anything(Probability::new(20)),
+                    common::consequence_didnt_find_anything(Probability::new(5)),
                     Consequence {
                         kind: ConsequenceKind::MultiplePossibleEncounters(get_enemies_by_regions(&[state.character.region])),
                         ..Default::default()
@@ -37,13 +37,18 @@ pub fn basic_plains_exploration(state: EventBuildState) -> Event {
                 consequences: vec![
                     common::consequence_didnt_find_anything(Probability::new(5)),
                     Consequence {
-                        probability: Probability::new(60),
+                        probability: Probability::new(70),
                         kind: ConsequenceKind::Rewards { iterations: 1, items: vec![], orbs: (8, 16), xp: XpReward::default() },
                         ..Default::default()
                     },
                     Consequence {
-                        probability: Probability::new(20),
+                        probability: Probability::new(1),
                         kind: ConsequenceKind::Event(basic_plains_weak_thief),
+                        ..Default::default()
+                    },
+                    Consequence {
+                        probability: Probability::new(15),
+                        kind: ConsequenceKind::Event(basic_plains_beginner_nomad_merchant),
                         ..Default::default()
                     }
                 ],
@@ -52,6 +57,48 @@ pub fn basic_plains_exploration(state: EventBuildState) -> Event {
         ]
     }
 }
+
+make_event!(
+    basic_plains_beginner_nomad_merchant,
+    Event {
+        identifier: "basic_plains_beginner_nomad_merchant",
+        spawn: EventSpawn::never(),
+        emoji: Emoji::from_unicode("💸"),
+        message: EventMessage::Multiple(&[
+            "um vendedor nômade te parou e perguntou se você tem interesse em comprar alguns itens.",
+            "você ouviu uma voz te chamando, e quando olhou era um vendedor nômade. Quer dar uma olhada em seus itens à venda?",
+        ]),
+        actions: vec![
+            common::ignore_action(),
+            Action {
+                name: "Ver Loja",
+                emoji: Some(Emoji::from_unicode("🏪")),
+                consequences: vec![
+                    Consequence {
+                        kind: ConsequenceKind::Shop {
+                            name: "Vendedor Nômade da Planície".to_string(),
+                            items: vec![
+                                ShopItem::new_item(6, items::consumable::WATER, 1.1),
+                                ShopItem::new_item(3, items::consumable::APPLE, 1.1),
+                                ShopItem::new_item(17, items::consumable::EGG, 1.1),
+                                ShopItem::new_item(5, items::consumable::SALT, 1.2),
+                                ShopItem::new_item(1, items::tool::SHOVEL, 0.9),
+                                ShopItem::new_item(1, items::tool::PICKAXE, 1.2).with_description("Hi hi, essa belezinha deu trabalho para conseguir!"),
+                                ShopItem::new_item(1, items::tool::HAMMER, 1.2),
+                                ShopItem::new_item(1, items::tool::AXE, 1.4).with_description("Bem, não há muitas árvores aqui perto. Não sei o que você faria com isso."),
+                                ShopItem::new_sellable_item(23, items::material::STONE, 1.2, 0.6),
+                                ShopItem::new_sellable_item(15, items::material::STICK, 1.2, 0.7),
+                                ShopItem::new_sellable_item(1, items::material::KNIFE, 1.4, 0.7),
+                            ]
+                        },
+                        ..Default::default()
+                    }
+                ],
+                ..Default::default()
+            },
+        ],
+    }
+);
 
 static WEAK_THIEF: Lazy<Enemy> = Lazy::new(|| Enemy {
     identifier: "weak_thief",

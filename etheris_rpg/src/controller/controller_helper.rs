@@ -94,9 +94,22 @@ pub async fn tick_every_effect(
                 EffectKind::Shocked => {
                     api.fighter_mut()
                         .remove_effect(Effect::new(effect.kind, 10, effect.culprit));
+                    // Handled by the controller
                 }
-                // Handled by the controller
                 EffectKind::Paralyzed => {}
+                EffectKind::Curse => {
+                    let safe = api.fighter_mut().remove_effect(Effect::new(
+                        effect.kind,
+                        10,
+                        effect.culprit,
+                    ));
+                    if safe {
+                        api.emit_message(format!(
+                            "***{}** não está mais com uma maldição!",
+                            fighter_name
+                        ));
+                    }
+                }
                 EffectKind::LowProtection => {
                     let unprotected = api.fighter_mut().remove_effect(Effect::new(
                         effect.kind,
@@ -371,6 +384,47 @@ pub async fn passives(controller: &mut BattleController) -> anyhow::Result<()> {
                 .passive_on_kill(api, fighter.index)
                 .await
                 .ok();
+        }
+    }
+
+    Ok(())
+}
+
+pub async fn tick_cycle(
+    fighters: &[FighterIndex],
+    controller: &mut BattleController,
+) -> anyhow::Result<()> {
+    for fighter_index in fighters {
+        let fighter = controller.battle.get_fighter(*fighter_index).clone();
+        let fighter_name = fighter.name.clone();
+
+        if let Composure::OnAir(meters) = fighter.composure {
+            if meters <= 1 {
+                controller.battle.get_fighter_mut(*fighter_index).composure = Composure::Standing;
+                controller.emit_turn_message(format!("***{}** pousou no chão!*", fighter_name));
+            } else {
+                controller.battle.get_fighter_mut(*fighter_index).composure =
+                    Composure::OnAir(meters - 1);
+            }
+        }
+
+        // Passives: on_cycle
+        for fighter_index in controller.battle.alive_fighters.clone() {
+            let fighter = controller.battle.get_fighter(fighter_index).clone();
+            let skills = fighter.skills.clone();
+
+            for skill in skills {
+                let mut api = BattleApi::new(controller);
+                api.fighter_index = fighter_index;
+                api.target_index = fighter.target;
+                skill
+                    .dynamic_skill
+                    .lock()
+                    .await
+                    .passive_on_cycle(api)
+                    .await
+                    .ok();
+            }
         }
     }
 

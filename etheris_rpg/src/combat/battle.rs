@@ -82,6 +82,7 @@ pub struct Battle {
 
     pub history: Vec<TurnHistory>,
     pub turn_counter: usize,
+    pub cycle_counter: usize,
     pub intruder_count: usize,
 
     pub state: BattleState,
@@ -128,6 +129,7 @@ impl Battle {
             region,
             history: vec![],
             turn_counter: 0,
+            cycle_counter: 0,
             intruder_count: 0,
             state: BattleState::Running,
             turn_end_queues: TurnEndQueues::default(),
@@ -180,6 +182,7 @@ impl Battle {
         self.fighters.push(fighter);
         self.alive_fighters.push(index);
         self.reallocate_fighter_target(index);
+        self.fighters_queue.push_back(index);
     }
 
     pub fn join_intruder(&mut self, fighter_data: FighterData) {

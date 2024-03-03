@@ -21,3 +21,11 @@ fn countenemies() {
         println!("{region} has {count} enemies.");
     }
 }
+
+#[test]
+fn enemies_pl() {
+    for enemy in enemies::ALL_ENEMIES.iter() {
+        let pl = enemy.power_level();
+        println!("{} -> {} PL", enemy.name, pl);
+    }
+}

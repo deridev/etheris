@@ -1,6 +1,6 @@
 use std::collections::HashSet;
 
-use etheris_rpg::events::EventController;
+use etheris_rpg::events::{ControllerAction, ControllerFlag, EventController};
 use once_cell::sync::Lazy;
 
 use crate::prelude::*;
@@ -37,27 +37,23 @@ pub async fn explore(mut ctx: CommandContext) -> anyhow::Result<()> {
         return Ok(());
     }
 
-    let Some(event) = EventController::pick_event(character) else {
-        ctx.send(
-            Response::new_user_reply(
-                &author,
-                "você não encontrou nenhum evento! Tente viajar para outro lugar para encontrar mais coisas interessantes.",
-            )
-            .add_emoji_prefix(emojis::ERROR)
-            .set_ephemeral(),
-        ).await?;
+    verify_user_cooldown!(ctx, author, "EXPLORE");
+    ctx.db()
+        .cooldowns()
+        .create_cooldown(author.id, "EXPLORE", chrono::Duration::seconds(4))
+        .await?;
 
-        return Ok(());
-    };
+    let mut event_controller = EventController::new(author.clone(), ctx.clone(), Vec::new());
+    event_controller.flags.insert(ControllerFlag::EXPLORING);
+    event_controller
+        .execute_action(ControllerAction::PickAEvent)
+        .await?;
 
     unsafe {
         USERS_EXPLORING.insert(author_id);
     }
 
-    match EventController::new(author.clone(), ctx.clone(), vec![event])
-        .execute()
-        .await
-    {
+    match event_controller.execute().await {
         Ok(_) => {
             unsafe {
                 USERS_EXPLORING.remove(&author_id);
@@ -66,7 +62,6 @@ pub async fn explore(mut ctx: CommandContext) -> anyhow::Result<()> {
             let mut character = parse_user_character!(ctx, author);
             character.action_points = character.action_points.saturating_sub(1);
             ctx.db().characters().save(character).await?;
-            return Ok(());
         }
         Err(e) => {
             unsafe {
@@ -75,4 +70,14 @@ pub async fn explore(mut ctx: CommandContext) -> anyhow::Result<()> {
             return Err(e);
         }
     };
+
+    if event_controller.ticks == 0 {
+        ctx.send(Response::new_user_reply(
+            &author,
+            "você não conseguiu encontrar nenhum evento! Tente viajar para outro lugar para encontrar mais coisas interessantes.",
+        ))
+        .await?;
+    }
+
+    Ok(())
 }

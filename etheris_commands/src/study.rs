@@ -36,7 +36,7 @@ pub async fn study(mut ctx: CommandContext) -> anyhow::Result<()> {
     verify_user_cooldown!(ctx, author, "STUDY");
     ctx.db()
         .cooldowns()
-        .create_cooldown(author.id, "STUDY", chrono::Duration::minutes(5))
+        .create_cooldown(author.id, "STUDY", chrono::Duration::minutes(2))
         .await?;
 
     let xp = match character.stats.intelligence_level {

@@ -30,7 +30,7 @@ pub async fn train(mut ctx: CommandContext) -> anyhow::Result<()> {
     verify_user_cooldown!(ctx, author, "TRAIN");
     ctx.db()
         .cooldowns()
-        .create_cooldown(author.id, "TRAIN", chrono::Duration::minutes(3))
+        .create_cooldown(author.id, "TRAIN", chrono::Duration::minutes(1))
         .await?;
 
     let buttons = vec![

@@ -166,7 +166,9 @@ impl CharacterCommands {
     ) -> anyhow::Result<CharacterModel> {
         let appearance = generate_random_character_appearance();
         let mut character = CharacterModel::new(user_id, name, personalities, vec![], appearance);
-        character.learnable_skills.extend_from_slice(&skills);
+        for skill in skills {
+            character.aknowledge_skill(skill);
+        }
 
         character.add_item(
             items::special::RECIPE_BOOK,

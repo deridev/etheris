@@ -19,6 +19,7 @@ pub struct BattleApi<'a> {
 pub struct EffectiveDamage {
     pub damage_specifier: DamageSpecifier,
     pub amount: i32,
+    pub potency: u8,
     pub defended: bool,
     pub missed: bool,
     pub dodged: bool,
@@ -114,9 +115,9 @@ impl<'a> BattleApi<'a> {
             <= ((self.target().vitality.max as f32) * finish_threshold);
 
         can_finish
-            && self.target().composure == Composure::Standing
+            && self.target().composure != Composure::OnGround
             && self.target().defense < 1
-            && self.fighter().composure == Composure::Standing
+            && self.fighter().composure != Composure::OnGround
             && !self.fighter().finishers.is_empty()
     }
 
@@ -251,6 +252,12 @@ impl<'a> BattleApi<'a> {
             damage.amount = ((damage.amount as f32) * 0.6) as i32;
         }
 
+        match target.composure {
+            Composure::OnAir(0..=2) => damage.accuracy = damage.accuracy.saturating_sub(5),
+            Composure::OnAir(_) => damage.accuracy = damage.accuracy.saturating_sub(15),
+            _ => (),
+        }
+
         let modifiers_defense = target.modifiers.overall_defense_multiplier();
         if modifiers_defense != 1.0 {
             damage.amount = ((damage.amount as f32) * modifiers_defense) as i32;
@@ -301,12 +308,19 @@ impl<'a> BattleApi<'a> {
             damage.effect = None;
         }
 
+        if let Composure::OnAir(_) = culprit.composure {
+            if !matches!(target.composure, Composure::OnAir(_)) {
+                damage.amount = (damage.amount as f32 * 1.3) as i32;
+                damage.accuracy = damage.accuracy.saturating_add(15);
+            }
+        }
+
         if target.has_effect(EffectKind::Wet) {
             if damage.kind.is_physical() {
                 damage.amount = (damage.amount as f32 * 1.25) as i32;
             }
 
-            damage.balance_effectiveness = damage.balance_effectiveness.saturating_add(8);
+            damage.balance_effectiveness = damage.balance_effectiveness.saturating_add(4);
         }
 
         if damage.amount > (target.resistance.value + target.vitality.value) / 2 {
@@ -314,6 +328,10 @@ impl<'a> BattleApi<'a> {
         }
 
         let target_name = target.name.clone();
+
+        let potency = ((damage.amount as f32 / target.health().max as f32) * 100.0)
+            .round()
+            .clamp(0.0, 100.0) as u8;
 
         target.take_damage(culprit_index, damage);
         target.balance = target.balance.saturating_sub(damage.balance_effectiveness);
@@ -327,8 +345,26 @@ impl<'a> BattleApi<'a> {
             _ => 0.0,
         };
 
+        match potency {
+            0..=3 => falling_prob *= 0.8,
+            4..=15 => (),
+            16..=25 => falling_prob *= 1.2,
+            26..=80 => falling_prob *= 1.5,
+            _ => falling_prob *= 2.0,
+        };
+
         if (culprit.pl as f32 * 1.5) < target.pl as f32 {
             falling_prob *= 0.8;
+        }
+
+        match target.composure {
+            Composure::OnAir(0..=3) => falling_prob *= 1.2,
+            Composure::OnAir(_) => falling_prob *= 0.8,
+            _ => (),
+        }
+
+        if matches!(target.composure, Composure::OnAir(0..)) {
+            falling_prob *= 1.1;
         }
 
         self.battle_mut()
@@ -348,7 +384,7 @@ impl<'a> BattleApi<'a> {
         let target = self.battle_mut().get_fighter(target_index).clone();
 
         if !missed
-            && target.composure == Composure::Standing
+            && target.composure != Composure::OnGround
             && has_fallen
             && !matches!(damage.kind, DamageKind::Special | DamageKind::Cut)
         {
@@ -363,6 +399,26 @@ impl<'a> BattleApi<'a> {
                 } else {
                     format!("**{}** caiu de costas no chão!", target_name)
                 },
+            ]
+            .choose(self.rng())
+            .cloned()
+            .unwrap_or_default();
+
+            self.battle_mut().deferred_turn_messages.push(message);
+        }
+
+        if missed
+            && target.composure == Composure::OnGround
+            && Probability::new(40).generate_random_bool()
+        {
+            self.battle_mut().get_fighter_mut(target_index).composure = Composure::OnGround;
+
+            let message = [
+                format!(
+                    "**{}** aproveitou o erro do inimigo para se levantar",
+                    target_name
+                ),
+                format!("**{}** levantou do chão!", target_name),
             ]
             .choose(self.rng())
             .cloned()
@@ -392,9 +448,38 @@ impl<'a> BattleApi<'a> {
             .await;
         }
 
+        if let Some(curse) = self
+            .battle()
+            .get_fighter(culprit_index)
+            .get_effect(EffectKind::Curse)
+        {
+            if !missed && damage.amount > 10 {
+                let dmg = (damage.amount as f32 * if curse.amount > 80 { 0.4 } else { 0.3 }) as i32;
+                self.battle_mut()
+                    .get_fighter_mut(culprit_index)
+                    .take_damage(
+                        curse.culprit,
+                        DamageSpecifier {
+                            kind: DamageKind::Special,
+                            amount: dmg,
+                            balance_effectiveness: 0,
+                            accuracy: 100,
+                            effect: None,
+                            culprit: curse.culprit,
+                        },
+                    );
+
+                self.battle_mut().deferred_turn_messages.push(format!(
+                    "***{}** recebeu **{dmg} dano** do seu próprio ataque graças à maldição!*",
+                    culprit.name
+                ))
+            }
+        }
+
         EffectiveDamage {
             damage_specifier: damage,
             amount: damage.amount,
+            potency,
             defended,
             missed,
             dodged,
@@ -424,6 +509,7 @@ impl<'a> BattleApi<'a> {
             EffectKind::Wet => format!("**{}** está molhado!", target_name),
             EffectKind::Frozen => format!("**{}** congelou!", target_name),
             EffectKind::Bleeding => format!("**{}** começou a sangrar!", target_name),
+            EffectKind::Curse => format!("**{}** está com uma maldição!", target_name),
             EffectKind::LowProtection => format!(
                 "**{}** está com uma proteção extra a danos leves!",
                 target_name

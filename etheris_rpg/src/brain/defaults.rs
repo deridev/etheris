@@ -6,6 +6,7 @@ use crate::*;
 
 pub async fn default_should_risk_life(api: BattleApi<'_>) -> bool {
     let fighter = api.fighter();
+    let pl_diff = fighter.pl - api.target().pl;
 
     let probs = fighter
         .personalities
@@ -13,16 +14,34 @@ pub async fn default_should_risk_life(api: BattleApi<'_>) -> bool {
         .map(|p| p.prob_of_risking_life());
     let prob = probs.map(|p| p.value() as i32).sum::<i32>() / fighter.personalities.len() as i32;
 
-    let prob = u8::try_from(prob).unwrap_or(50);
+    let mut prob = u8::try_from(prob).unwrap_or(50);
+
+    if api.target().flags.contains(FighterFlags::RISKING_LIFE) {
+        prob = prob.saturating_add(if pl_diff > 0 { 30 } else { 15 });
+    } else {
+        prob = prob.saturating_sub(5);
+    }
 
     Probability::new(prob).generate_random_bool()
 }
 
-pub async fn allow_fighter_to_enter_his_team(
-    mut _api: BattleApi<'_>,
-    _index: FighterIndex,
-) -> bool {
-    false
+pub async fn allow_fighter_to_enter_his_team(api: BattleApi<'_>, _index: FighterIndex) -> bool {
+    let Some(team) = api.battle().teams().get(&api.fighter().team).cloned() else {
+        return false;
+    };
+
+    let is_there_a_human_on_the_team = team
+        .iter()
+        .any(|index| api.battle().get_fighter(*index).user.is_some());
+
+    // Allow the human to decide if the fighter can enter his team
+    // (is this case, the unnecessary if-bool improves legibility and reduces cognitive overload of this)
+    #[allow(clippy::needless_bool)]
+    if is_there_a_human_on_the_team {
+        true
+    } else {
+        false
+    }
 }
 
 pub async fn select_target(api: &mut BattleApi<'_>) {
@@ -115,7 +134,7 @@ pub async fn select_a_input(mut api: BattleApi<'_>) -> BattleInput {
     if high_skill_priority
         || api
             .rng()
-            .gen_bool(if low_skill_priority { 0.05 } else { 0.4 })
+            .gen_bool(if low_skill_priority { 0.15 } else { 0.6 })
     {
         if let Some(skill) = skills.choose(&mut api.rng()) {
             return BattleInput::UseSkill((*skill).clone());

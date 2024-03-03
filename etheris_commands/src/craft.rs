@@ -46,9 +46,9 @@ pub async fn craft(
             explicit_ingredient_quantity = Some(quantity);
             ingredient_token = ingredient_token
                 .split_whitespace()
-                .nth(1)
-                .unwrap_or_default()
-                .to_string();
+                .skip(1)
+                .collect::<Vec<_>>()
+                .join(" ");
         }
 
         let quantity = explicit_ingredient_quantity.unwrap_or(quantity);

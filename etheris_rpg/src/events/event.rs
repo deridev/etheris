@@ -1,13 +1,16 @@
 use std::fmt::Debug;
 
 use etheris_common::Probability;
-use etheris_data::{items::Item, world::regions::WorldRegion};
+use etheris_data::{items::Item, world::regions::WorldRegion, ShopItem};
 use etheris_discord::Emoji;
 use etheris_framework::CommandContext;
 
 use crate::{data::enemies::Enemy, list::prelude::XpReward};
 
-use super::list::{EventBuildState, EventBuilder};
+use super::{
+    list::{EventBuildState, EventBuilder},
+    ControllerAction, ControllerFlag,
+};
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct EventSpawn {
     pub conditions: Vec<Condition>,
@@ -45,6 +48,7 @@ pub enum EventMessage {
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum Condition {
     Not(Box<Condition>),
+    IsFlagSet(ControllerFlag),
     HasItem(Item, usize),
     SimilarPowerTo(Enemy),
     StrongerThan(Enemy),
@@ -122,6 +126,7 @@ pub trait CustomConsequence {
 #[derive(Debug, Clone, PartialEq, PartialOrd)]
 pub enum ConsequenceKind {
     Event(EventBuilder),
+    Action(ControllerAction),
     Encounter(Enemy),
     InstantBattle(Enemy),
     MultiplePossibleEncounters(Vec<Enemy>),
@@ -138,7 +143,12 @@ pub enum ConsequenceKind {
         orbs_percentage: f64,
         specific_items: Vec<(Item, usize)>,
     },
+    Shop {
+        name: String,
+        items: Vec<ShopItem>,
+    },
     RemoveItemDurability(Item, u32),
+    AddActionPoint(u32),
 }
 
 impl Default for ConsequenceKind {

@@ -36,11 +36,11 @@ pub enum BattleInputKind {
 
 impl BattleInputKind {
     pub fn can_use(&self, api: BattleApi<'_>) -> bool {
-        let is_standing = api.fighter().composure == Composure::Standing;
+        let is_not_on_ground = api.fighter().composure != Composure::OnGround;
         match self {
             Self::ChangeTarget | Self::ChangeTeam => api.battle().alive_fighters.len() > 2,
-            Self::Attack | Self::Defend => is_standing,
-            Self::UseSkill => is_standing && !api.fighter().skills.is_empty(),
+            Self::Attack | Self::Defend => is_not_on_ground,
+            Self::UseSkill => is_not_on_ground && !api.fighter().skills.is_empty(),
             Self::Finish => api.can_finish_target(),
             Self::GetUp | Self::Upkick => api.fighter().composure == Composure::OnGround,
             Self::UseItem => !api.fighter().inventory.is_empty(),

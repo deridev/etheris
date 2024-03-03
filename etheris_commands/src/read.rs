@@ -69,7 +69,7 @@ pub async fn read(
                     .collect::<Vec<_>>();
 
                 description.push_str(&format!(
-                    "{} **{}**: `{}`",
+                    "\n{} **{}**: `{}`",
                     output_item.emoji,
                     output_item.display_name,
                     ingredients.join(" + ")

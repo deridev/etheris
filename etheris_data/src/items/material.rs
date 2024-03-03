@@ -14,6 +14,7 @@ pub const STONE: Item = Item {
     tags: MATERIAL_TAGS,
     purchase_properties: PurchaseProperties {
         base_price: 5,
+        base_sell_price: 2,
         ..PurchaseProperties::default()
     },
     ..Item::default()
@@ -26,6 +27,7 @@ pub const RAW_TRUNK: Item = Item {
     tags: MATERIAL_TAGS,
     purchase_properties: PurchaseProperties {
         base_price: 40,
+        base_sell_price: 15,
         ..PurchaseProperties::default()
     },
     ..Item::default()
@@ -37,7 +39,8 @@ pub const PLANK: Item = Item {
     emoji: Emoji::from_emote(Some("plank"), 1177293461863538698),
     tags: MATERIAL_TAGS,
     purchase_properties: PurchaseProperties {
-        base_price: 10,
+        base_price: 15,
+        base_sell_price: 4,
         is_sellable: true,
         ..PurchaseProperties::default()
     },
@@ -65,8 +68,8 @@ pub const KNIFE: Item = Item {
     emoji: Emoji::from_emote(Some("knife"), 1177287913369776229),
     tags: MATERIAL_TAGS,
     purchase_properties: PurchaseProperties {
-        base_price: 130,
-        base_sell_price: 30,
+        base_price: 60,
+        base_sell_price: 12,
         is_sellable: true,
         ..PurchaseProperties::default()
     },
@@ -81,7 +84,7 @@ pub const PAPER: Item = Item {
     tags: MATERIAL_TAGS,
     purchase_properties: PurchaseProperties {
         base_price: 20,
-        base_sell_price: 5,
+        base_sell_price: 3,
         is_sellable: true,
         ..PurchaseProperties::default()
     },

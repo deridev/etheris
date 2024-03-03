@@ -3,6 +3,10 @@ use std::fmt::Display;
 use etheris_macros::List;
 use serde::{Deserialize, Serialize};
 
+use crate::ShopItem;
+
+use super::city_shops;
+
 #[derive(
     List, Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize,
 )]
@@ -105,7 +109,7 @@ pub struct RegionData {
     pub travel_price: i64,
 }
 
-#[derive(Debug, Copy, Clone, PartialEq, PartialOrd)]
+#[derive(Debug, Clone, PartialEq, PartialOrd)]
 pub struct RegionCity {
     pub sell_multiplier: f32,
     pub wage: (i64, i64),
@@ -113,6 +117,7 @@ pub struct RegionCity {
     pub work_health_xp_gain: (u32, u32),
     pub work_intelligence_xp_gain: (u32, u32),
     pub work_ap_cost: u32,
+    pub shop_items: Vec<ShopItem>,
 }
 
 impl WorldRegion {
@@ -185,7 +190,7 @@ impl WorldRegion {
         self.data().kind
     }
 
-    pub const fn city(&self) -> Option<RegionCity> {
+    pub fn city(&self) -> Option<RegionCity> {
         match self {
             Self::Metrolis => Some(RegionCity {
                 sell_multiplier: 0.8,
@@ -194,6 +199,7 @@ impl WorldRegion {
                 work_health_xp_gain: (2, 6),
                 work_strength_xp_gain: (3, 7),
                 work_intelligence_xp_gain: (1, 4),
+                shop_items: city_shops::METROLIS.to_vec(),
             }),
             Self::SwordTown => Some(RegionCity {
                 sell_multiplier: 1.2,
@@ -202,6 +208,7 @@ impl WorldRegion {
                 work_health_xp_gain: (6, 10),
                 work_strength_xp_gain: (8, 12),
                 work_intelligence_xp_gain: (5, 8),
+                shop_items: city_shops::SWORD_TOWN.to_vec(),
             }),
             _ => None,
         }

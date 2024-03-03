@@ -107,7 +107,7 @@ pub async fn execute_command(
 
     let result = command.run(ctx).await;
     if result.is_err() {
-        eprintln!("{}", result.unwrap_err());
+        eprintln!("[ERROR]\n{}", result.unwrap_err());
     }
 
     Ok(())

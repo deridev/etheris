@@ -58,10 +58,16 @@ pub async fn consume(
         return Ok(());
     };
 
-    let health_regeneration =
-        math::calculate_health_regeneration(consumption_properties, quantity, character.pl);
-    let ether_regeneration =
-        math::calculate_ether_regeneration(consumption_properties, quantity, character.pl);
+    let health_regeneration = math::calculate_health_regeneration(
+        consumption_properties,
+        quantity,
+        character.stats.vitality.max + character.stats.resistance.max,
+    );
+    let ether_regeneration = math::calculate_ether_regeneration(
+        consumption_properties,
+        quantity,
+        character.stats.ether.max,
+    );
 
     let mut outputs = vec![];
     if health_regeneration != 0 {

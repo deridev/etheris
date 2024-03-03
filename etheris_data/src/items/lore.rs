@@ -13,6 +13,7 @@ pub const GOLDEN_ROBOT_POEM: Item = Item {
     emoji: Emoji::from_unicode("📜"),
     purchase_properties: PurchaseProperties {
         base_price: 750,
+        base_sell_price: 160,
         ..PurchaseProperties::default()
     },
     pages: &[
@@ -52,9 +53,10 @@ pub const GOLDEN_ROBOT_POEM: Item = Item {
 pub const OLD_ABANDONED_BASEMENT_DIARY: Item = Item {
     identifier: "old_abandoned_basement_diary",
     display_name: "Diário Antigo de um Porão Abandonado",
-    emoji: Emoji::from_unicode("�"),
+    emoji: Emoji::from_unicode("📘"),
     purchase_properties: PurchaseProperties {
         base_price: 1250,
+        base_sell_price: 299,
         ..PurchaseProperties::default()
     },
     pages: &[
@@ -101,6 +103,7 @@ pub const ENTITY_039_REPORT: Item = Item {
     emoji: Emoji::from_unicode("📋"),
     purchase_properties: PurchaseProperties {
         base_price: 3000,
+        base_sell_price: 600,
         ..PurchaseProperties::default()
     },
     pages: &[

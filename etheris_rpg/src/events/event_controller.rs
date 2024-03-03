@@ -3,6 +3,7 @@ use std::{
     time::Duration,
 };
 
+use bitflags::bitflags;
 use etheris_common::Color;
 use etheris_data::{
     emojis,
@@ -22,12 +23,25 @@ use rand::{
 };
 
 use crate::{
-    data::enemies::Enemy, encounter, Battle, BattleController, BattleSettings, FighterData,
+    data::enemies::Enemy, encounter, shop::Shop, Battle, BattleController, BattleSettings,
+    FighterData,
 };
 
 use self::list::{EventBuildState, ALL_EVENTS};
 
 use super::*;
+
+#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub enum ControllerAction {
+    PickAEvent,
+}
+
+bitflags! {
+    #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+    pub struct ControllerFlag: u8 {
+        const EXPLORING = 1 << 0;
+    }
+}
 
 #[derive(Debug, Clone)]
 pub struct EventController {
@@ -35,11 +49,58 @@ pub struct EventController {
     pub ctx: CommandContext,
     pub event_queue: VecDeque<Event>,
 
+    pub flags: ControllerFlag,
+    pub ticks: usize,
+
     last_interaction: Option<Interaction>,
 }
 
 impl EventController {
-    pub fn pick_event(character: CharacterModel) -> Option<Event> {
+    pub fn new(user: User, ctx: CommandContext, event_queue: Vec<Event>) -> Self {
+        Self {
+            user,
+            ctx,
+            event_queue: event_queue.into(),
+            ticks: 0,
+            last_interaction: None,
+            flags: ControllerFlag::empty(),
+        }
+    }
+
+    pub async fn execute(&mut self) -> anyhow::Result<()> {
+        while let Some(event) = self.event_queue.pop_front() {
+            self.ticks += 1;
+            self.execute_single_event(event).await?;
+        }
+
+        Ok(())
+    }
+
+    pub async fn execute_action(&mut self, action: ControllerAction) -> anyhow::Result<()> {
+        match action {
+            ControllerAction::PickAEvent => {
+                let Some(character) = self
+                    .ctx
+                    .db()
+                    .characters()
+                    .get_by_user(&self.user.id.to_string())
+                    .await?
+                else {
+                    return Ok(());
+                };
+
+                let Some(event) = self.pick_event(character) else {
+                    return Ok(());
+                };
+
+                self.event_queue.push_back(event);
+            }
+        }
+
+        Ok(())
+    }
+
+    pub fn pick_event(&self, character: CharacterModel) -> Option<Event> {
         let mut events = vec![];
         for event in ALL_EVENTS.iter() {
             let event = event(EventBuildState::new(character.clone()));
@@ -52,7 +113,7 @@ impl EventController {
                 .spawn
                 .conditions
                 .iter()
-                .any(|c| !Self::compute_condition(&character, c))
+                .any(|c| !self.compute_condition(&character, c))
             {
                 continue;
             }
@@ -84,32 +145,16 @@ impl EventController {
         Some(events.0.clone())
     }
 
-    pub fn new(user: User, ctx: CommandContext, event_queue: Vec<Event>) -> Self {
-        Self {
-            user,
-            ctx,
-            event_queue: event_queue.into(),
-            last_interaction: None,
-        }
-    }
-
-    pub async fn execute(&mut self) -> anyhow::Result<()> {
-        while let Some(event) = self.event_queue.pop_front() {
-            self.execute_single_event(event).await?;
-        }
-
-        Ok(())
-    }
-
-    fn compute_condition(character: &CharacterModel, condition: &Condition) -> bool {
+    fn compute_condition(&self, character: &CharacterModel, condition: &Condition) -> bool {
         let pl_range = (character.pl as f64 * 0.9)..(character.pl as f64 * 1.1);
 
         match condition {
-            Condition::Not(condition) => !Self::compute_condition(character, condition),
+            Condition::Not(condition) => !self.compute_condition(character, condition),
             Condition::HasItem(item, amount) => character.has_item(item, *amount),
             Condition::SimilarPowerTo(enemy) => pl_range.contains(&(enemy.power_level() as f64)),
             Condition::StrongerThan(enemy) => character.pl > enemy.power_level(),
             Condition::WeakerThan(enemy) => character.pl < enemy.power_level(),
+            Condition::IsFlagSet(flag) => self.flags.contains(*flag),
         }
     }
 
@@ -133,7 +178,7 @@ impl EventController {
                 .to_string(),
             EventMessage::Conditional(messages) => messages
                 .iter()
-                .filter(|m| Self::compute_condition(&character, &m.0))
+                .filter(|m| self.compute_condition(&character, &m.0))
                 .map(|m| m.1.clone())
                 .collect::<Vec<_>>()
                 .first()
@@ -170,7 +215,7 @@ impl EventController {
             if action
                 .conditions
                 .iter()
-                .any(|c| !Self::compute_condition(&character, c))
+                .any(|c| !self.compute_condition(&character, c))
             {
                 button = button.set_disabled(true);
             }
@@ -247,7 +292,7 @@ impl EventController {
             .filter(|c| {
                 c.conditions
                     .iter()
-                    .all(|c| Self::compute_condition(character, c))
+                    .all(|c| self.compute_condition(character, c))
             })
             .cloned()
             .collect::<Vec<_>>();
@@ -292,6 +337,9 @@ impl EventController {
 
                 self.event_queue
                     .push_front(event(EventBuildState::new(character)));
+            }
+            ConsequenceKind::Action(action) => {
+                self.execute_action(action).await?;
             }
             ConsequenceKind::Encounter(enemy) => {
                 self.execute_single_encounter(enemy, false).await?
@@ -595,6 +643,10 @@ impl EventController {
 
                 self.ctx.send(embed).await?;
             }
+            ConsequenceKind::Shop { name, items } => {
+                let shop = Shop::new(name, None, items);
+                shop.prompt(self.user.clone(), &mut self.ctx).await?;
+            }
             ConsequenceKind::RemoveItemDurability(item, amount) => {
                 let Some(mut character) = self
                     .ctx
@@ -636,6 +688,21 @@ impl EventController {
 
                 self.ctx.db().characters().save(character).await?;
             }
+            ConsequenceKind::AddActionPoint(amount) => {
+                let Some(mut character) = self
+                    .ctx
+                    .db()
+                    .characters()
+                    .get_by_user(&self.user.id.to_string())
+                    .await?
+                else {
+                    return Ok(());
+                };
+
+                character.action_points =
+                    (character.action_points + amount).min(character.max_action_points);
+                self.ctx.db().characters().save(character).await?;
+            }
         }
 
         Ok(())
@@ -646,6 +713,17 @@ impl EventController {
         enemy: Enemy,
         instant: bool,
     ) -> anyhow::Result<()> {
+        let Some(character) = self
+            .ctx
+            .db()
+            .characters()
+            .get_by_user(&self.user.id.to_string())
+            .await?
+        else {
+            return Ok(());
+        };
+
+        let mut rng = StdRng::from_entropy();
         let mut enemies = vec![enemy.clone()];
 
         let allies = enemy.allies.unwrap_or_default();
@@ -659,7 +737,10 @@ impl EventController {
 
         let enemies = enemies
             .into_iter()
-            .map(|e| FighterData::new_from_enemy(1, e.drop.clone().into(), e))
+            .map(|e| {
+                let reward = e.drop.to_reward(&mut rng, character.pl, e.power_level());
+                FighterData::new_from_enemy(1, reward, e)
+            })
             .collect::<Vec<_>>();
 
         if !instant {

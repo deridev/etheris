@@ -19,7 +19,12 @@ pub fn ignore_action() -> Action {
         probability: Probability::ALWAYS,
         emoji: None,
         conditions: Vec::new(),
-        consequences: Vec::new(),
+        consequences: vec![Consequence {
+            probability: Probability::ALWAYS,
+            conditions: vec![Condition::IsFlagSet(ControllerFlag::EXPLORING)],
+            kind: ConsequenceKind::Action(ControllerAction::PickAEvent),
+            ..Default::default()
+        }],
         extra_consequences: Vec::new(),
     }
 }

@@ -65,8 +65,8 @@ impl Personality {
     pub fn initial_learnable_skills(&self) -> Vec<SkillKind> {
         match self {
             Self::Calm => vec![SkillKind::CyclonePush],
-            Self::Courage => vec![SkillKind::Charge],
-            Self::Cowardice => vec![SkillKind::MirrorDamage],
+            Self::Courage => vec![SkillKind::ImbuedPunch],
+            Self::Cowardice => vec![SkillKind::DefensiveJump],
             Self::Aggressiveness => vec![SkillKind::TornadoKick],
             Self::Arrogance => vec![SkillKind::SimpleCut],
             Self::Intelligence => vec![SkillKind::CyclonePush],

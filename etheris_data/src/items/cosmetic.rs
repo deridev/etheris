@@ -31,7 +31,7 @@ pub const EYE_BANDANA: Item = Item {
     tags: COSMETIC_TAGS,
     purchase_properties: PurchaseProperties {
         base_price: 500,
-        base_sell_price: 200,
+        base_sell_price: 100,
         ..PurchaseProperties::default()
     },
     cosmetic_properties: Some(CosmeticProperties {
@@ -49,7 +49,7 @@ pub const GLASSES: Item = Item {
     tags: COSMETIC_TAGS,
     purchase_properties: PurchaseProperties {
         base_price: 150,
-        base_sell_price: 80,
+        base_sell_price: 60,
         ..PurchaseProperties::default()
     },
     cosmetic_properties: Some(CosmeticProperties {

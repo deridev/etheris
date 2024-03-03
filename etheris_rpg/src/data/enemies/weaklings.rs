@@ -15,10 +15,10 @@ make_enemy!(
         intelligence: 1,
         resistance: 60,
         vitality: 80,
-        ether: 10,
+        ether: 15,
         weapon: None,
         allies: None,
-        skills: vec![SkillKind::Bite, SkillKind::BloodDonation],
+        skills: vec![SkillKind::Bite],
         drop: EnemyReward {
             orbs: (10, 15),
             xp: (20, 40),

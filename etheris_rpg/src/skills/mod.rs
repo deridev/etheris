@@ -113,6 +113,10 @@ pub trait Skill {
         }
     }
 
+    async fn passive_on_cycle(&mut self, _api: BattleApi<'_>) -> SkillResult<()> {
+        Ok(())
+    }
+
     async fn passive_fighter_tick(&mut self, _api: BattleApi<'_>) -> SkillResult<()> {
         Ok(())
     }

@@ -98,7 +98,7 @@ pub const ALL_RECIPES: &[Recipe] = &[
     },
     Recipe {
         output: "plank",
-        output_quantity: 4,
+        output_quantity: 3,
         ingredients: &[Ingredient::new("knife", 1), Ingredient::new("raw_trunk", 1)],
     },
 ];

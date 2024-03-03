@@ -45,6 +45,7 @@ pub const SALT: Item = Item {
     }),
     purchase_properties: PurchaseProperties {
         base_price: 2,
+        base_sell_price: 1,
         ..PurchaseProperties::default()
     },
     ..Item::default()
@@ -62,6 +63,7 @@ pub const SUGAR: Item = Item {
     }),
     purchase_properties: PurchaseProperties {
         base_price: 2,
+        base_sell_price: 1,
         ..PurchaseProperties::default()
     },
     ..Item::default()
@@ -79,6 +81,7 @@ pub const WHEAT: Item = Item {
     }),
     purchase_properties: PurchaseProperties {
         base_price: 8,
+        base_sell_price: 3,
         ..PurchaseProperties::default()
     },
     ..Item::default()
@@ -91,11 +94,12 @@ pub const SLICE_OF_BREAD: Item = Item {
     tags: CONSUMABLE_TAGS,
     consumption_properties: Some(ConsumptionProperties {
         health_regenation: 25,
-        ether_regeneration: 0,
+        ether_regeneration: 25,
         ..ConsumptionProperties::default()
     }),
     purchase_properties: PurchaseProperties {
         base_price: 18,
+        base_sell_price: 9,
         ..PurchaseProperties::default()
     },
     ..Item::default()
@@ -113,6 +117,7 @@ pub const BREAD: Item = Item {
     }),
     purchase_properties: PurchaseProperties {
         base_price: 40,
+        base_sell_price: 15,
         ..PurchaseProperties::default()
     },
     ..Item::default()
@@ -130,6 +135,7 @@ pub const WATER: Item = Item {
     }),
     purchase_properties: PurchaseProperties {
         base_price: 10,
+        base_sell_price: 2,
         ..PurchaseProperties::default()
     },
     ..Item::default()
@@ -147,6 +153,7 @@ pub const MILK: Item = Item {
     }),
     purchase_properties: PurchaseProperties {
         base_price: 20,
+        base_sell_price: 5,
         ..PurchaseProperties::default()
     },
     ..Item::default()
@@ -164,6 +171,7 @@ pub const EGG: Item = Item {
     }),
     purchase_properties: PurchaseProperties {
         base_price: 5,
+        base_sell_price: 2,
         ..PurchaseProperties::default()
     },
     ..Item::default()
@@ -181,6 +189,7 @@ pub const FRIED_EGG: Item = Item {
     }),
     purchase_properties: PurchaseProperties {
         base_price: 20,
+        base_sell_price: 5,
         ..PurchaseProperties::default()
     },
     ..Item::default()
@@ -198,6 +207,7 @@ pub const CHEESE: Item = Item {
     }),
     purchase_properties: PurchaseProperties {
         base_price: 30,
+        base_sell_price: 9,
         ..PurchaseProperties::default()
     },
     ..Item::default()
@@ -215,6 +225,7 @@ pub const APPLE: Item = Item {
     }),
     purchase_properties: PurchaseProperties {
         base_price: 12,
+        base_sell_price: 5,
         ..PurchaseProperties::default()
     },
     ..Item::default()
@@ -232,6 +243,7 @@ pub const GREEN_APPLE: Item = Item {
     }),
     purchase_properties: PurchaseProperties {
         base_price: 12,
+        base_sell_price: 5,
         ..PurchaseProperties::default()
     },
     ..Item::default()
@@ -249,6 +261,7 @@ pub const CORN: Item = Item {
     }),
     purchase_properties: PurchaseProperties {
         base_price: 15,
+        base_sell_price: 6,
         ..PurchaseProperties::default()
     },
     ..Item::default()
@@ -266,6 +279,7 @@ pub const ORANGE: Item = Item {
     }),
     purchase_properties: PurchaseProperties {
         base_price: 15,
+        base_sell_price: 6,
         ..PurchaseProperties::default()
     },
     ..Item::default()
@@ -283,6 +297,7 @@ pub const LEMON: Item = Item {
     }),
     purchase_properties: PurchaseProperties {
         base_price: 18,
+        base_sell_price: 7,
         ..PurchaseProperties::default()
     },
     ..Item::default()
@@ -300,6 +315,7 @@ pub const WATERMELON: Item = Item {
     }),
     purchase_properties: PurchaseProperties {
         base_price: 25,
+        base_sell_price: 10,
         ..PurchaseProperties::default()
     },
     ..Item::default()
@@ -317,6 +333,7 @@ pub const TOMATO: Item = Item {
     }),
     purchase_properties: PurchaseProperties {
         base_price: 13,
+        base_sell_price: 4,
         ..PurchaseProperties::default()
     },
     ..Item::default()
@@ -334,6 +351,7 @@ pub const CHOCOLATE: Item = Item {
     }),
     purchase_properties: PurchaseProperties {
         base_price: 23,
+        base_sell_price: 11,
         ..PurchaseProperties::default()
     },
     ..Item::default()
@@ -350,7 +368,8 @@ pub const CHOCOLATE_MILK: Item = Item {
         ..ConsumptionProperties::default()
     }),
     purchase_properties: PurchaseProperties {
-        base_price: 23,
+        base_price: 26,
+        base_sell_price: 12,
         ..PurchaseProperties::default()
     },
     ..Item::default()
@@ -368,6 +387,7 @@ pub const ORANGE_JUICE: Item = Item {
     }),
     purchase_properties: PurchaseProperties {
         base_price: 32,
+        base_sell_price: 18,
         ..PurchaseProperties::default()
     },
     ..Item::default()
@@ -385,6 +405,7 @@ pub const LEMONADE: Item = Item {
     }),
     purchase_properties: PurchaseProperties {
         base_price: 37,
+        base_sell_price: 21,
         ..PurchaseProperties::default()
     },
     ..Item::default()
@@ -401,7 +422,8 @@ pub const BEEF: Item = Item {
         ..ConsumptionProperties::default()
     }),
     purchase_properties: PurchaseProperties {
-        base_price: 37,
+        base_price: 80,
+        base_sell_price: 30,
         ..PurchaseProperties::default()
     },
     ..Item::default()
@@ -418,7 +440,8 @@ pub const CHICKEN_MEAT: Item = Item {
         ..ConsumptionProperties::default()
     }),
     purchase_properties: PurchaseProperties {
-        base_price: 37,
+        base_price: 110,
+        base_sell_price: 21,
         ..PurchaseProperties::default()
     },
     ..Item::default()
@@ -435,7 +458,8 @@ pub const BACON: Item = Item {
         ..ConsumptionProperties::default()
     }),
     purchase_properties: PurchaseProperties {
-        base_price: 42,
+        base_price: 329,
+        base_sell_price: 115,
         ..PurchaseProperties::default()
     },
     ..Item::default()
@@ -453,6 +477,7 @@ pub const COMMON_FISH: Item = Item {
     }),
     purchase_properties: PurchaseProperties {
         base_price: 25,
+        base_sell_price: 10,
         ..PurchaseProperties::default()
     },
     ..Item::default()
@@ -469,7 +494,8 @@ pub const TROPICAL_FISH: Item = Item {
         ..ConsumptionProperties::default()
     }),
     purchase_properties: PurchaseProperties {
-        base_price: 20,
+        base_price: 45,
+        base_sell_price: 22,
         ..PurchaseProperties::default()
     },
     ..Item::default()
@@ -487,6 +513,7 @@ pub const GREEN_FISH: Item = Item {
     }),
     purchase_properties: PurchaseProperties {
         base_price: 35,
+        base_sell_price: 15,
         ..PurchaseProperties::default()
     },
     ..Item::default()

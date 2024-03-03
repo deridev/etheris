@@ -151,6 +151,7 @@ impl CommandContext {
     }
 
     pub async fn reply_interaction(&mut self, response: impl Into<Response>) -> anyhow::Result<()> {
+        self.already_replied = true;
         let response = response.into();
 
         self.interaction_client()
@@ -163,8 +164,6 @@ impl CommandContext {
                 },
             )
             .await?;
-
-        self.already_replied = true;
 
         Ok(())
     }
@@ -199,6 +198,14 @@ impl CommandContext {
             .update_response(&self.interaction.token)
             .payload_json(&json)
             .await?)
+    }
+
+    pub async fn delete_reply_message(&self) -> anyhow::Result<()> {
+        self.interaction_client()
+            .delete_response(&self.interaction.token)
+            .await?;
+
+        Ok(())
     }
 
     pub async fn update_message(&mut self, response: impl Into<Response>) -> anyhow::Result<()> {

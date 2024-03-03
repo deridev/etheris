@@ -44,6 +44,7 @@ pub enum Composure {
     #[default]
     Standing,
     OnGround,
+    OnAir(u8),
 }
 
 #[derive(Clone)]
@@ -119,6 +120,7 @@ pub enum EffectKind {
     Frozen,
     Bleeding,
     Paralyzed,
+    Curse,
 
     LowProtection,
 }

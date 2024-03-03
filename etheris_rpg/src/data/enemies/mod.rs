@@ -4,7 +4,7 @@ use etheris_data::{
     SkillKind,
 };
 use once_cell::sync::Lazy;
-use rand::{rngs::StdRng, Rng, SeedableRng};
+use rand::Rng;
 
 use crate::{brain::BrainKind, FighterData};
 
@@ -24,14 +24,15 @@ pub struct EnemyReward {
     pub items: Vec<EnemyRewardItem>,
 }
 
-impl From<EnemyReward> for Reward {
-    fn from(value: EnemyReward) -> Self {
-        let rng = &mut StdRng::from_entropy();
+impl EnemyReward {
+    pub fn to_reward<RNG: Rng>(&self, rng: &mut RNG, player_pl: i64, enemy_pl: i64) -> Reward {
+        let base_orbs = rng.gen_range(self.orbs.0..=self.orbs.1) as i64;
+        let base_xp = rng.gen_range(self.xp.0..=self.xp.1) as i64;
 
-        Self {
-            orbs: rng.gen_range(value.orbs.0..=value.orbs.1),
-            xp: rng.gen_range(value.xp.0..=value.xp.1),
-            items: value
+        Reward {
+            orbs: calculate_orbs_gain(player_pl, enemy_pl, base_orbs) as i32,
+            xp: calculate_xp_gain(player_pl, enemy_pl, base_xp) as i32,
+            items: self
                 .items
                 .iter()
                 .filter(|i| i.probability.generate_random_bool())
@@ -42,6 +43,38 @@ impl From<EnemyReward> for Reward {
                 .collect(),
         }
     }
+}
+
+fn calculate_gain(
+    player_pl: i64,
+    enemy_pl: i64,
+    base_value: i64,
+    multiplier: f64,
+    max_factor: f64,
+) -> i64 {
+    let pl_difference = (player_pl - enemy_pl) as f64;
+
+    let mut reduction_factor = if pl_difference >= 0.0 {
+        // Player is stronger
+        1.0 / (1.0 + multiplier * pl_difference)
+    } else {
+        // Player is weaker
+        1.0 + ((multiplier * 0.98) / 10.0) * pl_difference.abs()
+    };
+
+    if reduction_factor > max_factor {
+        reduction_factor = max_factor;
+    }
+
+    (base_value as f64 * reduction_factor) as i64
+}
+
+fn calculate_xp_gain(player_pl: i64, enemy_pl: i64, base_xp: i64) -> i64 {
+    calculate_gain(player_pl, enemy_pl, base_xp, 0.03, 5.0)
+}
+
+fn calculate_orbs_gain(player_pl: i64, enemy_pl: i64, base_orbs: i64) -> i64 {
+    calculate_gain(player_pl, enemy_pl, base_orbs, 0.3, 2.0)
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]

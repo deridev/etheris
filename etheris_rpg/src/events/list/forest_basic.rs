@@ -6,7 +6,7 @@ pub fn basic_forest_exploration(state: EventBuildState) -> Event {
     Event {
         identifier: "basic_forest_exploration",
         spawn: EventSpawn {
-            weighted_regions: vec![(WorldRegion::Mudland, 6), (WorldRegion::Gloomwood, 6)],
+            weighted_regions: vec![(WorldRegion::Mudland, 10), (WorldRegion::Gloomwood, 10)],
             ..Default::default()
         },
         emoji: Emoji::from_unicode("🗺️"),
@@ -19,7 +19,7 @@ pub fn basic_forest_exploration(state: EventBuildState) -> Event {
                 name: "Procurar Ameaças",
                 emoji: Some(Emoji::from_unicode("⚔️")),
                 consequences: vec![
-                    common::consequence_didnt_find_anything(Probability::new(20)),
+                    common::consequence_didnt_find_anything(Probability::new(5)),
                     Consequence {
                         kind: ConsequenceKind::MultiplePossibleEncounters(get_enemies_by_regions(&[state.character.region])),
                         ..Default::default()

@@ -14,7 +14,7 @@ pub use skill_kind::*;
 mod brain;
 pub use brain::*;
 
-use items::{DefaultItemValue, DefaultItemValues};
+use items::{DefaultItemValue, DefaultItemValues, Item};
 
 #[derive(
     Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, serde::Deserialize, serde::Serialize,
@@ -23,6 +23,52 @@ pub struct ShopItem {
     pub identifier: String,
     pub quantity: i32,
     pub price: i64,
+    pub description: Option<String>,
+    pub sellable_price: Option<i64>,
+}
+
+impl ShopItem {
+    pub fn new(quantity: i32, identifier: impl ToString, price: i64) -> Self {
+        Self {
+            identifier: identifier.to_string(),
+            quantity,
+            price,
+            sellable_price: None,
+            description: None,
+        }
+    }
+
+    pub fn new_item(quantity: i32, item: Item, price_multiplier: f64) -> Self {
+        Self {
+            identifier: item.identifier.to_string(),
+            quantity,
+            price: (item.purchase_properties.base_price as f64 * price_multiplier) as i64,
+            sellable_price: None,
+            description: None,
+        }
+    }
+
+    pub fn new_sellable_item(
+        quantity: i32,
+        item: Item,
+        price_multiplier: f64,
+        sell_multiplier: f64,
+    ) -> Self {
+        Self {
+            identifier: item.identifier.to_string(),
+            quantity,
+            price: (item.purchase_properties.base_price as f64 * price_multiplier) as i64,
+            sellable_price: Some(
+                (item.purchase_properties.base_sell_price as f64 * sell_multiplier) as i64,
+            ),
+            description: None,
+        }
+    }
+
+    pub fn with_description(mut self, description: impl ToString) -> Self {
+        self.description = Some(description.to_string());
+        self
+    }
 }
 
 #[derive(

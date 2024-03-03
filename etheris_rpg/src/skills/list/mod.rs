@@ -38,6 +38,8 @@ use_skill!(final_crucifix);
 use_skill!(resplendent_punch);
 use_skill!(ether_shadow);
 use_skill!(atomic_hollow);
+use_skill!(cursed_blood);
+use_skill!(defensive_jump);
 
 pub static ALL_SKILLS: Lazy<Vec<Box<dyn super::Skill + Send + Sync>>> = Lazy::new(|| {
     SkillKind::list()
@@ -78,5 +80,7 @@ pub fn get_boxed_skill_from_kind(kind: SkillKind) -> Box<dyn super::Skill + Send
         SkillKind::FinalCrucifix => Box::<FinalCrucifix>::default(),
         SkillKind::EtherShadow => Box::<EtherShadow>::default(),
         SkillKind::AtomicHollow => Box::<AtomicHollow>::default(),
+        SkillKind::CursedBlood => Box::<CursedBlood>::default(),
+        SkillKind::DefensiveJump => Box::<DefensiveJump>::default(),
     }
 }

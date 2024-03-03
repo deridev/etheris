@@ -40,9 +40,9 @@ pub async fn learn(mut ctx: CommandContext) -> anyhow::Result<()> {
     let learnable = character
         .learnable_skills
         .iter()
-        .map(|s| get_boxed_skill_from_kind(s.clone()))
         .rev()
         .take(10)
+        .map(|s| get_boxed_skill_from_kind(s.clone()))
         .collect::<Vec<_>>();
 
     let mut buttons = vec![];

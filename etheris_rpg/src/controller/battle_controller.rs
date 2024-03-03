@@ -380,7 +380,6 @@ impl BattleController {
         if !self.should_reinput {
             self.update_turn_history_message().await?;
             self.next_turn().await?;
-            self.battle.next_fighter();
         }
 
         self.should_reinput = false;
@@ -597,6 +596,20 @@ impl BattleController {
             tokio::time::sleep(Duration::from_secs(1)).await;
         }
 
+        let before_message_len = self.current_turn_history.messages.len();
+        if self.battle.fighters_queue.is_empty() {
+            self.battle.cycle_counter += 1;
+            controller_helper::tick_cycle(&self.battle.alive_fighters.clone(), self).await?;
+        }
+
+        // Update the turn message - cycle tick
+        if before_message_len != self.current_turn_history.messages.len() {
+            self.update_turn_history_message().await?;
+            tokio::time::sleep(Duration::from_secs(1)).await;
+        }
+
+        self.battle.next_fighter();
+
         Ok(())
     }
 
@@ -631,7 +644,7 @@ impl BattleController {
                 let is_kick = input == BattleInput::Upkick;
                 let mut api = BattleApi::new(self);
 
-                if !is_kick && api.fighter().composure == Composure::Standing {
+                if !is_kick && api.fighter().composure != Composure::OnGround {
                     if let Some(weapon) = api.fighter().weapon {
                         execute_weapon_attack(api, weapon).await?;
                         return Ok(());
@@ -787,10 +800,16 @@ impl BattleController {
                     return Ok(());
                 };
 
-                let health_regeneration =
-                    math::calculate_health_regeneration(consumption_properties, 1, fighter.pl);
-                let ether_regeneration =
-                    math::calculate_ether_regeneration(consumption_properties, 1, fighter.pl);
+                let health_regeneration = math::calculate_health_regeneration(
+                    consumption_properties,
+                    1,
+                    fighter.health().max,
+                );
+                let ether_regeneration = math::calculate_ether_regeneration(
+                    consumption_properties,
+                    1,
+                    fighter.ether.max,
+                );
 
                 let mut messages = vec![];
                 if health_regeneration > 0 {
@@ -814,6 +833,11 @@ impl BattleController {
                     item.display_name,
                     messages.join(" e ")
                 ));
+
+                self.update_turn_history_message().await?;
+                tokio::time::sleep(Duration::from_secs(1)).await;
+
+                self.should_reinput = true;
             }
         }
 
@@ -929,6 +953,7 @@ impl BattleController {
             match fighter.composure {
                 Composure::Standing => (),
                 Composure::OnGround => displays.push("**No Chão**".to_string()),
+                Composure::OnAir(n) => displays.push(format!("**{n}m No Ar**")),
             }
 
             fighter.effects.sort_by_key(|k| k.kind);
@@ -956,6 +981,9 @@ impl BattleController {
                     }
                     EffectKind::Bleeding => {
                         displays.push(format!("🩸 **Sangramento**: {}%", effect.amount))
+                    }
+                    EffectKind::Curse => {
+                        displays.push(format!("⚫ **Maldição**: {}%", effect.amount))
                     }
 
                     EffectKind::LowProtection => {

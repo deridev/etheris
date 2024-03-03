@@ -4,7 +4,8 @@ use etheris_discord::{bold, twilight_model::user::User, EmbedBuilder};
 use etheris_framework::*;
 
 use crate::{
-    list::get_boxed_skill_from_kind, Battle, BattleController, BattleSettings, FighterData,
+    events::list::prelude::Reward, list::get_boxed_skill_from_kind, Battle, BattleController,
+    BattleSettings, FighterData,
 };
 
 pub async fn prompt_encounter(
@@ -20,6 +21,10 @@ pub async fn prompt_encounter(
     else {
         return Ok(());
     };
+
+    let reward = enemies
+        .iter()
+        .fold(Reward::default(), |acc, x| acc.add(x.drop.clone()));
 
     let enemies_pl = enemies.iter().fold(0, |acc, x| acc + x.power_level());
     let power_diff = (character.pl - enemies_pl) / 2;
@@ -99,6 +104,25 @@ pub async fn prompt_encounter(
                         .collect::<Vec<_>>()
                         .join("`, `")
                 }
+            ),
+        );
+    }
+
+    if !reward.is_empty() {
+        embed = embed.add_inlined_field(
+            "💰 Recompensas:",
+            format!(
+                "{} {} ◎\n{} {} XP\n{}",
+                emojis::ORB,
+                reward.orbs,
+                emojis::XP,
+                reward.xp,
+                reward
+                    .items
+                    .iter()
+                    .map(|i| format!("{} **{}x {}**", i.item.emoji, i.amount, i.item.display_name))
+                    .collect::<Vec<_>>()
+                    .join(", ")
             ),
         );
     }

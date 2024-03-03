@@ -57,15 +57,20 @@ async fn main() {
                 let user_id = Id::new(character.user_id.parse::<u64>().unwrap_or(12345678));
 
                 character.last_refill = DatabaseDateTime::now();
+                if character.stats.vitality.value < 1 {
+                    db.characters().save(character.clone()).await.ok();
+                    continue;
+                }
+
                 character.stats.resistance.value = character.stats.resistance.max;
                 character.stats.vitality.value = character.stats.vitality.max;
                 character.stats.ether.value = character.stats.ether.max;
                 if character.settings.is_notifications_enabled
-                    && character.action_points != character.max_action_points
+                    && character.action_points < character.max_action_points
                 {
+                    character.action_points = character.max_action_points;
                     send_notification(&client_clone, user_id).await.ok();
                 }
-                character.action_points = character.max_action_points;
                 db.characters().save(character.clone()).await.ok();
             }
         }
