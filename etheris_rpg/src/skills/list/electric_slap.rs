@@ -9,7 +9,7 @@ impl Skill for ElectricSlap {
         SkillKind::ElectricSlap
     }
 
-    fn data(&self) -> SkillData {
+    fn data(&self, _fighter: &Fighter) -> SkillData {
         SkillData {
             identifier: "tapa_elétrico",
             name: "Tapa Elétrico",
@@ -24,9 +24,9 @@ impl Skill for ElectricSlap {
         let fighter = api.fighter().clone();
         let target = api.target().clone();
 
-        let damage = api.rng().gen_range(13..=17);
+        let damage = api.rng().gen_range(13..=20);
 
-        let multiplier = (fighter.strength_multiplier() + fighter.intelligence_multiplier()) / 2.0;
+        let multiplier = fighter.mixed_multiplier(0.6, 0.5);
         let damage = ((damage as f32) * multiplier) as i32;
 
         let damage = api.apply_damage(
@@ -37,7 +37,7 @@ impl Skill for ElectricSlap {
                 amount: damage,
                 balance_effectiveness: 15,
                 accuracy: 80,
-                effect: Some(Effect::new(EffectKind::Shocked, 45, fighter.index))
+                effect: Some(Effect::new(EffectKind::Shocked, 35, fighter.index))
             },
         ).await;
 

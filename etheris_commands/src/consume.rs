@@ -1,7 +1,5 @@
-// use anyhow::bail;
-use etheris_data::items::get_item;
+use etheris_data::items::{get_item, Item};
 use etheris_util::math;
-// use rand::{Rng, SeedableRng};
 
 use crate::prelude::*;
 
@@ -46,6 +44,11 @@ pub async fn consume(
             .add_emoji_prefix(emojis::ERROR),
         )
         .await?;
+        return Ok(());
+    }
+
+    if item.has_consumption_function {
+        special_consumption_function(ctx, character, item).await?;
         return Ok(());
     }
 
@@ -97,6 +100,54 @@ pub async fn consume(
         .add_emoji_prefix(format!("😋{}", item.emoji)),
     )
     .await?;
+
+    Ok(())
+}
+
+async fn special_consumption_function(
+    mut ctx: CommandContext,
+    mut character: CharacterModel,
+    item: Item,
+) -> anyhow::Result<()> {
+    let author = ctx.author().await?;
+
+    match item.identifier {
+        "intelligence_crystal" => {
+            character.intelligence_xp += 500;
+            ctx.reply(
+                Response::new_user_reply(&author, "você consumiu um cristal da inteligência e ganhou **500 XP**! Estude uma vez e sinta o conhecimento expandir.")
+                .add_emoji_prefix(item.emoji),
+            ).await?;
+        }
+        "invigorating_crystal" => {
+            if character.action_points < character.max_action_points {
+                character.action_points = character.max_action_points;
+            }
+
+            character.stats.resistance.value = character.stats.resistance.max;
+            character.stats.vitality.value = character.stats.vitality.max;
+            character.stats.ether.value = character.stats.ether.max;
+            ctx.reply(
+                Response::new_user_reply(
+                    &author,
+                    "você consumiu um cristal revigorante e entrou no seu potencial máximo!",
+                )
+                .add_emoji_prefix(item.emoji),
+            )
+            .await?;
+        }
+        _ => {
+            ctx.reply(
+                Response::new_user_reply(&author, "esse item não pode ser utilizado!.")
+                    .add_emoji_prefix(emojis::ERROR),
+            )
+            .await?;
+            return Ok(());
+        }
+    }
+
+    character.remove_item(item, 1);
+    ctx.db().characters().save(character).await?;
 
     Ok(())
 }

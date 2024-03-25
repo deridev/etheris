@@ -8,7 +8,7 @@ pub async fn daily(mut ctx: CommandContext) -> anyhow::Result<()> {
     verify_user_cooldown!(ctx, author, "DAILY");
     ctx.db()
         .cooldowns()
-        .create_cooldown(author.id, "DAILY", chrono::Duration::hours(12))
+        .create_cooldown(author.id, "DAILY", chrono::Duration::try_hours(12).unwrap())
         .await?;
 
     let mut character = parse_user_character!(ctx, author);

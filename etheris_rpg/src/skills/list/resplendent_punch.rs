@@ -9,11 +9,11 @@ impl Skill for ResplendentPunch {
         SkillKind::ResplendentPunch
     }
 
-    fn data(&self) -> SkillData {
+    fn data(&self, _fighter: &Fighter) -> SkillData {
         SkillData {
             identifier: "resplendent_punch",
             name: "Soco Resplandecente",
-            description: "Ataca com um soco imbuído de muito ether, mas com 50% de chance de acertar.",
+            description: "Ataca com um soco imbuído de muito ether, mas com 50% de chance de acertar. Se acertar, o inimigo não poderá regenerar ether por 4 turnos.",
             explanation: "Utiliza o mesmo princípio do Soco Imbuído, mas é intensificiado pela metaconsciência do ether por ter uma condição de uso (baixa chance de acerto), tornando o ether mais poderoso.",
             complexity: SkillComplexity::Normal,
             use_cost: SkillCost { ether: 30 },
@@ -26,7 +26,7 @@ impl Skill for ResplendentPunch {
 
         let critical = Probability::new(10).generate_random_bool();
 
-        let damage = api.rng().gen_range(if critical { 25..=30 } else { 20..=25 });
+        let damage = api.rng().gen_range(if critical { 30..=40 } else { 25..=30 });
 
         let multiplier = (fighter.strength_multiplier() + fighter.intelligence_multiplier()) / 2.0;
         let damage = ((damage as f32) * multiplier) as i32;
@@ -38,6 +38,7 @@ impl Skill for ResplendentPunch {
                 amount: damage,
                 balance_effectiveness: if critical { 20 } else { 10 },
                 accuracy: if critical { 60 } else { 50 },
+                effect: Some(Effect::new(EffectKind::Exhausted, 3, fighter.index)),
                 ..Default::default()
             },
         ).await;
@@ -70,11 +71,11 @@ impl Skill for ResplendentPunch {
 
         if target.resistance.value <= 0 && !target.flags.contains(FighterFlags::ASKED_TO_RISK_LIFE)
         {
-            target.ether.value = (target.ether.value as f32 * 0.8) as i32;
+            target.ether.value = (target.ether.value as f32 * 0.6) as i32;
 
             let target_name = target.name.clone();
             api.emit_random_message(&[
-                format!("A força do soco imbuído foi tanta que **{}** está semi-inconsciente e um pouco do seu ether vazou.", target_name),
+                format!("A força do soco resplandecente foi tanta que **{}** está semi-inconsciente e um muito do seu ether vazou.", target_name),
                 format!("**{}** recebeu um soco tão forte que seu ether vazou.", target_name),
             ]);
         }

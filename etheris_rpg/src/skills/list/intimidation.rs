@@ -9,7 +9,7 @@ impl Skill for Intimidation {
         SkillKind::Intimidation
     }
 
-    fn data(&self) -> SkillData {
+    fn data(&self, _fighter: &Fighter) -> SkillData {
         SkillData {
             identifier: "intimidation",
             name: "Intimidação",
@@ -34,7 +34,7 @@ impl Skill for Intimidation {
             fighter.balance = fighter.balance.saturating_sub(5);
         }
 
-        api.fighter_mut().defense = 2;
+        api.fighter_mut().defense += 2;
 
         format!("**{}** intimidou todos os inimigos e defendeu!", api.fighter().name);
 

@@ -40,6 +40,10 @@ use_skill!(ether_shadow);
 use_skill!(atomic_hollow);
 use_skill!(cursed_blood);
 use_skill!(defensive_jump);
+use_skill!(blood_theft);
+use_skill!(blood_spear);
+use_skill!(overcoming);
+use_skill!(hakikotenchou);
 
 pub static ALL_SKILLS: Lazy<Vec<Box<dyn super::Skill + Send + Sync>>> = Lazy::new(|| {
     SkillKind::list()
@@ -82,5 +86,9 @@ pub fn get_boxed_skill_from_kind(kind: SkillKind) -> Box<dyn super::Skill + Send
         SkillKind::AtomicHollow => Box::<AtomicHollow>::default(),
         SkillKind::CursedBlood => Box::<CursedBlood>::default(),
         SkillKind::DefensiveJump => Box::<DefensiveJump>::default(),
+        SkillKind::BloodTheft => Box::<BloodTheft>::default(),
+        SkillKind::BloodSpear => Box::<BloodSpear>::default(),
+        SkillKind::Overcoming => Box::<Overcoming>::default(),
+        SkillKind::Hakikotenchou => Box::<Hakikotenchou>::default(),
     }
 }

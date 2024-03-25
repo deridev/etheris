@@ -55,6 +55,11 @@ impl CharacterCommands {
         Ok(())
     }
 
+    pub fn remove_from_cache(&self, character: &CharacterModel) {
+        CACHE_ID.remove(&character.id);
+        CACHE_USER_ID.remove(&character.user_id);
+    }
+
     async fn get<K: Eq + Hash>(
         &self,
         cache: &Cache<K, CharacterModel>,

@@ -11,7 +11,9 @@ use rand::{
     SeedableRng,
 };
 
-use crate::{common::DamageSpecifier, Fighter, FighterData, FighterFlags, FighterIndex};
+use crate::{
+    common::DamageSpecifier, EffectKind, Fighter, FighterData, FighterFlags, FighterIndex,
+};
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum BattleError {
@@ -310,13 +312,18 @@ impl Battle {
                 || fighter
                     .flags
                     .contains(FighterFlags::CANNOT_REGEN_ETHER_OVERLOAD)
+                || fighter.has_effect(EffectKind::Exhausted)
             {
                 0
             } else {
                 (fighter.ether.max as f32 * 0.05) as i32
             };
 
-            fighter.overload = fighter.overload.sub(0.3).clamp(0.0, 1000.0);
+            fighter.overload = if ether_rec == 0 {
+                fighter.overload
+            } else {
+                fighter.overload.sub(0.3).clamp(0.0, 1000.0)
+            };
 
             fighter.balance = fighter.balance.add(3).min(100);
             fighter.defense = fighter.defense.saturating_sub(1);

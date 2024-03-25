@@ -11,7 +11,7 @@ impl Skill for ParalyzingBet {
         SkillKind::ParalyzingBet
     }
 
-    fn data(&self) -> SkillData {
+    fn data(&self, _fighter: &Fighter) -> SkillData {
         SkillData {
             identifier: "paralyzing_bet",
             name: "Aposta Paralisante",
@@ -24,7 +24,7 @@ impl Skill for ParalyzingBet {
 
     fn ai_chance_to_pick(&self, api: BattleApi<'_>) -> Probability {
         if api.fighter().has_personality(Personality::Insanity) {
-            Probability::new(60)
+            Probability::new(65)
         } else {
             Probability::new(25)
         }

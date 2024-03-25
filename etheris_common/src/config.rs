@@ -1,7 +1,7 @@
 use std::time::Duration;
 
 pub const BOT_ID: &str = "1195306808860999680";
-pub const DEBUG_GUILD_ID: u64 = 562364424002994189;
+pub const DEBUG_GUILD_ID: u64 = 1213951940124479498;
 
 pub const DEBUG: bool = true;
 

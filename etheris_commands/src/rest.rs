@@ -29,7 +29,11 @@ pub async fn rest(mut ctx: CommandContext) -> anyhow::Result<()> {
     verify_user_cooldown!(ctx, author, "REST");
     ctx.db()
         .cooldowns()
-        .create_cooldown(author.id, "REST", chrono::Duration::minutes(10))
+        .create_cooldown(
+            author.id,
+            "REST",
+            chrono::Duration::try_minutes(10).unwrap(),
+        )
         .await?;
 
     let mut character = parse_user_character!(ctx, author);

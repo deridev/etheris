@@ -9,7 +9,7 @@ impl Skill for FirePunch {
         SkillKind::FirePunch
     }
 
-    fn data(&self) -> SkillData {
+    fn data(&self, _fighter: &Fighter) -> SkillData {
         SkillData {
             identifier: "fire_punch",
             name: "Soco em Chamas",
@@ -24,7 +24,7 @@ impl Skill for FirePunch {
         let fighter = api.fighter().clone();
         let target = api.target().clone();
 
-        let damage = api.rng().gen_range(20..=25);
+        let damage = api.rng().gen_range(20..=30);
         let self_damage = api.rng().gen_range(3..=5);
 
         let multiplier = fighter.mixed_multiplier(0.7, 0.4);

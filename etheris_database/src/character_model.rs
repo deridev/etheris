@@ -1,4 +1,9 @@
-use std::{collections::HashSet, mem::discriminant, ops::Add};
+use std::{
+    collections::HashSet,
+    hash::Hash,
+    mem::discriminant,
+    ops::{Add, Sub},
+};
 
 use chrono::Duration;
 use etheris_common::{clear_string, config, Attribute};
@@ -173,6 +178,7 @@ pub struct CharacterModel {
     pub flags: HashSet<CharacterFlag>,
     pub orbs: i64,
 
+    pub tags: HashSet<String>,
     pub inventory: Vec<InventoryItem>,
     pub battle_inventory: Vec<InventoryItem>,
     pub personalities: Vec<Personality>,
@@ -201,6 +207,7 @@ pub struct CharacterModel {
     pub knowledge_xp: u32,
     pub knowledge_points: u32,
 
+    pub karma: i32,
     pub life_expectancy: i32,
     pub alive: bool,
     pub death_info: Option<DeathInfo>,
@@ -245,6 +252,7 @@ impl CharacterModel {
             alive: true,
             death_info: None,
 
+            tags: HashSet::new(),
             inventory: vec![],
             battle_inventory: vec![],
 
@@ -257,6 +265,7 @@ impl CharacterModel {
             region: WorldRegion::Greenagis,
             weapon: None,
 
+            karma: 0,
             action_points: 30, // Start with a lot of action points to keep engagement at the start
             max_action_points: 10,
 
@@ -304,6 +313,26 @@ impl CharacterModel {
 
     pub fn remove_flag(&mut self, flag: CharacterFlag) {
         self.flags.remove(&flag);
+    }
+
+    pub fn has_tag(&self, tag: &str) -> bool {
+        self.tags.contains(tag)
+    }
+
+    pub fn insert_tag(&mut self, tag: String) {
+        self.tags.insert(tag);
+    }
+
+    pub fn remove_tag(&mut self, tag: &str) {
+        self.tags.remove(tag);
+    }
+
+    pub fn add_karma(&mut self, amount: i32) {
+        self.karma = (self.karma + amount).clamp(-1000, 1000);
+    }
+
+    pub fn remove_karma(&mut self, amount: i32) {
+        self.karma = (self.karma - amount).clamp(-1000, 1000);
     }
 
     pub fn heal(&mut self, amount: i32) {
@@ -424,6 +453,17 @@ impl CharacterModel {
 
     pub fn remove_orbs(&mut self, orbs: i64) {
         self.orbs -= orbs;
+    }
+
+    pub fn take_damage(&mut self, damage: i32) {
+        let vital_damage = damage - self.stats.resistance.value;
+
+        if vital_damage > 0 {
+            self.stats.resistance.value = 0;
+            self.stats.vitality.value = self.stats.vitality.value.sub(vital_damage).max(0);
+        } else {
+            self.stats.resistance.value = self.stats.resistance.value.sub(damage).max(0);
+        }
     }
 
     pub fn get_inventory_item(&self, item: &Item) -> Option<&InventoryItem> {

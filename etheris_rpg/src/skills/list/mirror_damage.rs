@@ -13,7 +13,7 @@ impl Skill for MirrorDamage {
         SkillKind::MirrorDamage
     }
 
-    fn data(&self) -> SkillData {
+    fn data(&self, _fighter: &Fighter) -> SkillData {
         let ether_cost = match self.accumulated_damage {
             0 => 0,
             1..=10 => 5,
@@ -37,8 +37,8 @@ impl Skill for MirrorDamage {
         self.accumulated_damage > 0 && self.default_can_use(api)
     }
 
-    fn display(&self) -> SkillDisplay {
-        let mut display = self.default_display();
+    fn display(&self, fighter: &Fighter) -> SkillDisplay {
+        let mut display = self.default_display(fighter);
 
         display.sub_header.push_str(&format!("\n**Acumulado**: {} dano", self.accumulated_damage));
 
@@ -57,7 +57,7 @@ impl Skill for MirrorDamage {
 
     async fn passive_fighter_tick(&mut self, mut api: BattleApi<'_>) -> SkillResult<()> {
         if self.accumulated_damage > 0 && api.fighter().ether.value <= 0 {
-            api.emit_message(format!("***{}** ficou sem ether e perdeu o dano acumulado na habilidade **{}***", api.fighter().name, self.data().name));
+            api.emit_message(format!("***{}** ficou sem ether e perdeu o dano acumulado na habilidade **{}***", api.fighter().name, self.data(api.fighter()).name));
             self.accumulated_damage = 0;
         }
 
@@ -66,8 +66,8 @@ impl Skill for MirrorDamage {
 
     async fn passive_on_damage(&mut self, mut api: BattleApi<'_>, damage: DamageSpecifier) -> SkillResult<()> {
         let damage = match damage.kind {
-            DamageKind::Physical | DamageKind::PhysicalCut => (damage.amount as f32 * 0.25) as i32,
-            DamageKind::SpecialPhysical => (damage.amount as f32 * 0.2) as i32,
+            DamageKind::Physical | DamageKind::PhysicalCut => (damage.amount as f32 * 0.6) as i32,
+            DamageKind::SpecialPhysical => (damage.amount as f32 * 0.5) as i32,
             _ => 0
         };
 
@@ -75,12 +75,12 @@ impl Skill for MirrorDamage {
             return Ok(());
         }
 
-        self.accumulated_damage = self.accumulated_damage.add(damage).min(100);
+        self.accumulated_damage = self.accumulated_damage.add(damage).min(1000);
 
-        if self.accumulated_damage == 100 {
-            api.emit_message(format!("***{}** acumulou o dano máximo na habilidade **{}***", api.fighter().name, self.data().name));
+        if self.accumulated_damage == 1000 {
+            api.emit_message(format!("***{}** acumulou o dano máximo na habilidade **{}***", api.fighter().name, self.data(api.fighter()).name));
         } else {
-            api.emit_message(format!("***{}** acumulou **{damage} dano** na habilidade **{}***", api.fighter().name, self.data().name));
+            api.emit_message(format!("***{}** acumulou **{damage} dano** na habilidade **{}***", api.fighter().name, self.data(api.fighter()).name));
         }
         
         Ok(())

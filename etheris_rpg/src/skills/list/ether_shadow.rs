@@ -15,7 +15,7 @@ impl Skill for EtherShadow {
         SkillKind::EtherShadow
     }
 
-    fn data(&self) -> SkillData {
+    fn data(&self, _fighter: &Fighter) -> SkillData {
         SkillData {
             identifier: "ether_shadow",
             name: "Sombra de Ether",

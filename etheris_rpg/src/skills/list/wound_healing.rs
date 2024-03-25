@@ -11,7 +11,7 @@ impl Skill for WoundHealing {
         SkillKind::WoundHealing
     }
 
-    fn data(&self) -> SkillData {
+    fn data(&self, _fighter: &Fighter) -> SkillData {
         SkillData {
             identifier: "wound_healing",
             name: "Cicatrização",
@@ -41,7 +41,7 @@ impl Skill for WoundHealing {
             return Ok(());
         };
         
-        let cure = api.rng().gen_range(8.0..=10.0);
+        let cure = api.rng().gen_range(14.0..=20.0);
         let cure = 1 + (cure * (api.fighter().intelligence_multiplier() * 0.8)) as i32;
 
         {

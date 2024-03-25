@@ -27,8 +27,8 @@ pub const SHOVEL: Item = Item {
     emoji: Emoji::from_emote(Some("shovel"), 1212034121958686822),
     tags: TOOL_TAGS,
     purchase_properties: PurchaseProperties {
-        base_price: 100,
-        base_sell_price: 50,
+        base_price: 60,
+        base_sell_price: 40,
         ..PurchaseProperties::default()
     },
     default_values: DefaultItemValues {
@@ -43,8 +43,8 @@ pub const PICKAXE: Item = Item {
     emoji: Emoji::from_emote(Some("pickaxe"), 1212036853117489213),
     tags: TOOL_TAGS,
     purchase_properties: PurchaseProperties {
-        base_price: 350,
-        base_sell_price: 150,
+        base_price: 250,
+        base_sell_price: 100,
         ..PurchaseProperties::default()
     },
     default_values: DefaultItemValues {
@@ -59,7 +59,7 @@ pub const HAMMER: Item = Item {
     emoji: Emoji::from_emote(Some("hammer"), 1212390855705362465),
     tags: TOOL_TAGS,
     purchase_properties: PurchaseProperties {
-        base_price: 500,
+        base_price: 400,
         base_sell_price: 200,
         ..PurchaseProperties::default()
     },
@@ -75,7 +75,7 @@ pub const AXE: Item = Item {
     emoji: Emoji::from_emote(Some("axe"), 1212806414402060419),
     tags: TOOL_TAGS,
     purchase_properties: PurchaseProperties {
-        base_price: 300,
+        base_price: 250,
         base_sell_price: 100,
         ..PurchaseProperties::default()
     },

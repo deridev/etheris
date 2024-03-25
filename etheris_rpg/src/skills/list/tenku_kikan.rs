@@ -21,7 +21,7 @@ impl Skill for TenkuKikan {
         SkillKind::TenkuKikan(self.soul.clone())
     }
 
-    fn data(&self) -> SkillData {
+    fn data(&self, _fighter: &Fighter) -> SkillData {
         SkillData {
             identifier: "tenku_kikan",
             name: "Tenkū Kikan",
@@ -40,8 +40,8 @@ impl Skill for TenkuKikan {
         Probability::new(70)
     }
 
-    fn display(&self) -> SkillDisplay {
-        let mut display = self.default_display();
+    fn display(&self, fighter: &Fighter) -> SkillDisplay {
+        let mut display = self.default_display(fighter);
 
         if let Some(soul) = &self.soul {
             display.sub_header.push_str(&format!("\n**Alma**: {}", soul.name));
@@ -53,7 +53,7 @@ impl Skill for TenkuKikan {
     async fn passive_on_kill(&mut self, mut api: BattleApi<'_>, killed: FighterIndex) -> SkillResult<()> {
         let killed = api.battle().get_fighter(killed);
         if self.soul.is_some() {
-            api.defer_message(format!("**{}** não conseguiu armazenar a alma de **{}** no {} pois já há uma alma armazenada!", api.fighter().name, killed.name, self.data().name));
+            api.defer_message(format!("**{}** não conseguiu armazenar a alma de **{}** no {} pois já há uma alma armazenada!", api.fighter().name, killed.name, self.data(api.fighter()).name));
             return Ok(());
         }
 
@@ -75,7 +75,7 @@ impl Skill for TenkuKikan {
             skills,
         };
 
-        api.defer_message(format!("**{}** usou **{}** e armazenou a alma de **{}**!", api.fighter().name, self.data().name, soul.name));
+        api.defer_message(format!("**{}** usou **{}** e armazenou a alma de **{}**!", api.fighter().name, self.data(api.fighter()).name, soul.name));
 
         self.soul = Some(soul);
 
@@ -119,7 +119,7 @@ impl Skill for TenkuKikan {
             skills: soul.skills,
         });
 
-        api.add_overload(api.fighter_index, 8.0).await;
+        api.add_overload(api.fighter_index, 15.0).await;
 
         Ok(())
     }

@@ -60,6 +60,11 @@ impl Modifiers {
         self.list.retain(|m| m.kind != modifier.kind);
     }
 
+    pub fn get_mut_with_tag(&mut self, tag: impl ToString) -> Option<&mut Modifier> {
+        let tag = tag.to_string();
+        self.list.iter_mut().find(|m| m.tags.contains(&tag))
+    }
+
     pub fn overall_dmg_multiplier(&self) -> f32 {
         let mut overall_multiplier = 1.0;
         for modifier in self.list.iter() {

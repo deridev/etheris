@@ -5,7 +5,7 @@ use rand::Rng;
 use crate::list::prelude::*;
 
 async fn weapon_stick(mut api: BattleApi<'_>) -> anyhow::Result<()> {
-    let damage = api.rng().gen_range(3..=9);
+    let damage = api.rng().gen_range(8..=16);
     let damage = (damage as f32 * api.fighter().weapon_multiplier()) as i32;
 
     let damage = api
@@ -33,7 +33,7 @@ async fn weapon_stick(mut api: BattleApi<'_>) -> anyhow::Result<()> {
 }
 
 async fn weapon_knife(mut api: BattleApi<'_>) -> anyhow::Result<()> {
-    let damage = api.rng().gen_range(4..=9);
+    let damage = api.rng().gen_range(10..=18);
     let damage = (damage as f32 * api.fighter().weapon_multiplier()) as i32;
 
     let damage = api
@@ -61,8 +61,8 @@ async fn weapon_knife(mut api: BattleApi<'_>) -> anyhow::Result<()> {
 }
 
 async fn weapon_katana(mut api: BattleApi<'_>) -> anyhow::Result<()> {
-    let damage_1 = api.rng().gen_range(2..=5);
-    let damage_2 = api.rng().gen_range(2..=5);
+    let damage_1 = api.rng().gen_range(4..=12);
+    let damage_2 = api.rng().gen_range(4..=12);
 
     let damage_1 = (damage_1 as f32 * api.fighter().weapon_multiplier()) as i32;
     let damage_2 = (damage_2 as f32 * api.fighter().weapon_multiplier()) as i32;
@@ -106,7 +106,7 @@ async fn weapon_katana(mut api: BattleApi<'_>) -> anyhow::Result<()> {
 }
 
 async fn weapon_spear(mut api: BattleApi<'_>) -> anyhow::Result<()> {
-    let damage = api.rng().gen_range(3..=13);
+    let damage = api.rng().gen_range(12..=20);
     let damage = (damage as f32 * api.fighter().weapon_multiplier()) as i32;
 
     let damage = api
@@ -134,7 +134,7 @@ async fn weapon_spear(mut api: BattleApi<'_>) -> anyhow::Result<()> {
 }
 
 async fn weapon_bat(mut api: BattleApi<'_>) -> anyhow::Result<()> {
-    let damage = api.rng().gen_range(5..=13);
+    let damage = api.rng().gen_range(15..=18);
     let damage = (damage as f32 * api.fighter().weapon_multiplier()) as i32;
 
     let effect = if Probability::new(10).generate_random_bool() {
@@ -188,7 +188,7 @@ async fn weapon_bat(mut api: BattleApi<'_>) -> anyhow::Result<()> {
 }
 
 async fn weapon_umbrella(mut api: BattleApi<'_>) -> anyhow::Result<()> {
-    let damage = api.rng().gen_range(5..=10);
+    let damage = api.rng().gen_range(10..=18);
     let damage = (damage as f32 * api.fighter().weapon_multiplier()) as i32;
 
     let effect = if Probability::new(40).generate_random_bool() {

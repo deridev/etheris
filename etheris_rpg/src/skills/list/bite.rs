@@ -9,7 +9,7 @@ impl Skill for Bite {
         SkillKind::Bite
     }
 
-    fn data(&self) -> SkillData {
+    fn data(&self, _fighter: &Fighter) -> SkillData {
         SkillData {
             identifier: "bite",
             name: "Mordida",
@@ -24,7 +24,7 @@ impl Skill for Bite {
         let fighter = api.fighter().clone();
         let target = api.target().clone();
 
-        let damage = api.rng().gen_range(2..=5);
+        let damage = api.rng().gen_range(5..=10);
 
         let multiplier = fighter.mixed_multiplier(0.7, 0.4);
         let damage = ((damage as f32) * multiplier) as i32;

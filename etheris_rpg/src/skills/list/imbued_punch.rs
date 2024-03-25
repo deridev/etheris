@@ -9,7 +9,7 @@ impl Skill for ImbuedPunch {
         SkillKind::ImbuedPunch
     }
 
-    fn data(&self) -> SkillData {
+    fn data(&self, _fighter: &Fighter) -> SkillData {
         SkillData {
             identifier: "imbued_punch",
             name: "Soco Imbuído",
@@ -24,11 +24,11 @@ impl Skill for ImbuedPunch {
         let fighter = api.fighter().clone();
         let target = api.target().clone();
 
-        let critical = Probability::new(10).generate_random_bool();
+        let critical = Probability::new(5).generate_random_bool();
 
-        let damage = api.rng().gen_range(if critical { 15..=20 } else { 10..=15 });
+        let damage = api.rng().gen_range(if critical { 25..=30 } else { 15..=20 });
 
-        let multiplier = (fighter.strength_multiplier() + fighter.intelligence_multiplier()) / 2.0;
+        let multiplier = fighter.mixed_multiplier(0.7, 0.3);
         let damage = ((damage as f32) * multiplier) as i32;
 
         let damage = api.apply_damage(
@@ -42,7 +42,7 @@ impl Skill for ImbuedPunch {
             },
         ).await;
 
-            if critical {
+        if critical {
             api.emit_random_message(&[
                 format!(
                     "**{}** deu um soco imbuído na cara de **{}** que causou **{damage}**!",

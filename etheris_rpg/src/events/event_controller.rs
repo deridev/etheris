@@ -27,7 +27,7 @@ use crate::{
     FighterData,
 };
 
-use self::list::{EventBuildState, ALL_EVENTS};
+use self::list::{prelude::get_enemies_by_regions, EventBuildState, ALL_EVENTS};
 
 use super::*;
 
@@ -149,12 +149,20 @@ impl EventController {
         let pl_range = (character.pl as f64 * 0.9)..(character.pl as f64 * 1.1);
 
         match condition {
+            Condition::None => true,
             Condition::Not(condition) => !self.compute_condition(character, condition),
+            Condition::Or(a, b) => {
+                self.compute_condition(character, a) || self.compute_condition(character, b)
+            }
+            Condition::HasOrbs(orbs) => character.orbs >= *orbs,
             Condition::HasItem(item, amount) => character.has_item(item, *amount),
+            Condition::HasTag(tag) => character.has_tag(tag),
+            Condition::HasPersonality(personality) => character.personalities.contains(personality),
             Condition::SimilarPowerTo(enemy) => pl_range.contains(&(enemy.power_level() as f64)),
             Condition::StrongerThan(enemy) => character.pl > enemy.power_level(),
             Condition::WeakerThan(enemy) => character.pl < enemy.power_level(),
             Condition::IsFlagSet(flag) => self.flags.contains(*flag),
+            Condition::Probability(probability) => probability.generate_random_bool(),
         }
     }
 
@@ -171,11 +179,16 @@ impl EventController {
 
         let message = match event.message {
             EventMessage::Single(message) => message.to_string(),
+            EventMessage::SingleString(message) => message,
             EventMessage::Multiple(messages) => messages
                 .choose(&mut StdRng::from_entropy())
                 .copied()
                 .unwrap_or("TEXTO INVÁLIDO")
                 .to_string(),
+            EventMessage::MultipleString(messages) => messages
+                .choose(&mut StdRng::from_entropy())
+                .cloned()
+                .unwrap_or(String::from("TEXTO INVÁLIDO")),
             EventMessage::Conditional(messages) => messages
                 .iter()
                 .filter(|m| self.compute_condition(&character, &m.0))
@@ -185,6 +198,10 @@ impl EventController {
                 .cloned()
                 .unwrap_or("TEXTO INVÁLIDO OU NENHUMA CONDIÇÃO TEXTUAL CUMPRIDA.".to_string()),
         };
+
+        let message = message.replace("[REGION]", &format!("{}", character.region));
+        let message = message.replace("[NAME]", &character.name);
+
         let response = Response::new_user_reply(&self.user, message).add_emoji_prefix(event.emoji);
 
         if event.actions.is_empty() {
@@ -209,8 +226,8 @@ impl EventController {
             }
 
             let mut button = ButtonBuilder::new()
-                .set_custom_id(action.name)
-                .set_label(action.name);
+                .set_custom_id(&action.name)
+                .set_label(&action.name);
 
             if action
                 .conditions
@@ -276,8 +293,12 @@ impl EventController {
 
         self.execute_one_of_multiple_consequences(&character, action.consequences.clone())
             .await?;
-        self.execute_one_of_multiple_consequences(&character, action.extra_consequences.clone())
-            .await?;
+
+        for extra in action.extra_consequences.clone() {
+            if extra.probability.generate_random_bool() {
+                self.execute_single_consequence(extra).await?;
+            }
+        }
 
         Ok(())
     }
@@ -319,27 +340,148 @@ impl EventController {
                 }),
         };
 
-        self.execute_single_consequence(consequence.clone()).await
+        self.execute_single_consequence(consequence.clone()).await?;
+
+        for extra in consequence.extra_consequences.clone() {
+            if extra.probability.generate_random_bool() {
+                self.execute_single_consequence(extra).await?;
+            }
+        }
+
+        Ok(())
     }
 
-    async fn execute_single_consequence(&mut self, consequence: Consequence) -> anyhow::Result<()> {
-        match consequence.kind {
-            ConsequenceKind::Event(event) => {
-                let Some(character) = self
-                    .ctx
-                    .db()
-                    .characters()
-                    .get_by_user(&self.user.id.to_string())
-                    .await?
-                else {
-                    return Ok(());
-                };
+    async fn execute_single_consequence(
+        &mut self,
+        mut consequence: Consequence,
+    ) -> anyhow::Result<()> {
+        let Some(mut character) = self
+            .ctx
+            .db()
+            .characters()
+            .get_by_user(&self.user.id.to_string())
+            .await?
+        else {
+            return Ok(());
+        };
 
+        if consequence.kind == ConsequenceKind::FindARegionEnemy {
+            consequence.kind =
+                ConsequenceKind::MultiplePossibleEncounters(get_enemies_by_regions(&[
+                    character.region
+                ]));
+        }
+
+        match consequence.kind {
+            ConsequenceKind::FindARegionEnemy => unreachable!(),
+            ConsequenceKind::Message { message, emoji } => {
+                let mut response = Response::new_user_reply(&self.user, message);
+                if let Some(emoji) = emoji {
+                    response = response.add_emoji_prefix(emoji);
+                }
+
+                self.ctx.send(response).await?;
+            }
+            ConsequenceKind::Event(event) => {
                 self.event_queue
                     .push_front(event(EventBuildState::new(character)));
             }
             ConsequenceKind::Action(action) => {
                 self.execute_action(action).await?;
+            }
+            ConsequenceKind::Battle(battle) => {
+                let main_enemy = battle.enemies.first().unwrap().clone();
+
+                let player_pl = character.pl;
+
+                let mut rng = StdRng::from_entropy();
+                let enemies = battle.enemies;
+                let enemies_fighter_data = enemies
+                    .iter()
+                    .map(|e| {
+                        FighterData::new_from_enemy(
+                            1,
+                            e.drop.to_reward(&mut rng, player_pl, e.power_level()),
+                            e.clone(),
+                        )
+                    })
+                    .collect::<Vec<_>>();
+
+                let result = if battle.prompt {
+                    encounter::prompt_encounter(
+                        &mut self.ctx,
+                        self.user.clone(),
+                        enemies_fighter_data,
+                    )
+                    .await?
+                } else {
+                    let mut fighters = vec![FighterData::new_from_character(
+                        0,
+                        &character,
+                        self.user.clone(),
+                        Default::default(),
+                    )];
+                    fighters.extend_from_slice(&enemies_fighter_data);
+
+                    let battle = Battle::new(
+                        character.region,
+                        BattleSettings {
+                            casual: false,
+                            has_consequences: true,
+                            is_risking_life_allowed: true,
+                            max_intruders: 2,
+                        },
+                        fighters,
+                    )?;
+
+                    let mut controller = BattleController::new(battle, self.ctx.clone());
+                    controller.run().await?
+                };
+
+                let all_fighters = result
+                    .winners
+                    .iter()
+                    .chain(result.losers.iter())
+                    .cloned()
+                    .collect::<Vec<_>>();
+                let user_fighter_index = all_fighters
+                    .iter()
+                    .find(|f| f.user.as_ref().map(|u| u.id) == Some(self.user.id))
+                    .unwrap()
+                    .index;
+
+                let won = result.winners.iter().any(|w| w.index == user_fighter_index);
+                let is_alive = all_fighters
+                    .iter()
+                    .find(|f| f.index == user_fighter_index)
+                    .unwrap()
+                    .killed_by
+                    .is_none();
+
+                let killed = result
+                    .losers
+                    .iter()
+                    .any(|w| w.name == main_enemy.name && w.killed_by == Some(user_fighter_index));
+
+                if !won {
+                    if !is_alive {
+                        if let Some(on_lose_kill_event) = battle.on_lose_die_event {
+                            self.event_queue
+                                .push_front(on_lose_kill_event(EventBuildState::new(character)));
+                        }
+                    } else if let Some(on_lose_knockout_event) = battle.on_lose_knockout_event {
+                        self.event_queue
+                            .push_front(on_lose_knockout_event(EventBuildState::new(character)));
+                    }
+                } else if killed {
+                    if let Some(on_win_kill_event) = battle.on_win_kill_event {
+                        self.event_queue
+                            .push_front(on_win_kill_event(EventBuildState::new(character)));
+                    }
+                } else if let Some(on_win_knockout_event) = battle.on_win_knockout_event {
+                    self.event_queue
+                        .push_front(on_win_knockout_event(EventBuildState::new(character)));
+                }
             }
             ConsequenceKind::Encounter(enemy) => {
                 self.execute_single_encounter(enemy, false).await?
@@ -348,16 +490,6 @@ impl EventController {
                 self.execute_single_encounter(enemy, true).await?
             }
             ConsequenceKind::MultiplePossibleEncounters(encounters) => {
-                let Some(character) = self
-                    .ctx
-                    .db()
-                    .characters()
-                    .get_by_user(&self.user.id.to_string())
-                    .await?
-                else {
-                    return Ok(());
-                };
-
                 let enemies = encounters
                     .iter()
                     .filter_map(|e| {
@@ -390,6 +522,7 @@ impl EventController {
                 self.execute_single_encounter(enemy.clone(), false).await?;
             }
             ConsequenceKind::Rewards {
+                message,
                 iterations,
                 items,
                 orbs,
@@ -486,16 +619,6 @@ impl EventController {
                     );
                 }
 
-                let Some(mut character) = self
-                    .ctx
-                    .db()
-                    .characters()
-                    .get_by_user(&self.user.id.to_string())
-                    .await?
-                else {
-                    return Ok(());
-                };
-
                 character.add_orbs(orbs);
                 character.strength_xp += strength_xp as u32;
                 character.health_xp += health_xp as u32;
@@ -508,27 +631,22 @@ impl EventController {
 
                 self.ctx.db().characters().save(character).await?;
 
-                self.ctx.send(embed).await?;
+                self.ctx
+                    .send(Response::new_user_reply(&self.user, message).add_embed(embed))
+                    .await?;
             }
             ConsequenceKind::Prejudice {
+                message,
                 items_amount,
                 max_item_valuability,
                 fixed_orbs,
                 orbs_percentage,
                 specific_items,
+                damage_percentage,
+                damage_limit,
             } => {
                 let rng = &mut StdRng::from_entropy();
                 let steal_amount = rng.gen_range(items_amount.0..=items_amount.1);
-
-                let Some(mut character) = self
-                    .ctx
-                    .db()
-                    .characters()
-                    .get_by_user(&self.user.id.to_string())
-                    .await?
-                else {
-                    return Ok(());
-                };
 
                 let mut stealed_items: HashMap<Item, usize> = HashMap::new();
                 let mut total_valiability = 0;
@@ -539,6 +657,10 @@ impl EventController {
                     total_valiability += item.purchase_properties.base_price * amount as i64;
                     stealed_amount += amount;
                 }
+
+                let health = character.stats.resistance.max + character.stats.vitality.max;
+                let damage = (health as f64 * damage_percentage) as i32;
+                let damage = damage.min(damage_limit);
 
                 const MAX_ITEM_ITERATIONS: usize = 30;
                 for _ in 0..MAX_ITEM_ITERATIONS {
@@ -600,6 +722,7 @@ impl EventController {
                 stealed_orbs += (character.orbs as f64 * orbs_percentage) as i64;
 
                 character.remove_orbs(stealed_orbs.clamp(0, character.orbs));
+                character.take_damage(damage);
                 for (item, amount) in &stealed_items {
                     character.remove_item(*item, *amount);
                 }
@@ -624,6 +747,17 @@ impl EventController {
                     );
                 }
 
+                if damage > 0 {
+                    embed = embed.add_field_with_emoji(
+                        emojis::HEALTH,
+                        EmbedField {
+                            name: "Dano".into(),
+                            value: format!("**{} dano**", damage),
+                            inline: true,
+                        },
+                    );
+                }
+
                 if !stealed_items.is_empty() {
                     embed = embed.add_field_with_emoji(
                         stealed_items[0].0.emoji,
@@ -641,23 +775,15 @@ impl EventController {
                     );
                 }
 
-                self.ctx.send(embed).await?;
+                self.ctx
+                    .send(Response::new_user_reply(&self.user, message).add_embed(embed))
+                    .await?;
             }
             ConsequenceKind::Shop { name, items } => {
                 let shop = Shop::new(name, None, items);
                 shop.prompt(self.user.clone(), &mut self.ctx).await?;
             }
             ConsequenceKind::RemoveItemDurability(item, amount) => {
-                let Some(mut character) = self
-                    .ctx
-                    .db()
-                    .characters()
-                    .get_by_user(&self.user.id.to_string())
-                    .await?
-                else {
-                    return Ok(());
-                };
-
                 let Some(inventory_item) = character.get_inventory_item_mut(&item) else {
                     return Ok(());
                 };
@@ -688,19 +814,29 @@ impl EventController {
 
                 self.ctx.db().characters().save(character).await?;
             }
+            ConsequenceKind::RemoveItem(item, amount) => {
+                character.remove_item(item, amount);
+                self.ctx.db().characters().save(character).await?;
+            }
             ConsequenceKind::AddActionPoint(amount) => {
-                let Some(mut character) = self
-                    .ctx
-                    .db()
-                    .characters()
-                    .get_by_user(&self.user.id.to_string())
-                    .await?
-                else {
-                    return Ok(());
-                };
-
                 character.action_points =
                     (character.action_points + amount).min(character.max_action_points);
+                self.ctx.db().characters().save(character).await?;
+            }
+            ConsequenceKind::AddTag(tag) => {
+                character.insert_tag(tag);
+                self.ctx.db().characters().save(character).await?;
+            }
+            ConsequenceKind::RemoveTag(tag) => {
+                character.remove_tag(&tag);
+                self.ctx.db().characters().save(character).await?;
+            }
+            ConsequenceKind::AddKarma(amount) => {
+                character.add_karma(amount);
+                self.ctx.db().characters().save(character).await?;
+            }
+            ConsequenceKind::RemoveKarma(amount) => {
+                character.remove_karma(amount);
                 self.ctx.db().characters().save(character).await?;
             }
         }

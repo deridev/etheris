@@ -1,4 +1,4 @@
-use etheris_rpg::list::get_boxed_skill_from_kind;
+use etheris_rpg::{list::get_boxed_skill_from_kind, Fighter, FighterData};
 
 use crate::prelude::*;
 
@@ -14,6 +14,12 @@ pub async fn skill_equip(
 ) -> anyhow::Result<()> {
     let author = ctx.author().await?;
     let mut character: CharacterModel = parse_user_character!(ctx, author);
+    let fighter = Fighter::new(
+        0,
+        Default::default(),
+        Default::default(),
+        FighterData::new_from_character(0, &character, author.clone(), Default::default()),
+    );
 
     if character.skills.len() >= 8 {
         ctx.send(Response::new_user_reply(
@@ -30,7 +36,7 @@ pub async fn skill_equip(
         .map(|s| get_boxed_skill_from_kind(s.clone()))
         .find(|s| {
             unidecode::unidecode(&skill).to_lowercase()
-                == unidecode::unidecode(s.data().name).to_lowercase()
+                == unidecode::unidecode(s.data(&fighter).name).to_lowercase()
         })
     else {
         ctx.send(Response::new_user_reply(
@@ -53,7 +59,7 @@ pub async fn skill_equip(
             &author,
             format!(
                 "a habilidade **{}** foi equipada com sucesso!",
-                skill.data().name
+                skill.data(&fighter).name
             ),
         )
         .add_emoji_prefix(emojis::SUCCESS),

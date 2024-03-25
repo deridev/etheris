@@ -9,7 +9,7 @@ impl Skill for CursedBlood {
         SkillKind::CursedBlood
     }
 
-    fn data(&self) -> SkillData {
+    fn data(&self, _fighter: &Fighter) -> SkillData {
         SkillData {
             identifier: "cursed_blood",
             name: "Sangue Amaldiçoado",

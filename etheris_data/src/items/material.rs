@@ -5,7 +5,16 @@ use etheris_discord::Emoji;
 
 const MATERIAL_TAGS: &[ItemTag] = &[ItemTag::Consumable];
 
-pub const ALL_ITEMS: &[Item] = &[STONE, RAW_TRUNK, PLANK, STICK, PAPER, KNIFE, TOOL_HANDLE];
+pub const ALL_ITEMS: &[Item] = &[
+    STONE,
+    RAW_TRUNK,
+    PLANK,
+    STICK,
+    PAPER,
+    KNIFE,
+    TOOL_HANDLE,
+    BONE,
+];
 
 pub const STONE: Item = Item {
     identifier: "stone",
@@ -99,6 +108,20 @@ pub const TOOL_HANDLE: Item = Item {
     purchase_properties: PurchaseProperties {
         base_price: 75,
         base_sell_price: 40,
+        is_sellable: true,
+        ..PurchaseProperties::default()
+    },
+    ..Item::default()
+};
+
+pub const BONE: Item = Item {
+    identifier: "bone",
+    display_name: "Osso",
+    emoji: Emoji::from_emote(Some("bone"), 1221804518421954571),
+    tags: MATERIAL_TAGS,
+    purchase_properties: PurchaseProperties {
+        base_price: 30,
+        base_sell_price: 15,
         is_sellable: true,
         ..PurchaseProperties::default()
     },

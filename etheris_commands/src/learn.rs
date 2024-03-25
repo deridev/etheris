@@ -2,7 +2,7 @@ use std::time::Duration;
 
 use etheris_discord::twilight_model::channel::message::component::ButtonStyle;
 use etheris_framework::{util::make_multiple_rows, watcher::WatcherOptions};
-use etheris_rpg::list::get_boxed_skill_from_kind;
+use etheris_rpg::{list::get_boxed_skill_from_kind, Fighter, FighterData};
 
 use crate::prelude::*;
 
@@ -12,6 +12,12 @@ use crate::prelude::*;
 pub async fn learn(mut ctx: CommandContext) -> anyhow::Result<()> {
     let author = ctx.author().await?;
     let character = parse_user_character!(ctx, author);
+    let fighter = Fighter::new(
+        0,
+        Default::default(),
+        Default::default(),
+        FighterData::new_from_character(0, &character, author.clone(), Default::default()),
+    );
     if character.action_points < 1 {
         ctx.reply(
             Response::new_user_reply(
@@ -50,8 +56,8 @@ pub async fn learn(mut ctx: CommandContext) -> anyhow::Result<()> {
         let knowledge_cost = skill.kind().knowledge_cost();
         buttons.push(
             ButtonBuilder::new()
-                .set_custom_id(skill.data().identifier)
-                .set_label(skill.data().name.to_string())
+                .set_custom_id(skill.data(&fighter).identifier)
+                .set_label(skill.data(&fighter).name.to_string())
                 .set_disabled(knowledge_cost > character.knowledge_points),
         );
     }
@@ -70,11 +76,11 @@ pub async fn learn(mut ctx: CommandContext) -> anyhow::Result<()> {
                 .map(|skill| {
                     format!(
                         "## {}\n**`{} conhecimento`**\n{} **{}**\n{}",
-                        skill.data().name,
+                        skill.data(&fighter).name,
                         skill.kind().knowledge_cost(),
                         emojis::ETHER,
-                        skill.data().use_cost.ether,
-                        skill.data().description
+                        skill.data(&fighter).use_cost.ether,
+                        skill.data(&fighter).description
                     )
                 })
                 .collect::<Vec<_>>()
@@ -104,7 +110,7 @@ pub async fn learn(mut ctx: CommandContext) -> anyhow::Result<()> {
     let data = component.parse_message_component_data()?;
     let Some(skill) = learnable
         .into_iter()
-        .find(|skill| skill.data().identifier == data.custom_id)
+        .find(|skill| skill.data(&fighter).identifier == data.custom_id)
     else {
         return Ok(());
     };
@@ -125,7 +131,7 @@ pub async fn learn(mut ctx: CommandContext) -> anyhow::Result<()> {
 
     character.learn_skill(skill.kind());
 
-    let auto_equipped = character.learned_skills.len() < 5;
+    let auto_equipped = character.learned_skills.len() < 7;
     if auto_equipped {
         character.equip_skill(skill.kind());
     }
@@ -157,14 +163,14 @@ pub async fn learn(mut ctx: CommandContext) -> anyhow::Result<()> {
         ctx.send_in_channel(
             Response::new_user_reply(
                 &author,
-                format!("você aprendeu e equipou a habilidade **{}** com sucesso! Use **/habilidades** para ver as habilidades equipadas e aprendidas do seu personagem.", skill.data().name)
+                format!("você aprendeu e equipou a habilidade **{}** com sucesso! Use **/habilidades** para ver as habilidades equipadas e aprendidas do seu personagem.", skill.data(&fighter).name)
             ).add_emoji_prefix(emojis::SUCCESS)
         ).await?;
     } else {
         ctx.send_in_channel(
             Response::new_user_reply(
                 &author,
-                format!("você aprendeu a habilidade **{}** com sucesso! Para equipar essa habilidade, use **/habilidade equipar**. Ou use **/habilidades** para ver as habilidades do seu personagem.", skill.data().name)
+                format!("você aprendeu a habilidade **{}** com sucesso! Para equipar essa habilidade, use **/habilidade equipar**. Ou use **/habilidades** para ver as habilidades do seu personagem.", skill.data(&fighter).name)
             ).add_emoji_prefix(emojis::SUCCESS)
         ).await?;
     }

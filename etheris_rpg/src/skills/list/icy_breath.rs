@@ -9,7 +9,7 @@ impl Skill for IcyBreath {
         SkillKind::IcyBreath
     }
 
-    fn data(&self) -> SkillData {
+    fn data(&self, _fighter: &Fighter) -> SkillData {
         SkillData {
             identifier: "icy_breath",
             name: "Sopro Gelado",
@@ -37,7 +37,7 @@ impl Skill for IcyBreath {
                 amount: damage,
                 balance_effectiveness: 30,
                 accuracy: 90,
-                effect: Some(Effect::new(EffectKind::Ice, 45, fighter.index))
+                effect: Some(Effect::new(EffectKind::Ice, 35, fighter.index))
             },
         ).await;
 

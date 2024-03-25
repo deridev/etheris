@@ -1,5 +1,7 @@
 use etheris_data::items;
 
+use self::common::all_regions;
+
 use super::prelude::*;
 
 make_event!(
@@ -26,12 +28,13 @@ make_event!(
         actions: vec![
             common::ignore_action(),
             Action {
-                name: "Minerar",
+                name: "Minerar".to_string(),
                 emoji: Some(items::tool::PICKAXE.emoji),
                 conditions: vec![Condition::HasItem(items::tool::PICKAXE, 1)],
                 consequences: vec![Consequence {
                     probability: Probability::ALWAYS,
                     kind: ConsequenceKind::Rewards {
+                        message: "a pedra quebrou e você pegou alguns materiais!".to_string(),
                         iterations: 4,
                         items: vec![
                             (Probability::ALWAYS, items::material::STONE, (1, 3)),
@@ -58,3 +61,53 @@ make_event!(
         ]
     }
 );
+
+make_event!(general_basic_place_to_meditate, Event {
+    identifier: "general_basic_place_to_meditate",
+    spawn: EventSpawn {
+        base_probability: Probability::new(30),
+        weighted_regions: all_regions(1),
+        conditions: vec![]
+    },
+    emoji: Emoji::from_unicode("🌅"),
+    message: EventMessage::Single("você encontrou um lugar que parece ser um lugar de meditação. Você sente que a luz do sol é mais aconchegante aqui. Quer se concentrar e meditar?"),
+    actions: vec![
+        common::ignore_action(),
+        Action {
+            name: "Meditar".to_string(),
+            emoji: None,
+            conditions: vec![],
+            consequences: vec![
+                Consequence {
+                    probability: Probability::new(70),
+                    kind: ConsequenceKind::Rewards {
+                        message: "você passou algumas horas meditando e sente seu corpo leve. Você ganhou pontos de ação!".to_string(), 
+                        iterations: 1, items: vec![], orbs: (0, 0), xp: XpReward {
+                            health: (10, 20), intelligence: (10, 15), strength: (0, 5), knowledge: (10, 30)
+                        }
+                    },
+                    extra_consequences: vec![Consequence {
+                        kind: ConsequenceKind::AddActionPoint(3),
+                        ..Default::default()
+                    }],
+                    ..Default::default()
+                },
+                Consequence {
+                    probability: Probability::new(30),
+                    kind: ConsequenceKind::Prejudice {
+                        message: "alguém te roubou enquanto você meditava!".to_string(),
+                        items_amount: (1, 5),
+                        max_item_valuability: 200,
+                        fixed_orbs: (50, 100),
+                        orbs_percentage: 0.3,
+                        specific_items: vec![],
+                        damage_percentage: 0.0,
+                        damage_limit: 0,
+                    },
+                    ..Default::default()
+                }
+            ],
+            ..Default::default()
+        }
+    ],
+});

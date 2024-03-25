@@ -7,6 +7,10 @@ use crate::{events::*, make_event};
 pub fn all_regions(weight: i32) -> Vec<(WorldRegion, i32)> {
     let mut regions = vec![];
     for region in WorldRegion::LIST.iter() {
+        if region.city().is_some() {
+            continue;
+        }
+
         regions.push((*region, weight));
     }
 
@@ -15,7 +19,7 @@ pub fn all_regions(weight: i32) -> Vec<(WorldRegion, i32)> {
 
 pub fn ignore_action() -> Action {
     Action {
-        name: "Ignorar",
+        name: "Ignorar".to_string(),
         probability: Probability::ALWAYS,
         emoji: None,
         conditions: Vec::new(),
@@ -27,6 +31,12 @@ pub fn ignore_action() -> Action {
         }],
         extra_consequences: Vec::new(),
     }
+}
+
+pub fn ignore_action_with_extra_consequences(consequences: Vec<Consequence>) -> Action {
+    let mut action = ignore_action();
+    action.extra_consequences = consequences;
+    action
 }
 
 pub fn consequence_didnt_find_anything(prob: Probability) -> Consequence {

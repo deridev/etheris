@@ -176,11 +176,15 @@ pub async fn get_change_team_input(
                 break;
             }
         } else if let Some(brain) = fighter.brain.clone() {
+            let mut api = BattleApi::new(controller);
+            api.fighter_index = fighter.index;
+            api.target_index = fighter.target;
+
             let confirmation = brain
                 .dynamic_brain
                 .lock()
                 .await
-                .allow_fighter_to_enter_his_team(BattleApi::new(controller), current_fighter.index)
+                .allow_fighter_to_enter_his_team(api, current_fighter.index)
                 .await;
             if !confirmation {
                 fighter_that_disallowed = Some(fighter);

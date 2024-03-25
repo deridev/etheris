@@ -9,7 +9,7 @@ impl Skill for InstinctiveReaction {
         SkillKind::InstinctiveReaction
     }
 
-    fn data(&self) -> SkillData {
+    fn data(&self, _fighter: &Fighter) -> SkillData {
         SkillData {
             identifier: "instinctive_reaction",
             name: "Reação Instintiva",
@@ -30,7 +30,7 @@ impl Skill for InstinctiveReaction {
         }
 
         let fighter = api.fighter().clone();
-        if fighter.ether.value < self.data().use_cost.ether {
+        if fighter.ether.value < self.data(&fighter).use_cost.ether {
             return Ok(());
         }
 
@@ -38,9 +38,9 @@ impl Skill for InstinctiveReaction {
             return Ok(());
         }
 
-        api.fighter_mut().ether.value -= self.data().use_cost.ether;
+        api.fighter_mut().ether.value -= self.data(&fighter).use_cost.ether;
 
-        let damage = api.rng().gen_range(5..=7);
+        let damage = api.rng().gen_range(12..=16);
         let damage = (damage as f32 * api.fighter().mixed_multiplier(0.9, 0.1)) as i32;
 
         let damage = api

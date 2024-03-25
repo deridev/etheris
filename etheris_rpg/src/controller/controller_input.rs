@@ -163,11 +163,12 @@ pub async fn get_skill_input(
     interaction: Interaction,
     message: Message,
 ) -> anyhow::Result<BattleInput> {
+    let fighter = controller.battle.get_current_fighter().clone();
     let skills = controller.battle.get_current_fighter().skills.clone();
 
     let mut skill_displays = vec![];
     for skill in skills.iter() {
-        let display = skill.dynamic_skill.lock().await.display();
+        let display = skill.dynamic_skill.lock().await.display(&fighter);
         skill_displays.push(display);
     }
 
@@ -204,7 +205,7 @@ pub async fn get_skill_input(
         let dynamic_skill = skill.dynamic_skill.lock().await;
         let button = ButtonBuilder::new()
             .set_custom_id(skill.identifier)
-            .set_label(dynamic_skill.data().name)
+            .set_label(dynamic_skill.data(&fighter).name)
             .set_style(ButtonStyle::Primary)
             .set_disabled(!dynamic_skill.can_use(BattleApi::new(controller)));
         buttons.push(button);

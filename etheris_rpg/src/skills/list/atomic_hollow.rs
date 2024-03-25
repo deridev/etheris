@@ -13,19 +13,20 @@ impl Skill for AtomicHollow {
         SkillKind::AtomicHollow
     }
 
-    fn data(&self) -> SkillData {
+    fn data(&self, fighter: &Fighter) -> SkillData {
+        let cost = calculate_cost(fighter);
         SkillData {
             identifier: "atomic_hollow",
             name: "Vazio Atômico",
             description: "Custa metade do ether máximo, e lança uma bola de ether condensado que aplica diversos efeitos e causa dano no alvo.",
             explanation: "Materializar uma bola de ether condensado com diversos efeitos requer massiva energia e controle do ether, além de ser perigoso de manusear, então requer um cuidado extra.",
             complexity: SkillComplexity::Hard,
-            use_cost: SkillCost { ether: 0 },
+            use_cost: SkillCost { ether: cost },
         }
     }
 
-    fn display(&self) -> SkillDisplay {
-        let mut display = self.default_display();
+    fn display(&self, fighter: &Fighter) -> SkillDisplay {
+        let mut display = self.default_display(fighter);
         display.sub_header = format!("{} **?**", emojis::ETHER);
         display
     }
@@ -62,7 +63,7 @@ impl Skill for AtomicHollow {
 
         if !damage.missed {
             for kind in EFFECT_KINDS {
-                let amount = api.rng().gen_range(45..=70);
+                let amount = api.rng().gen_range(40..=60);
                 api.apply_effect(target.index, Effect::new(*kind, amount, fighter.index)).await;
             }
 

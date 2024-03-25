@@ -12,7 +12,17 @@ pub use pagination::Pagination;
 pub use probability::Probability;
 
 #[derive(
-    Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, serde::Deserialize, serde::Serialize,
+    Debug,
+    Copy,
+    Clone,
+    PartialEq,
+    Eq,
+    PartialOrd,
+    Ord,
+    Hash,
+    serde::Deserialize,
+    serde::Serialize,
+    Default,
 )]
 pub struct Attribute {
     pub value: i32,

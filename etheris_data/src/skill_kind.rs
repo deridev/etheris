@@ -27,13 +27,16 @@ pub enum SkillKind {
     Intimidation,
     CyclonePush,
     Suplex,
+    BloodTheft,
     InstinctiveReaction,
+    Overcoming,
     FirePunch,
     Charge,
     FlamingBall,
     IcyShot,
     IcyBreath,
     WaterJet,
+    BloodSpear,
     WaterBlessing,
     Refresh,
     ResplendentPunch,
@@ -47,6 +50,7 @@ pub enum SkillKind {
     FinalCrucifix,
     EtherShadow,
     CursedBlood,
+    Hakikotenchou,
 }
 
 impl SkillKind {
@@ -58,7 +62,9 @@ impl SkillKind {
             Self::TornadoKick,
             Self::Bite,
             Self::MirrorDamage,
+            Self::BloodTheft,
             Self::InstinctiveReaction,
+            Self::Overcoming,
             Self::CyclonePush,
             Self::Suplex,
             Self::FirePunch,
@@ -82,13 +88,14 @@ impl SkillKind {
             Self::EtherShadow,
             Self::AtomicHollow,
             Self::CursedBlood,
+            Self::Hakikotenchou,
         ]
     }
 
     pub fn personalities_affinity(&self) -> &'static [Personality] {
         match self {
             Self::ImbuedPunch => &Personality::LIST,
-            Self::SimpleCut => &[Personality::Cowardice, Personality::Insanity],
+            Self::SimpleCut => &[Personality::Cowardice, Personality::Arrogance],
             Self::DefensiveJump => &[Personality::Intelligence, Personality::Cowardice],
             Self::TornadoKick => &[Personality::Aggressiveness],
             Self::Bite => &[Personality::Aggressiveness, Personality::Insanity],
@@ -96,6 +103,7 @@ impl SkillKind {
             Self::MirrorDamage => &[Personality::Arrogance],
             Self::ElectricSlap => &[Personality::Insanity, Personality::Aggressiveness],
             Self::Intimidation => &[Personality::Courage],
+            Self::BloodTheft => &[Personality::Arrogance, Personality::Insanity],
             Self::Suplex => &[Personality::Courage, Personality::Arrogance],
             Self::FirePunch => &[Personality::Aggressiveness, Personality::Arrogance],
             Self::IcyBreath => &[
@@ -107,11 +115,13 @@ impl SkillKind {
             Self::WaterBlessing => &[Personality::Calm],
             Self::Refresh => &[Personality::Cowardice],
             Self::InstinctiveReaction => &[Personality::Calm, Personality::Arrogance],
+            Self::Overcoming => &[Personality::Courage],
             Self::CyclonePush => &[Personality::Courage, Personality::Intelligence],
             Self::FlamingBall => &[Personality::Aggressiveness],
-            Self::Earthquake => &[Personality::Arrogance, Personality::Aggressiveness],
+            Self::Earthquake => &[Personality::Insanity, Personality::Aggressiveness],
             Self::WaterJet => &[Personality::Intelligence, Personality::Cowardice],
-            Self::ResplendentPunch => &[Personality::Insanity, Personality::Courage],
+            Self::BloodSpear => &[Personality::Arrogance, Personality::Insanity],
+            Self::ResplendentPunch => &[Personality::Courage],
             Self::BloodDonation => &[Personality::Courage],
             Self::WoundHealing => &[Personality::Intelligence, Personality::Calm],
             Self::YinYang => &[Personality::Calm, Personality::Intelligence],
@@ -125,6 +135,7 @@ impl SkillKind {
             Self::AtomicHollow => &[Personality::Arrogance],
             Self::TenkuKikan(_) => &[Personality::Arrogance],
             Self::CursedBlood => &[Personality::Courage],
+            Self::Hakikotenchou => &[Personality::Calm, Personality::Intelligence],
         }
     }
 
@@ -144,22 +155,26 @@ impl SkillKind {
             Self::IcyBreath => 10,
             Self::Intimidation => 11,
             Self::IcyShot => 12,
+            Self::BloodDonation => 12,
             Self::WaterBlessing => 13,
+            Self::BloodTheft => 14,
             Self::InstinctiveReaction => 14,
-            Self::ResplendentPunch => 15,
+            Self::Overcoming => 15,
+            Self::ResplendentPunch => 16,
             Self::Refresh => 16,
             Self::WaterJet => 17,
             Self::FlamingBall => 20,
             Self::Earthquake => 21,
             Self::WoundHealing => 22,
-            Self::BloodDonation => 25,
-            Self::YinYang => 30,
+            Self::BloodSpear => 25,
             Self::CursedBlood => 35,
+            Self::ParalyzingBet => 40,
             Self::EtherShadow => 45,
-            Self::ParalyzingBet => 50,
-            Self::AtomicHollow => 55,
-            Self::TenkuKikan(_) => 60,
-            Self::FinalCrucifix => 70,
+            Self::YinYang => 50,
+            Self::AtomicHollow => 60,
+            Self::TenkuKikan(_) => 80,
+            Self::FinalCrucifix => 100,
+            Self::Hakikotenchou => 110,
         }
     }
 
@@ -180,16 +195,19 @@ impl SkillKind {
             | Self::BloodDonation
             | Self::Refresh
             | Self::WoundHealing
-            | Self::ResplendentPunch => 2,
+            | Self::ResplendentPunch
+            | Self::BloodSpear
+            | Self::Overcoming => 2,
             Self::IcyShot
             | Self::ElectricSlap
             | Self::WaterBlessing
             | Self::InstinctiveReaction
             | Self::Earthquake
             | Self::AtomicHollow
-            | Self::CursedBlood => 3,
+            | Self::CursedBlood
+            | Self::BloodTheft => 3,
             Self::WaterJet | Self::FlamingBall | Self::EtherShadow => 4,
-            Self::YinYang => 5,
+            Self::YinYang | Self::Hakikotenchou => 5,
             Self::TenkuKikan(..) => 6,
             Self::ParalyzingBet => 6,
             Self::FinalCrucifix => 7,

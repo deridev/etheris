@@ -9,7 +9,7 @@ impl Skill for TornadoKick {
         SkillKind::TornadoKick
     }
 
-    fn data(&self) -> SkillData {
+    fn data(&self, _fighter: &Fighter) -> SkillData {
         SkillData {
             identifier: "tornado_kick",
             name: "Chute Tornado",
@@ -24,7 +24,7 @@ impl Skill for TornadoKick {
         let fighter = api.fighter().clone();
         let target = api.target().clone();
 
-        let damage = api.rng().gen_range(16..=19);
+        let damage = api.rng().gen_range(16..=22);
 
         let multiplier = fighter.mixed_multiplier(1.2, 0.6);
         let damage = ((damage as f32) * multiplier) as i32;

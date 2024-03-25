@@ -9,7 +9,7 @@ impl Skill for FlamingBall {
         SkillKind::FlamingBall
     }
 
-    fn data(&self) -> SkillData {
+    fn data(&self, _fighter: &Fighter) -> SkillData {
         SkillData {
             identifier: "flaming_ball",
             name: "Bola Flamejante",
@@ -24,7 +24,7 @@ impl Skill for FlamingBall {
         let fighter = api.fighter().clone();
         let target = api.target().clone();
 
-        let damage = api.rng().gen_range(20..=30);
+        let damage = api.rng().gen_range(20..=35);
 
         let multiplier = fighter.intelligence_multiplier();
         let damage = ((damage as f32) * multiplier) as i32;

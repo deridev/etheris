@@ -5,7 +5,7 @@ use std::fmt::Display;
 use etheris_common::Probability;
 use etheris_data::{emojis, SkillKind};
 
-use crate::{common::DamageSpecifier, BattleApi, FighterIndex};
+use crate::{common::DamageSpecifier, BattleApi, Fighter, FighterIndex};
 
 pub type SkillResult<T> = anyhow::Result<T>;
 
@@ -83,22 +83,26 @@ pub trait Skill {
         self.kind()
     }
 
-    fn data(&self) -> SkillData;
+    fn data(&self, fighter: &Fighter) -> SkillData;
 
-    fn default_display(&self) -> SkillDisplay {
+    fn default_display(&self, fighter: &Fighter) -> SkillDisplay {
         SkillDisplay {
-            header: self.data().name.to_owned(),
-            sub_header: format!("**{} {}**", emojis::ETHER, self.data().use_cost.ether),
-            body: self.data().description.to_owned(),
+            header: self.data(fighter).name.to_owned(),
+            sub_header: format!(
+                "**{} {}**",
+                emojis::ETHER,
+                self.data(fighter).use_cost.ether
+            ),
+            body: self.data(fighter).description.to_owned(),
         }
     }
 
-    fn display(&self) -> SkillDisplay {
-        self.default_display()
+    fn display(&self, fighter: &Fighter) -> SkillDisplay {
+        self.default_display(fighter)
     }
 
     fn default_can_use(&self, api: BattleApi<'_>) -> bool {
-        api.fighter().ether.value >= self.data().use_cost.ether
+        api.fighter().ether.value >= self.data(api.fighter()).use_cost.ether
     }
 
     fn can_use(&self, api: BattleApi<'_>) -> bool {
@@ -111,6 +115,10 @@ pub trait Skill {
         } else {
             Probability::NEVER
         }
+    }
+
+    async fn on_start(&mut self, _api: BattleApi<'_>) -> SkillResult<()> {
+        Ok(())
     }
 
     async fn passive_on_cycle(&mut self, _api: BattleApi<'_>) -> SkillResult<()> {

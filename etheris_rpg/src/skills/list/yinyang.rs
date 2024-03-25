@@ -35,7 +35,7 @@ impl Skill for YinYang {
         SkillKind::YinYang
     }
 
-    fn data(&self) -> SkillData {
+    fn data(&self, _fighter: &Fighter) -> SkillData {
         SkillData {
             identifier: "yinyang",
             name: "Yin-Yang",
@@ -46,18 +46,26 @@ impl Skill for YinYang {
         }
     }
 
-    fn display(&self) -> SkillDisplay {
-        let mut display = self.default_display();
+    fn display(&self, fighter: &Fighter) -> SkillDisplay {
+        let mut display = self.default_display(fighter);
         display.sub_header.push_str(&format!("\n**Estado**: {}", self.state));
         display
     }
 
     fn ai_chance_to_pick(&self, api: BattleApi<'_>) -> Probability {
+        let fighter = api.fighter();
+        if fighter.overload > 100.0 && self.state != YinYangState::Neutral {
+            return Probability::new(95);
+        }
+
+        if fighter.overload > 50.0 {
+            return Probability::new(20);
+        }
+
         if self.state == YinYangState::Neutral {
             return Probability::new(60);
         }
 
-        let fighter = api.fighter();
 
         if fighter.has_personality(Personality::Aggressiveness) && self.state != YinYangState::Yin {
             return Probability::new(80);

@@ -9,7 +9,7 @@ impl Skill for SimpleCut {
         SkillKind::SimpleCut
     }
 
-    fn data(&self) -> SkillData {
+    fn data(&self, _fighter: &Fighter) -> SkillData {
         SkillData {
             identifier: "simple_cut",
             name: "Corte Simples",
@@ -24,7 +24,7 @@ impl Skill for SimpleCut {
         let fighter = api.fighter().clone();
         let target = api.target().clone();
 
-        let damage = api.rng().gen_range(6..=12);
+        let damage = api.rng().gen_range(14..=18);
 
         let multiplier = fighter.intelligence_multiplier();
         let damage = ((damage as f32) * multiplier) as i32;

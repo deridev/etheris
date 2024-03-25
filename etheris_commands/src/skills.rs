@@ -1,4 +1,4 @@
-use etheris_rpg::list::get_boxed_skill_from_kind;
+use etheris_rpg::{list::get_boxed_skill_from_kind, Fighter, FighterData};
 
 use crate::prelude::*;
 
@@ -13,6 +13,12 @@ pub async fn skills(
 ) -> anyhow::Result<()> {
     let user = user.unwrap_or(ctx.author().await?);
     let character = parse_user_character!(ctx, user);
+    let fighter = Fighter::new(
+        0,
+        Default::default(),
+        Default::default(),
+        FighterData::new_from_character(0, &character, user.clone(), Default::default()),
+    );
 
     let image = character.create_image_bufer();
     let attachment =
@@ -54,7 +60,7 @@ pub async fn skills(
             "🌀 Habilidades Equipadas",
             skills
                 .iter()
-                .map(|skill| skill.data().name.to_string())
+                .map(|skill| skill.data(&fighter).name.to_string())
                 .collect::<Vec<_>>()
                 .join(", "),
         )
@@ -62,7 +68,7 @@ pub async fn skills(
             "🧠 Habilidades Aprendidas",
             learned_skills
                 .iter()
-                .map(|skill| format!("`{}`", skill.data().name))
+                .map(|skill| format!("`{}`", skill.data(&fighter).name))
                 .collect::<Vec<_>>()
                 .join(", "),
         )

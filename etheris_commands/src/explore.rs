@@ -40,7 +40,11 @@ pub async fn explore(mut ctx: CommandContext) -> anyhow::Result<()> {
     verify_user_cooldown!(ctx, author, "EXPLORE");
     ctx.db()
         .cooldowns()
-        .create_cooldown(author.id, "EXPLORE", chrono::Duration::seconds(4))
+        .create_cooldown(
+            author.id,
+            "EXPLORE",
+            chrono::Duration::try_seconds(4).unwrap(),
+        )
         .await?;
 
     let mut event_controller = EventController::new(author.clone(), ctx.clone(), Vec::new());

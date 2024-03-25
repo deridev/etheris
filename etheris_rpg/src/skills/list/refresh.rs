@@ -9,11 +9,11 @@ impl Skill for Refresh {
         SkillKind::Refresh
     }
 
-    fn data(&self) -> SkillData {
+    fn data(&self, _fighter: &Fighter) -> SkillData {
         SkillData {
             identifier: "refresh",
             name: "Refrescar",
-            description: "Reduz muito todos os efeitos negativos de um aliado.",
+            description: "Reduz muito todos os efeitos negativos de um aliado e melhora seu equilíbrio.",
             explanation: "Habilidade de renegeração: a categoria mais difícil do controle de ether. Alguns efeitos como fogo só precisam de um ether que apague, mas outros efeitos como sangramento precisam de um ether que regenera o ferimento. Requer muito ether.",
             complexity: SkillComplexity::Hard,
             use_cost: SkillCost { ether: 15 },
@@ -40,17 +40,21 @@ impl Skill for Refresh {
 
         let ally = api.battle_mut().get_fighter_mut(ally.index);
         ally.balance = ally.balance.saturating_add(30).clamp(0, 100);
-        ally.remove_effect(Effect::new(EffectKind::Bleeding, 50, fighter.index));
+        ally.overload = (ally.overload - 1.0).max(0.0);
+        ally.remove_effect(Effect::new(EffectKind::Bleeding, 60, fighter.index));
         ally.remove_effect(Effect::new(EffectKind::Flaming, 80, fighter.index));
         ally.remove_effect(Effect::new(EffectKind::Burning, 50, fighter.index));
         ally.remove_effect(Effect::new(EffectKind::Ice, 70, fighter.index));
         ally.remove_effect(Effect::new(EffectKind::Shocked, 80, fighter.index));
         ally.remove_effect(Effect::new(EffectKind::Frozen, 2, fighter.index));
         ally.remove_effect(Effect::new(EffectKind::Paralyzed, 2, fighter.index));
+        ally.remove_effect(Effect::new(EffectKind::Exhausted, 2, fighter.index));
         ally.remove_effect(Effect::new(EffectKind::Wet, 50, fighter.index));
+        ally.remove_effect(Effect::new(EffectKind::Curse, 20, fighter.index));
+        ally.defense += 2;
 
         let ally = ally.clone();
-        api.emit_message(format!("**{}** refrescou **{}** e melhorou vários efeitos negativos!", fighter.name, ally.name));
+        api.emit_message(format!("**{}** refrescou **{}** e melhorou vários efeitos negativos e melhorou seu equilíbrio!", fighter.name, ally.name));
 
         Ok(())
     }

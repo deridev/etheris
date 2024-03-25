@@ -64,7 +64,7 @@ impl From<SkillKind> for FighterSkill {
 impl FighterSkill {
     pub fn new(skill: BoxedSkill) -> Self {
         Self {
-            identifier: skill.data().identifier,
+            identifier: skill.data(&Default::default()).identifier,
             base_kind: skill.kind(),
             dynamic_skill: Arc::new(Mutex::new(skill)),
         }
@@ -121,6 +121,7 @@ pub enum EffectKind {
     Bleeding,
     Paralyzed,
     Curse,
+    Exhausted,
 
     LowProtection,
 }
@@ -181,7 +182,7 @@ pub struct AiState {
     pub focused_in: FighterIndex,
 }
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Default)]
 pub struct Fighter {
     pub team: u8,
     pub index: FighterIndex,
@@ -296,11 +297,11 @@ impl Fighter {
     }
 
     pub fn strength_multiplier(&self) -> f32 {
-        1.0 + (self.strength_level as f32) * 0.25
+        1.0 + (self.strength_level as f32) * 0.4
     }
 
     pub fn intelligence_multiplier(&self) -> f32 {
-        1.0 + (self.intelligence_level as f32) * 0.225
+        1.0 + (self.intelligence_level as f32) * 0.35
     }
 
     pub fn mixed_multiplier(&self, strength_weight: f32, intelligence_weight: f32) -> f32 {

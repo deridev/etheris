@@ -1,4 +1,4 @@
-use etheris_rpg::list::get_boxed_skill_from_kind;
+use etheris_rpg::{list::get_boxed_skill_from_kind, Fighter, FighterData};
 
 use crate::prelude::*;
 
@@ -15,13 +15,20 @@ pub async fn skill_analyze(
     let author = ctx.author().await?;
     let character: CharacterModel = parse_user_character!(ctx, author);
 
+    let fighter = Fighter::new(
+        0,
+        Default::default(),
+        Default::default(),
+        FighterData::new_from_character(0, &character, author.clone(), Default::default()),
+    );
+
     let Some(skill) = character
         .learned_skills
         .iter()
         .map(|s| get_boxed_skill_from_kind(s.clone()))
         .find(|s| {
             unidecode::unidecode(&skill).to_lowercase()
-                == unidecode::unidecode(s.data().name).to_lowercase()
+                == unidecode::unidecode(s.data(&fighter).name).to_lowercase()
         })
     else {
         ctx.send(Response::new_user_reply(
@@ -36,15 +43,15 @@ pub async fn skill_analyze(
         .set_author_to_user(&author)
         .set_description(format!(
             "## {}\n### {}\n{}",
-            skill.display().header,
-            skill.display().sub_header,
-            skill.display().body
+            skill.display(&fighter).header,
+            skill.display(&fighter).sub_header,
+            skill.display(&fighter).body
         ))
-        .add_inlined_field("💡 Explicação:", skill.data().explanation)
+        .add_inlined_field("💡 Explicação:", skill.data(&fighter).explanation)
         .add_footer_text(format!(
             "Complexidade: {} | ID: {}",
-            skill.data().complexity,
-            skill.data().identifier
+            skill.data(&fighter).complexity,
+            skill.data(&fighter).identifier
         ));
 
     ctx.send(Response::from(embed)).await?;

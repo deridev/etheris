@@ -1,7 +1,7 @@
 use std::fmt::Debug;
 
 use etheris_common::Probability;
-use etheris_data::{items::Item, world::regions::WorldRegion, ShopItem};
+use etheris_data::{items::Item, personality::Personality, world::regions::WorldRegion, ShopItem};
 use etheris_discord::Emoji;
 use etheris_framework::CommandContext;
 
@@ -41,18 +41,26 @@ impl Default for EventSpawn {
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum EventMessage {
     Single(&'static str),
+    SingleString(String),
     Multiple(&'static [&'static str]),
+    MultipleString(Vec<String>),
     Conditional(Vec<(Condition, String)>),
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum Condition {
+    None,
     Not(Box<Condition>),
+    Or(Box<Condition>, Box<Condition>),
     IsFlagSet(ControllerFlag),
+    HasOrbs(i64),
     HasItem(Item, usize),
+    HasTag(&'static str),
+    HasPersonality(Personality),
     SimilarPowerTo(Enemy),
     StrongerThan(Enemy),
     WeakerThan(Enemy),
+    Probability(Probability),
 }
 
 #[derive(Debug, Clone, PartialEq, PartialOrd)]
@@ -78,7 +86,7 @@ impl Default for Event {
 
 #[derive(Debug, Clone, PartialEq, PartialOrd)]
 pub struct Action {
-    pub name: &'static str,
+    pub name: String,
     pub probability: Probability,
     pub emoji: Option<Emoji<'static>>,
     pub conditions: Vec<Condition>,
@@ -89,7 +97,7 @@ pub struct Action {
 impl Default for Action {
     fn default() -> Self {
         Self {
-            name: "default",
+            name: "default".to_string(),
             conditions: Vec::new(),
             consequences: Vec::new(),
             emoji: None,
@@ -123,32 +131,57 @@ pub trait CustomConsequence {
     async fn execute<'a>(&self, ctx: &'a mut CommandContext) -> anyhow::Result<()>;
 }
 
+#[derive(Debug, Clone, PartialEq, PartialOrd, Default)]
+pub struct BattleConsequence {
+    pub enemies: Vec<Enemy>,
+    pub prompt: bool,
+    pub on_win_knockout_event: Option<EventBuilder>,
+    pub on_win_kill_event: Option<EventBuilder>,
+    pub on_lose_knockout_event: Option<EventBuilder>,
+    pub on_lose_die_event: Option<EventBuilder>,
+}
+
 #[derive(Debug, Clone, PartialEq, PartialOrd)]
 pub enum ConsequenceKind {
+    Message {
+        message: String,
+        emoji: Option<Emoji<'static>>,
+    },
     Event(EventBuilder),
     Action(ControllerAction),
+    Battle(BattleConsequence),
     Encounter(Enemy),
     InstantBattle(Enemy),
     MultiplePossibleEncounters(Vec<Enemy>),
+    FindARegionEnemy,
     Rewards {
+        message: String,
         iterations: usize,
         items: Vec<(Probability, Item, (i32, i32))>,
         orbs: (i64, i64),
         xp: XpReward,
     },
     Prejudice {
+        message: String,
         items_amount: (usize, usize),
         max_item_valuability: usize,
         fixed_orbs: (i64, i64),
         orbs_percentage: f64,
         specific_items: Vec<(Item, usize)>,
+        damage_percentage: f64,
+        damage_limit: i32,
     },
     Shop {
         name: String,
         items: Vec<ShopItem>,
     },
     RemoveItemDurability(Item, u32),
+    RemoveItem(Item, usize),
     AddActionPoint(u32),
+    AddTag(String),
+    RemoveTag(String),
+    AddKarma(i32),
+    RemoveKarma(i32),
 }
 
 impl Default for ConsequenceKind {

@@ -5,21 +5,21 @@ use etheris_framework::*;
 
 use crate::{
     events::list::prelude::Reward, list::get_boxed_skill_from_kind, Battle, BattleController,
-    BattleSettings, FighterData,
+    BattleResult, BattleSettings, Fighter, FighterData,
 };
 
 pub async fn prompt_encounter(
     ctx: &mut CommandContext,
     user: User,
     enemies: Vec<FighterData>,
-) -> anyhow::Result<()> {
+) -> anyhow::Result<BattleResult> {
     let Some(character) = ctx
         .db()
         .characters()
         .get_by_user(&user.id.to_string())
         .await?
     else {
-        return Ok(());
+        return Ok(Default::default());
     };
 
     let reward = enemies
@@ -86,6 +86,8 @@ pub async fn prompt_encounter(
             None => Default::default(),
         };
 
+        let dummy_enemy_fighter = Fighter::dummy(enemy.clone());
+
         embed = embed.add_inlined_field(
             &enemy.name,
             format!(
@@ -100,7 +102,7 @@ pub async fn prompt_encounter(
                     enemy
                         .skills
                         .iter()
-                        .map(|s| get_boxed_skill_from_kind(s.clone()).data().name.to_string())
+                        .map(|s| get_boxed_skill_from_kind(s.clone()).data(&dummy_enemy_fighter).name.to_string())
                         .collect::<Vec<_>>()
                         .join("`, `")
                 }
@@ -139,7 +141,7 @@ pub async fn prompt_encounter(
         .await?;
 
     if !confirmation {
-        return Ok(());
+        return Ok(Default::default());
     }
 
     let mut fighters = enemies;
@@ -160,7 +162,5 @@ pub async fn prompt_encounter(
     )?;
 
     let mut controller = BattleController::new(battle, ctx.clone());
-    controller.run().await?;
-
-    Ok(())
+    controller.run().await
 }

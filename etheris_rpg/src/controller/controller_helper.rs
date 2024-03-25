@@ -30,6 +30,21 @@ fn melt_ice(melt_power: i32, api: &mut BattleApi<'_>) {
     }
 }
 
+pub async fn on_start(controller: &mut BattleController) -> anyhow::Result<()> {
+    for fighter_index in controller.battle.alive_fighters.clone() {
+        let fighter = controller.battle.get_fighter(fighter_index).clone();
+        for skill in fighter.skills.clone() {
+            let mut api = BattleApi::new(controller);
+            api.fighter_index = fighter_index;
+            api.target_index = fighter.target;
+
+            let mut skill = skill.dynamic_skill.lock().await;
+            skill.on_start(api).await?;
+        }
+    }
+    Ok(())
+}
+
 pub async fn tick_every_effect(
     fighters: &[FighterIndex],
     controller: &mut BattleController,
@@ -232,6 +247,13 @@ pub async fn tick_every_effect(
                             Default::default(),
                         ));
                     }
+                }
+                EffectKind::Exhausted => {
+                    api.fighter_mut().remove_effect(Effect::new(
+                        effect.kind,
+                        1,
+                        Default::default(),
+                    ));
                 }
             }
         }

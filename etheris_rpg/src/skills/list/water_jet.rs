@@ -9,7 +9,7 @@ impl Skill for WaterJet {
         SkillKind::WaterJet
     }
 
-    fn data(&self) -> SkillData {
+    fn data(&self, _fighter: &Fighter) -> SkillData {
         SkillData {
             identifier: "water_jet",
             name: "Jato de Água",
@@ -24,7 +24,7 @@ impl Skill for WaterJet {
         let fighter = api.fighter().clone();
         let target = api.target().clone();
 
-        let damage = api.rng().gen_range(5..=10);
+        let damage = api.rng().gen_range(8..=13);
 
         let multiplier = fighter.mixed_multiplier(0.5, 1.5);
         let damage = ((damage as f32) * multiplier) as i32;

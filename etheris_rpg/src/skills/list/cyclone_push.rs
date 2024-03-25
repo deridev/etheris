@@ -9,7 +9,7 @@ impl Skill for CyclonePush {
         SkillKind::CyclonePush
     }
 
-    fn data(&self) -> SkillData {
+    fn data(&self, _fighter: &Fighter) -> SkillData {
         SkillData {
             identifier: "cyclone_push",
             name: "Empurrão Ciclone",
@@ -24,7 +24,7 @@ impl Skill for CyclonePush {
         let fighter = api.fighter().clone();
         let target = api.target().clone();
 
-        let damage = api.rng().gen_range(2..=4);
+        let damage = api.rng().gen_range(3..=7);
 
         let multiplier = fighter.intelligence_multiplier();
         let damage = ((damage as f32) * multiplier) as i32;

@@ -9,7 +9,7 @@ impl Skill for Suplex {
         SkillKind::Suplex
     }
 
-    fn data(&self) -> SkillData {
+    fn data(&self, _fighter: &Fighter) -> SkillData {
         SkillData {
             identifier: "suplex",
             name: "Suplex",
@@ -28,7 +28,7 @@ impl Skill for Suplex {
         let fighter = api.fighter().clone();
         let target = api.target().clone();
 
-        let damage = api.rng().gen_range(18..=22);
+        let damage = api.rng().gen_range(16..=23);
         let damage = (damage as f32 * fighter.strength_multiplier()) as i32;
 
         let paralyze = Probability::new(20).generate_random_bool();
@@ -38,7 +38,7 @@ impl Skill for Suplex {
             DamageSpecifier { 
                 kind: DamageKind::Physical, 
                 amount: damage, 
-                balance_effectiveness: 40, 
+                balance_effectiveness: 30, 
                 accuracy: 90, 
                 effect: if paralyze { Some(Effect::new(EffectKind::Paralyzed, 1, fighter.index)) } else { None }, 
                 culprit: fighter.index 

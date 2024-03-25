@@ -1,5 +1,5 @@
 use etheris_data::items::get_item_by_weapon;
-use etheris_rpg::list::get_boxed_skill_from_kind;
+use etheris_rpg::{list::get_boxed_skill_from_kind, Fighter, FighterData};
 
 use crate::prelude::*;
 
@@ -14,6 +14,13 @@ pub async fn profile(
 ) -> anyhow::Result<()> {
     let user = user.unwrap_or(ctx.author().await?);
     let character = parse_user_character!(ctx, user);
+
+    let fighter = Fighter::new(
+        0,
+        Default::default(),
+        Default::default(),
+        FighterData::new_from_character(0, &character, user.clone(), Default::default()),
+    );
 
     let image = character.create_image_bufer();
     let attachment =
@@ -44,7 +51,7 @@ pub async fn profile(
             character
                 .skills
                 .iter()
-                .map(|s| format!("`{}`", get_boxed_skill_from_kind(s.clone()).data().name))
+                .map(|s| format!("`{}`", get_boxed_skill_from_kind(s.clone()).data(&fighter).name))
                 .collect::<Vec<_>>()
                 .join(", "),
             character.pl
@@ -96,7 +103,7 @@ pub async fn profile(
                         format!("\nRecarrega em: `{}`",
                         crate::util::format_duration(
                             (character.last_refill.0
-                                + chrono::Duration::minutes(character.refill_minutes as i64))
+                                + chrono::Duration::try_minutes(character.refill_minutes as i64).unwrap())
                                 - chrono::Utc::now()
                         ))
                     } else {

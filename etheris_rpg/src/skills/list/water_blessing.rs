@@ -9,7 +9,7 @@ impl Skill for WaterBlessing {
         SkillKind::WaterBlessing
     }
 
-    fn data(&self) -> SkillData {
+    fn data(&self, _fighter: &Fighter) -> SkillData {
         SkillData {
             identifier: "water_blessing",
             name: "Bênção da Água",

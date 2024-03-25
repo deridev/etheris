@@ -102,8 +102,17 @@ impl Enemy {
     }
 }
 
+pub mod special;
 pub mod weaklings;
-pub static ALL_ENEMIES: Lazy<Vec<Enemy>> = Lazy::new(|| [weaklings::giant_rat()].to_vec());
+pub static ALL_ENEMIES: Lazy<Vec<Enemy>> = Lazy::new(|| {
+    [
+        special::miniorbs(),
+        weaklings::giant_rat(),
+        weaklings::greenagis_mutant(),
+        weaklings::weak_shredder(),
+    ]
+    .to_vec()
+});
 
 pub fn get_enemy_by_id(id: &str) -> Option<Enemy> {
     ALL_ENEMIES

@@ -263,7 +263,7 @@ impl<'a> BattleApi<'a> {
             damage.amount = ((damage.amount as f32) * modifiers_defense) as i32;
         }
 
-        if culprit.balance < 85 {
+        if damage.accuracy < 255 && culprit.balance < 85 {
             let accuracy_loss = if culprit.balance < 20 {
                 30
             } else if culprit.balance < 50 {
@@ -277,7 +277,7 @@ impl<'a> BattleApi<'a> {
             damage.accuracy = damage.accuracy.saturating_sub(accuracy_loss);
         }
 
-        if damage.accuracy < 100 {
+        if damage.accuracy < 255 {
             let mut dodge_prob = Probability::new(if target.balance > 90 { 5 } else { 0 });
             if target.has_effect(EffectKind::Paralyzed) || target.has_effect(EffectKind::Frozen) {
                 dodge_prob = Probability::NEVER;
@@ -427,8 +427,10 @@ impl<'a> BattleApi<'a> {
             self.battle_mut().deferred_turn_messages.push(message);
         }
 
-        if let Some(effect) = damage.effect {
-            self.apply_effect(target_index, effect).await;
+        if !missed {
+            if let Some(effect) = damage.effect {
+                self.apply_effect(target_index, effect).await;
+            }
         }
 
         if !missed
@@ -510,6 +512,10 @@ impl<'a> BattleApi<'a> {
             EffectKind::Frozen => format!("**{}** congelou!", target_name),
             EffectKind::Bleeding => format!("**{}** começou a sangrar!", target_name),
             EffectKind::Curse => format!("**{}** está com uma maldição!", target_name),
+            EffectKind::Exhausted => format!(
+                "**{}** está exausto e não pode mais regenerar ether!",
+                target_name
+            ),
             EffectKind::LowProtection => format!(
                 "**{}** está com uma proteção extra a danos leves!",
                 target_name

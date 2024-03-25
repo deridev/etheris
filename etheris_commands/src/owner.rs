@@ -1,6 +1,11 @@
-use etheris_data::items::{get_item, get_item_by_name};
+use etheris_data::{
+    items::{get_item, get_item_by_name},
+    util::{translate, untranslate},
+};
 use etheris_database::bson::oid::ObjectId;
-use etheris_util::generate_random_character_appearance;
+use etheris_util::{
+    character_image::generate_character_image_buffer, generate_random_character_appearance,
+};
 
 use crate::prelude::*;
 
@@ -16,6 +21,9 @@ pub enum Command {
     RemoveOrbs(IdString, i32),
     AddItem(IdString, String, i32),
     RemoveItem(IdString, String, i32),
+    Translate(String),
+    Untranslate(String),
+    GenerateSkin,
 }
 
 impl Command {
@@ -28,6 +36,9 @@ impl Command {
         "remove orbs <id> [quantity]",
         "add item <id> <item> [quantity]",
         "remove item <id> <item> [quantity]",
+        "translate <text>",
+        "untranslate <text>",
+        "generate skin",
     ];
 
     pub fn parse(input: &str) -> Option<Command> {
@@ -37,6 +48,8 @@ impl Command {
 
         match command.as_str() {
             "help" => Some(Command::Help),
+            "translate" => Some(Command::Translate(splitted.skip(1).collect())),
+            "untranslate" => Some(Command::Untranslate(splitted.skip(1).collect())),
             "reset" => {
                 let subcommand = splitted.next()?.to_lowercase();
                 match subcommand.as_str() {
@@ -80,6 +93,14 @@ impl Command {
                             _ => None,
                         }
                     }
+                    _ => None,
+                }
+            }
+            "generate" => {
+                let subcommand = splitted.next()?.to_lowercase();
+
+                match subcommand.as_str() {
+                    "skin" => Some(Command::GenerateSkin),
                     _ => None,
                 }
             }
@@ -145,10 +166,20 @@ pub async fn owner(
             ))
             .await?;
         }
+        Command::Translate(text) => {
+            let output = translate(&text);
+            ctx.reply(Response::new_user_reply(&author, format!("```{output}```")))
+                .await?;
+        }
+        Command::Untranslate(text) => {
+            let output = untranslate(&text);
+            ctx.reply(Response::new_user_reply(&author, format!("```{output}```")))
+                .await?;
+        }
         Command::ResetCache(id) => {
             let character = parse_character!(id.clone().unwrap_or(author.id.to_string()))
                 .context("character not found")?;
-            ctx.db().characters().save(character.clone()).await?;
+            ctx.db().characters().remove_from_cache(&character);
             ctx.reply(Response::new_user_reply(
                 &author,
                 format!("você resetou o cache de {} com sucesso.", character.name),
@@ -258,6 +289,17 @@ pub async fn owner(
                 ),
             ))
             .await?;
+        }
+        Command::GenerateSkin => {
+            let image = generate_character_image_buffer(&generate_random_character_appearance());
+            let attachment = DiscordAttachment::from_bytes("image.png".to_owned(), image, 1);
+
+            let embed = EmbedBuilder::new_common()
+                .set_color(Color::LIGHT_CYAN)
+                .set_image(format!("attachment://{}", attachment.filename));
+
+            ctx.reply(Response::from(embed).set_attachments(vec![attachment]))
+                .await?;
         }
     }
 

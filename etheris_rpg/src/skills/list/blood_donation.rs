@@ -9,7 +9,7 @@ impl Skill for BloodDonation {
         SkillKind::BloodDonation
     }
 
-    fn data(&self) -> SkillData {
+    fn data(&self, _fighter: &Fighter) -> SkillData {
         SkillData {
             identifier: "blood_donation",
             name: "Doação Sanguínea",

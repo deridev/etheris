@@ -9,7 +9,7 @@ impl Skill for FinalCrucifix {
         SkillKind::FinalCrucifix
     }
 
-    fn data(&self) -> SkillData {
+    fn data(&self, _fighter: &Fighter) -> SkillData {
         SkillData {
             identifier: "final_crucifix",
             name: "Crucifixo Final",
@@ -30,14 +30,12 @@ impl Skill for FinalCrucifix {
 
     async fn on_use(&mut self, mut api: BattleApi<'_>) -> SkillResult<()> {
         let fighter_team = api.fighter().team;
-        let multiplier = api.fighter().mixed_multiplier(0.1, 1.0);
+        let multiplier = api.fighter().mixed_multiplier(0.1, 1.1);
 
         api.fighter_mut().flags.insert(FighterFlags::CANNOT_REGEN_ETHER);
 
-        let self_damage = (api.rng().gen_range(15..=20) as f32 * multiplier) as i32;
-        let ally_damage = (api.rng().gen_range(10..=15) as f32 * multiplier) as i32;
-        let enemy_damage = (api.rng().gen_range(35..=45) as f32 * multiplier) as i32;
-
+        let self_damage = (api.rng().gen_range(20..=25) as f32 * multiplier) as i32;
+        
         let self_damage = api.apply_damage(api.fighter_index, DamageSpecifier {
             culprit: api.fighter_index,
             kind: DamageKind::Special,
@@ -46,7 +44,7 @@ impl Skill for FinalCrucifix {
             balance_effectiveness: 40,
             effect: None,
         }).await;
-
+        
         let fighter_died = api.fighter().killed_by.is_some();
         if fighter_died {
             api.emit_message(format!("**{}** sacrificou toda sua vitalidade para invocar um Crucifixo Final, mas não sobreviveu ao próprio poder.", api.fighter().name));
@@ -54,11 +52,14 @@ impl Skill for FinalCrucifix {
         } else {
             api.emit_message(format!("**{}** sacrificou sua vitalidade e recebeu **{self_damage}** para invocar um magnífico Crucifixo Final!", api.fighter().name));
         }
-
+        
         for index in api.battle().alive_fighters.clone() {
             if index == api.fighter_index {
                 continue;
             }
+            
+            let ally_damage = (api.rng().gen_range(10..=15) as f32 * multiplier) as i32;
+            let enemy_damage = (api.rng().gen_range(45..=60) as f32 * multiplier) as i32;
 
             let fighter = api.battle().get_fighter(index).clone();
             let dmg = if fighter.team == fighter_team {
@@ -71,7 +72,7 @@ impl Skill for FinalCrucifix {
                 culprit: api.fighter_index,
                 kind: DamageKind::Special,
                 amount: dmg,
-                accuracy: 100,
+                accuracy: 255,
                 balance_effectiveness: 30,
                 effect: None,
             }).await;
@@ -83,7 +84,7 @@ impl Skill for FinalCrucifix {
             ]);
         }
 
-        let overload = api.rng().gen_range(40.0..=60.0);
+        let overload = api.rng().gen_range(60.0..=90.0);
         api.add_overload(api.fighter_index, overload).await;
 
         Ok(())

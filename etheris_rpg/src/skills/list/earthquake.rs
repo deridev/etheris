@@ -9,7 +9,7 @@ impl Skill for Earthquake {
         SkillKind::Earthquake
     }
 
-    fn data(&self) -> SkillData {
+    fn data(&self, _fighter: &Fighter) -> SkillData {
         SkillData {
             identifier: "earthquake",
             name: "Terremoto",
@@ -24,8 +24,8 @@ impl Skill for Earthquake {
         let fighter_team = api.fighter().team;
         let multiplier = api.fighter().mixed_multiplier(0.3, 0.7);
 
-        let ally_damage = (api.rng().gen_range(6..=8) as f32 * multiplier) as i32;
-        let enemy_damage = (api.rng().gen_range(15..=19) as f32 * multiplier) as i32;
+        let ally_damage = (api.rng().gen_range(6..=10) as f32 * multiplier) as i32;
+        let enemy_damage = (api.rng().gen_range(15..=25) as f32 * multiplier) as i32;
 
         api.emit_message(format!("**{}** invocou um poderoso terremoto na arena!", api.fighter().name));
 

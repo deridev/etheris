@@ -25,10 +25,11 @@ use crate::{common::*, get_input, *};
 
 use self::data::{weapons::execute_weapon_attack, Reward};
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Default)]
 pub struct BattleResult {
     pub reward: Reward,
     pub winners: Vec<Fighter>,
+    pub losers: Vec<Fighter>,
 }
 
 pub struct BattleController {
@@ -104,6 +105,8 @@ impl BattleController {
     }
 
     async fn prepare(&mut self) -> anyhow::Result<()> {
+        controller_helper::on_start(self).await?;
+
         for (user, fighter) in self
             .battle
             .fighters
@@ -190,6 +193,14 @@ impl BattleController {
             bail!("A battle can't draw");
         }
 
+        let losers = self
+            .battle
+            .fighters
+            .iter()
+            .filter(|f| !winners.contains(f))
+            .cloned()
+            .collect();
+
         let rewards = self
             .battle
             .defeated_fighters
@@ -202,6 +213,7 @@ impl BattleController {
         Ok(BattleResult {
             reward: rewards,
             winners,
+            losers,
         })
     }
 
@@ -441,11 +453,11 @@ impl BattleController {
                     continue;
                 }
 
-                for skill in fighter.skills {
+                for skill in fighter.skills.clone() {
                     let skill = skill.dynamic_skill.lock().await;
                     let kind = skill.save_kind();
                     if skill
-                        .data()
+                        .data(&fighter)
                         .complexity
                         .prob_of_aknowleding()
                         .generate_random_bool()
@@ -652,9 +664,9 @@ impl BattleController {
                 }
 
                 // Default attack
-                let mut damage = api.rng().gen_range(4..=7);
+                let mut damage = api.rng().gen_range(10..=15);
                 if is_kick {
-                    damage += api.rng().gen_range(3..=7);
+                    damage += api.rng().gen_range(3..=6);
                 }
 
                 let damage = (damage as f32 * api.fighter().strength_multiplier() * 1.1) as i32;
@@ -707,7 +719,7 @@ impl BattleController {
                 fighter.ether.value = fighter
                     .ether
                     .value
-                    .sub(dynamic_skill.data().use_cost.ether)
+                    .sub(dynamic_skill.data(fighter).use_cost.ether)
                     .max(0);
 
                 dynamic_skill.on_use(BattleApi::new(self)).await?;
@@ -977,13 +989,16 @@ impl BattleController {
                         displays.push(format!("❄️ **Congelando**: {}%", effect.amount))
                     }
                     EffectKind::Frozen => {
-                        displays.push(format!("🧊 **Congelado**: {}%", effect.amount))
+                        displays.push(format!("🧊 **Congelado**: {} turnos", effect.amount))
                     }
                     EffectKind::Bleeding => {
                         displays.push(format!("🩸 **Sangramento**: {}%", effect.amount))
                     }
                     EffectKind::Curse => {
                         displays.push(format!("⚫ **Maldição**: {}%", effect.amount))
+                    }
+                    EffectKind::Exhausted => {
+                        displays.push(format!("😞 **Exausto**: {} turnos", effect.amount))
                     }
 
                     EffectKind::LowProtection => {

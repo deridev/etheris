@@ -11,7 +11,7 @@ impl Skill for Charge {
         SkillKind::Charge
     }
 
-    fn data(&self) -> SkillData {
+    fn data(&self, _fighter: &Fighter) -> SkillData {
         SkillData {
             identifier: "charge",
             name: "Investida",
@@ -22,8 +22,8 @@ impl Skill for Charge {
         }
     }
 
-    fn display(&self) -> SkillDisplay {
-        let mut display = self.default_display();
+    fn display(&self, fighter: &Fighter) -> SkillDisplay {
+        let mut display = self.default_display(fighter);
         display.sub_header.push_str(&format!("\n**Carregado**: {}", if self.charged { "Sim" } else { "Não" }));
         display
     }
@@ -49,7 +49,7 @@ impl Skill for Charge {
         let fighter = api.fighter().clone();
         let target = api.target().clone();
 
-        let damage = api.rng().gen_range(15..=25);
+        let damage = api.rng().gen_range(15..=30);
 
         let multiplier = fighter.strength_multiplier();
         let damage = ((damage as f32) * multiplier) as i32;

@@ -4,7 +4,7 @@ use etheris_discord::twilight_model::channel::message::component::ButtonStyle;
 use etheris_framework::{util::make_multiple_rows, watcher::WatcherOptions};
 use etheris_rpg::{
     list::{get_boxed_skill_from_kind, ALL_SKILLS},
-    SkillComplexity,
+    Fighter, FighterData, SkillComplexity,
 };
 use rand::{rngs::StdRng, seq::SliceRandom, Rng, SeedableRng};
 
@@ -36,7 +36,11 @@ pub async fn study(mut ctx: CommandContext) -> anyhow::Result<()> {
     verify_user_cooldown!(ctx, author, "STUDY");
     ctx.db()
         .cooldowns()
-        .create_cooldown(author.id, "STUDY", chrono::Duration::minutes(2))
+        .create_cooldown(
+            author.id,
+            "STUDY",
+            chrono::Duration::try_minutes(2).unwrap(),
+        )
         .await?;
 
     let xp = match character.stats.intelligence_level {
@@ -160,6 +164,12 @@ pub async fn aknowledge_skill(author: &User, ctx: &mut CommandContext) -> anyhow
     const MAX_SKILLS: usize = 4;
     let rng = &mut StdRng::from_entropy();
     let character = parse_user_character!(ctx, author);
+    let fighter = Fighter::new(
+        0,
+        Default::default(),
+        Default::default(),
+        FighterData::new_from_character(0, &character, author.clone(), Default::default()),
+    );
 
     let valid_skills = ALL_SKILLS
         .iter()
@@ -181,7 +191,7 @@ pub async fn aknowledge_skill(author: &User, ctx: &mut CommandContext) -> anyhow
             .filter(|p| character.personalities.contains(*p))
             .count() as f64;
 
-        let complexity_multiplier = match s.data().complexity {
+        let complexity_multiplier = match s.data(&fighter).complexity {
             SkillComplexity::VerySimple => 2.5,
             SkillComplexity::Simple => 2.0,
             SkillComplexity::Normal => 1.5,
@@ -238,11 +248,11 @@ pub async fn aknowledge_skill(author: &User, ctx: &mut CommandContext) -> anyhow
                 .map(|s| {
                     format!(
                         "## {}\n**`{} conhecimento`**\n{} **{}**\n{}",
-                        s.data().name,
+                        s.data(&fighter).name,
                         s.kind().knowledge_cost(),
                         emojis::ETHER,
-                        s.data().use_cost.ether,
-                        s.data().description
+                        s.data(&fighter).use_cost.ether,
+                        s.data(&fighter).description
                     )
                 })
                 .collect::<Vec<_>>()
@@ -253,8 +263,8 @@ pub async fn aknowledge_skill(author: &User, ctx: &mut CommandContext) -> anyhow
     let mut buttons = vec![];
     for skill in skills.iter() {
         let button = ButtonBuilder::new()
-            .set_custom_id(skill.data().identifier)
-            .set_label(skill.data().name);
+            .set_custom_id(skill.data(&fighter).identifier)
+            .set_label(skill.data(&fighter).name);
 
         buttons.push(button);
     }
@@ -302,7 +312,7 @@ pub async fn aknowledge_skill(author: &User, ctx: &mut CommandContext) -> anyhow
 
     let Some(skill) = skills
         .iter()
-        .find(|s| s.data().identifier == data.custom_id)
+        .find(|s| s.data(&fighter).identifier == data.custom_id)
     else {
         return Ok(());
     };
@@ -312,7 +322,7 @@ pub async fn aknowledge_skill(author: &User, ctx: &mut CommandContext) -> anyhow
     character.remove_flag(CharacterFlag::CanAknowledgeSkill);
     ctx.db().characters().save(character).await?;
 
-    ctx.send(Response::new_user_reply(author, format!("você descobriu a habilidade **{}**! Use **/aprender** para obtê-la para o seu personagem.", skill.data().name))).await?;
+    ctx.send(Response::new_user_reply(author, format!("você descobriu a habilidade **{}**! Use **/aprender** para obtê-la para o seu personagem.", skill.data(&fighter).name))).await?;
 
     Ok(())
 }
