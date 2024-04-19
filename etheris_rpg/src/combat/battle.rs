@@ -308,6 +308,8 @@ impl Battle {
             let fighter_is_ai = fighter.ai_state.is_some();
             let target = fighter.target;
 
+            fighter.recalculate_pl();
+
             let ether_rec = if fighter.flags.contains(FighterFlags::CANNOT_REGEN_ETHER)
                 || fighter
                     .flags

@@ -24,17 +24,19 @@ impl Skill for CyclonePush {
         let fighter = api.fighter().clone();
         let target = api.target().clone();
 
-        let damage = api.rng().gen_range(3..=7);
+        let damage = api.rng().gen_range(3..=5);
 
         let multiplier = fighter.intelligence_multiplier();
         let damage = ((damage as f32) * multiplier) as i32;
+
+        let balance_effectiveness = api.rng().gen_range(20..=35);
 
         let damage = api.apply_damage(
             target.index,
             DamageSpecifier {
                 kind: DamageKind::Wind,
                 amount: damage,
-                balance_effectiveness: 35,
+                balance_effectiveness,
                 accuracy: 90,
                 ..Default::default()
             },

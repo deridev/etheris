@@ -11,6 +11,7 @@ make_enemy!(
         brain: BrainKind::Simple,
         regions: &[],
         personalities: &[Personality::Cowardice, Personality::Intelligence],
+        potential: EnemyPotential::Medium,
         strength: 10,
         intelligence: 20,
         resistance: 200,

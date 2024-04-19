@@ -99,12 +99,13 @@ pub fn calculate_power_level(
     ether: Attribute,
     strength_level: u32,
     intelligence_level: u32,
+    power: f64,
     weighted_skills: f64,
 ) -> i64 {
     let health = (resistance.value + vitality.value) / 2;
     let health_pl = (health as f64).powf(0.45).round();
     let ether_pl = (ether.value as f64).powf(0.45).round();
-    let strength_pl = ((strength_level + intelligence_level) as f64 / 2.0)
+    let strength_pl = (((strength_level + intelligence_level) as f64 * power) / 2.0)
         .powf(0.65)
         .round();
 

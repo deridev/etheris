@@ -44,6 +44,7 @@ impl CharacterCommands {
             character.stats.ether.into(),
             character.stats.strength_level,
             character.stats.intelligence_level,
+            character.potential,
             weighted_skills,
         );
 

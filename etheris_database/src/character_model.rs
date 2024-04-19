@@ -1,5 +1,6 @@
 use std::{
     collections::HashSet,
+    fmt::Display,
     hash::Hash,
     mem::discriminant,
     ops::{Add, Sub},
@@ -168,6 +169,57 @@ pub enum CharacterFlag {
     CanAknowledgeSkill,
 }
 
+#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
+pub enum BattleAction {
+    GiveUp,
+    ControlPower,
+}
+
+impl BattleAction {
+    pub fn identifier(&self) -> String {
+        match self {
+            Self::GiveUp => "give_up".to_string(),
+            Self::ControlPower => "control_power".to_string(),
+        }
+    }
+
+    pub fn name(&self) -> String {
+        match self {
+            Self::GiveUp => "Desistir".to_string(),
+            Self::ControlPower => "Controlar Poder".to_string(),
+        }
+    }
+}
+
+#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
+pub enum MentalLevel {
+    Laymen,
+    Beginner,
+    Novice,
+    Accustomed,
+    Spirited,
+    Strong,
+    Master,
+    Champion,
+    Legend,
+}
+
+impl Display for MentalLevel {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::Laymen => f.write_str("Leigo"),
+            Self::Beginner => f.write_str("Iniciante"),
+            Self::Novice => f.write_str("Novato"),
+            Self::Accustomed => f.write_str("Acostumado"),
+            Self::Spirited => f.write_str("Espirituoso"),
+            Self::Strong => f.write_str("Forte"),
+            Self::Master => f.write_str("Mestre"),
+            Self::Champion => f.write_str("Campeão"),
+            Self::Legend => f.write_str("Lenda"),
+        }
+    }
+}
+
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
 pub struct CharacterModel {
     #[serde(rename = "_id")]
@@ -182,6 +234,10 @@ pub struct CharacterModel {
     pub inventory: Vec<InventoryItem>,
     pub battle_inventory: Vec<InventoryItem>,
     pub personalities: Vec<Personality>,
+    pub actions: HashSet<BattleAction>,
+
+    pub mental_level: MentalLevel,
+    pub potential: f64,
 
     pub study_skills_cache: Vec<SkillKind>,
     pub skills: Vec<SkillKind>,
@@ -251,10 +307,14 @@ impl CharacterModel {
             flags: HashSet::new(),
             alive: true,
             death_info: None,
+            actions: [BattleAction::GiveUp].into_iter().collect(),
 
             tags: HashSet::new(),
             inventory: vec![],
             battle_inventory: vec![],
+
+            mental_level: MentalLevel::Laymen,
+            potential: 0.5,
 
             study_skills_cache: vec![],
             learned_skills: skills.clone(),

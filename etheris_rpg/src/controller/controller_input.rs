@@ -1,6 +1,7 @@
 use std::time::Duration;
 
 use etheris_common::Color;
+use etheris_database::character_model::BattleAction;
 use etheris_discord::{
     twilight_model::channel::{message::component::ButtonStyle, Message},
     *,
@@ -136,6 +137,7 @@ pub async fn get_input(controller: &mut BattleController) -> anyhow::Result<Batt
             | BattleInputKind::ChangeTarget
             | BattleInputKind::ChangeTeam
             | BattleInputKind::UseItem
+            | BattleInputKind::Actions
     ) {
         ctx.update_message(response).await?;
         tokio::time::sleep(Duration::from_millis(100)).await;
@@ -155,6 +157,7 @@ pub async fn get_input(controller: &mut BattleController) -> anyhow::Result<Batt
         BattleInputKind::GetUp => BattleInput::GetUp,
         BattleInputKind::Upkick => BattleInput::Upkick,
         BattleInputKind::UseItem => get_item_input(controller, collected, message).await?,
+        BattleInputKind::Actions => get_action_input(controller, collected, message).await?,
     })
 }
 
@@ -467,4 +470,109 @@ pub async fn get_item_input(
     };
 
     Ok(BattleInput::UseItem(item.item))
+}
+
+pub async fn get_action_input(
+    controller: &mut BattleController,
+    interaction: Interaction,
+    message: Message,
+) -> anyhow::Result<BattleInput> {
+    let fighter = controller.battle.get_current_fighter().clone();
+
+    let mut actions = vec![];
+    for action in controller.battle.get_current_fighter().actions.clone() {
+        actions.push(action);
+    }
+
+    match &fighter.user {
+        Some(..) => (),
+        None => return Ok(BattleInput::Reinput),
+    };
+
+    let mut field = controller_helper::create_fighter_embed_fields(&fighter, None);
+    field.name = "Seus Atributos".to_string();
+
+    let mut descriptors = vec![format!("## **{} PL**", fighter.pl)];
+
+    if fighter.actions.contains(&BattleAction::ControlPower) {
+        descriptors.push(format!(
+            "**Poder liberado**: {}%\n**Potencial**: `{}`%",
+            (fighter.power * 100.0).round() as i32,
+            (fighter.potential * 100.0).round() as i32
+        ));
+    }
+
+    let embed = EmbedBuilder::new_common()
+        .set_color(Color::ORANGE)
+        .set_author(EmbedAuthor {
+            name: format!("Ações de {}", fighter.name),
+            icon_url: fighter.user.as_ref().map(|u| u.avatar_url()),
+        })
+        .add_description_text(descriptors.join("\n"))
+        .add_field(field);
+
+    let mut buttons = vec![];
+    for action in actions.iter() {
+        let button = ButtonBuilder::new()
+            .set_custom_id(action.identifier())
+            .set_label(action.name());
+        buttons.push(button);
+    }
+
+    buttons.insert(
+        0,
+        ButtonBuilder::new()
+            .set_custom_id("return")
+            .set_label("Voltar"),
+    );
+
+    let mut ctx =
+        CommandContext::from_with_interaction(&controller.ctx, Box::new(interaction.clone()));
+
+    ctx.update_message(
+        Response::from(embed.clone())
+            .set_components(vec![ActionRowBuilder::new().add_buttons(buttons.clone())]),
+    )
+    .await?;
+
+    let Ok(collected) =
+        input_util::await_component_allowing_intruders(message.id, &mut ctx, controller).await
+    else {
+        return Ok(BattleInput::Nothing);
+    };
+
+    controller.last_interaction = Some(collected.clone());
+    let data = collected.parse_message_component_data()?;
+
+    let mut ctx = CommandContext::from_with_interaction(&ctx, Box::new(collected.clone()));
+
+    let buttons = buttons
+        .into_iter()
+        .map(|b| {
+            let custom_id = b.data.custom_id.clone().unwrap_or_default();
+            b.set_disabled(true)
+                .set_style(if custom_id == data.custom_id {
+                    ButtonStyle::Success
+                } else {
+                    ButtonStyle::Secondary
+                })
+        })
+        .collect::<Vec<_>>();
+
+    ctx.update_message(
+        Response::from(embed).set_components(vec![ActionRowBuilder::new().add_buttons(buttons)]),
+    )
+    .await?;
+
+    tokio::time::sleep(Duration::from_millis(100)).await;
+
+    if data.custom_id == "return" {
+        return Ok(BattleInput::Reinput);
+    }
+
+    let Some(action) = actions.iter().find(|s| s.identifier() == data.custom_id) else {
+        return Ok(BattleInput::Reinput);
+    };
+
+    Ok(BattleInput::UseAction(*action))
 }

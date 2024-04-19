@@ -1,6 +1,6 @@
 use etheris_common::{calculate_power_level, Attribute};
 use etheris_data::{items, personality::Personality, weapon::WeaponKind, SkillKind};
-use etheris_database::character_model::CharacterModel;
+use etheris_database::character_model::{BattleAction, CharacterModel};
 use etheris_discord::twilight_model::user::User;
 
 use crate::{
@@ -9,13 +9,14 @@ use crate::{
     list::prelude::BattleItem,
 };
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct FighterData {
     pub team: u8,
     pub name: String,
     pub user: Option<User>,
 
     pub brain: Option<BrainKind>,
+    pub actions: Vec<BattleAction>,
 
     pub inventory: Vec<BattleItem>,
     pub personalities: Vec<Personality>,
@@ -23,6 +24,7 @@ pub struct FighterData {
 
     pub strength_level: u32,
     pub intelligence_level: u32,
+    pub potential: f64,
 
     pub weapon: Option<WeaponKind>,
 
@@ -46,6 +48,7 @@ impl FighterData {
             user: Some(user),
 
             brain: None,
+            actions: character.actions.iter().copied().collect(),
 
             inventory: character
                 .battle_inventory
@@ -61,6 +64,7 @@ impl FighterData {
 
             strength_level: character.stats.strength_level,
             intelligence_level: character.stats.intelligence_level,
+            potential: character.potential,
 
             resistance: character.stats.resistance.into(),
             vitality: character.stats.vitality.into(),
@@ -78,9 +82,11 @@ impl FighterData {
             personalities: enemy.personalities.to_owned(),
             drop,
             brain: Some(enemy.brain),
+            actions: vec![BattleAction::ControlPower],
             user: None,
             name: enemy.name.to_string(),
             inventory: vec![],
+            potential: enemy.potential.to_f64(),
             intelligence_level: enemy.intelligence,
             strength_level: enemy.strength,
             ether: Attribute::from(enemy.ether),
@@ -108,6 +114,7 @@ impl FighterData {
             self.ether,
             self.strength_level,
             self.intelligence_level,
+            self.potential,
             weighted_skills,
         )
     }

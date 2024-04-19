@@ -77,6 +77,29 @@ fn calculate_orbs_gain(player_pl: i64, enemy_pl: i64, base_orbs: i64) -> i64 {
     calculate_gain(player_pl, enemy_pl, base_orbs, 0.3, 2.0)
 }
 
+#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub enum EnemyPotential {
+    VeryLow,
+    Low,
+    Medium,
+    High,
+    VeryHigh,
+    Master,
+}
+
+impl EnemyPotential {
+    pub fn to_f64(&self) -> f64 {
+        match self {
+            Self::VeryLow => 0.5,
+            Self::Low => 0.75,
+            Self::Medium => 1.0,
+            Self::High => 1.5,
+            Self::VeryHigh => 2.0,
+            Self::Master => 4.0,
+        }
+    }
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct Enemy {
     pub identifier: &'static str,
@@ -85,6 +108,7 @@ pub struct Enemy {
     pub brain: BrainKind,
     pub regions: &'static [(WorldRegion, i32)],
     pub personalities: &'static [Personality],
+    pub potential: EnemyPotential,
     pub strength: u32,
     pub intelligence: u32,
     pub resistance: i32,
@@ -104,12 +128,22 @@ impl Enemy {
 
 pub mod special;
 pub mod weaklings;
+pub mod weaklings_plus;
 pub static ALL_ENEMIES: Lazy<Vec<Enemy>> = Lazy::new(|| {
     [
         special::miniorbs(),
+        // Weaklings
         weaklings::giant_rat(),
         weaklings::greenagis_mutant(),
         weaklings::weak_shredder(),
+        weaklings::newbie_hunter(),
+        weaklings::weak_mercenary(),
+        weaklings::mud_golem(),
+        weaklings::swamp_master(),
+        weaklings::weak_mercenary_leader(),
+        // Weaklings+
+        weaklings_plus::average_looter(),
+        weaklings_plus::marsh_marauder(),
     ]
     .to_vec()
 });

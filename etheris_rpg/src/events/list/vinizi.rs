@@ -195,11 +195,11 @@ fn vinizi_first_stage_interaction(state: EventBuildState) -> Event {
         "`\"Ei [NAME], já te contei sobre o tempo que fui teleportado para um concerto de rock? Foi chocante! Eu apareci no meio do palco, bem na frente da banda. Eles ficaram muito assustados! Mas antes que pudesse desfrutar do show, já tinha sido teleportado novamente. Às vezes, ser eu é uma verdadeira montanha-russa! Ha ha ha! Teve um dia qu-\"`. Vinizi teleportou antes de terminar a frase.".to_string(),
         "`\"[NAME], você já imaginou ser teleportado para um lugar completamente diferente enquanto está no meio de uma conversa? Isso acontece comigo o tempo todo! Às vezes eu acabo em situações estranhas por causa disso. Eu já me acostumei, mas às vezes isso me irrit-\"`. Vinizi teleportou antes de terminar a frase.".to_string(),
         "`\"Aí, [NAME], você já ouviu falar do Festival de Fogos de Artifício de Astra? Eu fui teleportado para lá uma vez e acabei no meio de um show de luzes espetacular! Foi uma experiência incrível, mas durou apenas alguns segundos antes de eu ser teleportado novamente. Às vezes, desejo que pudesse ficar em um lugar por mais tempo, mas a vida de um teleportador é cheia de surpresas! Ah, estou sentindo, acho que vou ser telepor-\"`. Vinizi teleportou antes de terminar a frase.".to_string(),
-        "`\"[NAME], você já se perguntou como seria ser um pássaro? Eu me teleportei para o topo de uma montanha uma vez e fiquei rodeado por pássaros voando. Foi uma sensação incrível. Sério! Por alguns instantes, senti como se pudesse voar também. Mas é claro que logo fui teleportado novamente para algum outro lugar. Ah, a vida emocionante que eu levo! Ha ha ha!\"`. Vinizi teleportou antes de terminar a frase.".to_string(),
+        "`\"[NAME], você já se perguntou como seria ser um pássaro? Eu me teleportei para o topo de uma montanha uma vez e fiquei rodeado por pássaros voando. Foi uma sensação incrível. Sério! Por alguns instantes, senti como se pudesse voar também. Mas é claro que logo fui teleportado novamente para algum outro lugar. Ah, a vida emocionante que eu levo! Ha ha ha! Ei, voc-\"`. Vinizi teleportou antes de terminar a frase.".to_string(),
     ];
 
     if state.character.region.kind() == RegionKind::Desert {
-        for _ in 0..=3{
+        for _ in 0..=3 {
             messages.push("`\"Eu estava com saudade, [NAME]! Mas por que você tá nesse deserto? Eu não gosto muito de teleportar para regiões com temperaturas extremas, eu não tenho tempo nem para preparar minhas roupas! A minha sorte é que minha doença me teleporta para o meio do oceano às vezes, então eu consigo tomar banho. Ha ha h-\"`. Vinizi teleportou antes de terminar a frase.".to_string());
         }
     }

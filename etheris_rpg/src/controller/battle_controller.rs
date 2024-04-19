@@ -5,7 +5,7 @@ use std::{
 
 use anyhow::bail;
 use etheris_common::{Color, Probability};
-use etheris_data::{emojis, items::get_item_by_weapon, ItemValues};
+use etheris_data::{items::get_item_by_weapon, ItemValues};
 use etheris_database::{
     character_model::{DeathCause, DeathInfo},
     common::{DatabaseDateTime, InventoryItem},
@@ -23,7 +23,10 @@ use rand::{seq::SliceRandom, Rng};
 
 use crate::{common::*, get_input, *};
 
-use self::data::{weapons::execute_weapon_attack, Reward};
+use self::{
+    controller_helper::create_fighter_embed_fields,
+    data::{weapons::execute_weapon_attack, Reward},
+};
 
 #[derive(Debug, Clone, Default)]
 pub struct BattleResult {
@@ -150,8 +153,8 @@ impl BattleController {
                 Ok(()) => (),
                 Err(e) => {
                     eprintln!("battle_controller::run Error: {}", e);
-                    // Error tolerancy of 5
-                    if turn_errors < 5 {
+                    // Error tolerancy of 10
+                    if turn_errors < 10 {
                         turn_errors += 1;
                         continue;
                     }
@@ -851,6 +854,12 @@ impl BattleController {
 
                 self.should_reinput = true;
             }
+            BattleInput::UseAction(action) => {
+                let mut api = BattleApi::new(self);
+                api.fighter_index = fighter.index;
+                api.target_index = fighter.target;
+                action_handler::execute_action(action, &mut api).await?;
+            }
         }
 
         Ok(())
@@ -924,106 +933,10 @@ impl BattleController {
         });
 
         for fighter in alive_fighters {
-            let fighter = self.battle.get_fighter_mut(fighter.index);
-            let index = fighter.index;
-
-            let is_target = index == current_fighter.target;
-            let target_string = if is_target {
-                "🎯 ".to_string()
-            } else {
-                String::new()
-            };
-
-            let mut displays = vec![];
-
-            if fighter.resistance.value > 0 {
-                displays.push(format!(
-                    "{} {}",
-                    emojis::RESISTANCE,
-                    fighter.resistance.value
-                ))
-            }
-
-            if fighter.vitality.value != fighter.vitality.max || fighter.resistance.value <= 0 {
-                displays.push(format!("{} {}", emojis::VITALITY, fighter.vitality.value));
-            }
-
-            displays.push(format!("{} {}", emojis::ETHER, fighter.ether.value));
-
-            if fighter.overload > 5.0 {
-                displays.push(format!("🧨 **Sobrecarga**: {}%", fighter.overload as i64));
-            }
-
-            match fighter.balance {
-                0..=15 => displays.push("Equilíbrio Zero".to_string()),
-                16..=40 => displays.push("Nenhum Equilíbrio".to_string()),
-                41..=60 => displays.push("Equilíbrio Muito Baixo".to_string()),
-                61..=80 => displays.push("Equilíbrio Baixo".to_string()),
-                _ => (),
-            }
-
-            match fighter.composure {
-                Composure::Standing => (),
-                Composure::OnGround => displays.push("**No Chão**".to_string()),
-                Composure::OnAir(n) => displays.push(format!("**{n}m No Ar**")),
-            }
-
-            fighter.effects.sort_by_key(|k| k.kind);
-
-            for effect in fighter.effects.iter() {
-                match effect.kind {
-                    EffectKind::Flaming => {
-                        displays.push(format!("♨️ **Queimando**: {}%", effect.amount))
-                    }
-                    EffectKind::Burning => {
-                        displays.push(format!("🔥 **Combustão**: {}%", effect.amount))
-                    }
-                    EffectKind::Shocked => {
-                        displays.push(format!("⚡ **Choque**: {}%", effect.amount))
-                    }
-                    EffectKind::Paralyzed => {
-                        displays.push(format!("😵‍💫 **Paralisado**: {} turnos", effect.amount))
-                    }
-                    EffectKind::Wet => displays.push(format!("💧 **Molhado**: {}%", effect.amount)),
-                    EffectKind::Ice => {
-                        displays.push(format!("❄️ **Congelando**: {}%", effect.amount))
-                    }
-                    EffectKind::Frozen => {
-                        displays.push(format!("🧊 **Congelado**: {} turnos", effect.amount))
-                    }
-                    EffectKind::Bleeding => {
-                        displays.push(format!("🩸 **Sangramento**: {}%", effect.amount))
-                    }
-                    EffectKind::Curse => {
-                        displays.push(format!("⚫ **Maldição**: {}%", effect.amount))
-                    }
-                    EffectKind::Exhausted => {
-                        displays.push(format!("😞 **Exausto**: {} turnos", effect.amount))
-                    }
-
-                    EffectKind::LowProtection => {
-                        displays.push(format!("🛡️ **Proteção Leve**: {} turnos", effect.amount))
-                    }
-                }
-            }
-
-            embed = embed.add_field(EmbedField {
-                name: format!(
-                    "{target_string}{}{}",
-                    if is_target {
-                        format!("__{}__", fighter.name)
-                    } else {
-                        fighter.name.to_owned()
-                    },
-                    if fighter.defense == 0 {
-                        String::new()
-                    } else {
-                        format!(" ({})", emojis::SHIELD)
-                    }
-                ),
-                value: displays.join("\n"),
-                inline: true,
-            });
+            embed = embed.add_field(create_fighter_embed_fields(
+                &fighter,
+                Some(current_fighter.index),
+            ));
         }
 
         embed

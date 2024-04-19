@@ -35,7 +35,7 @@ pub async fn allow_fighter_to_enter_his_team(api: BattleApi<'_>, _index: Fighter
         .any(|index| api.battle().get_fighter(*index).user.is_some());
 
     // Allow the human to decide if the fighter can enter his team
-    // (is this case, the unnecessary if-bool improves legibility and reduces cognitive overload of this)
+    // (is this case, the unnecessary if-bool improves legibility and reduces cognitive overload of this function)
     #[allow(clippy::needless_bool)]
     if is_there_a_human_on_the_team {
         true
@@ -114,14 +114,13 @@ pub async fn select_a_input(mut api: BattleApi<'_>) -> BattleInput {
 
     for skill in fighter.skills.iter() {
         let dyn_skill = skill.dynamic_skill.lock().await;
+        let prob = dyn_skill.ai_chance_to_pick(BattleApi::new(api.controller));
         if dyn_skill.can_use(BattleApi::new(api.controller)) {
-            let prob = dyn_skill.ai_chance_to_pick(BattleApi::new(api.controller));
-
-            if prob.value() > 80 {
+            if prob.value() > 70 {
                 high_skill_priority = true;
             }
 
-            if prob.value() >= 50 {
+            if prob.value() >= 40 {
                 low_skill_priority = false;
             }
 
@@ -134,21 +133,29 @@ pub async fn select_a_input(mut api: BattleApi<'_>) -> BattleInput {
     if high_skill_priority
         || api
             .rng()
-            .gen_bool(if low_skill_priority { 0.15 } else { 0.6 })
+            .gen_bool(if low_skill_priority { 0.15 } else { 0.75 })
     {
         if let Some(skill) = skills.choose(&mut api.rng()) {
             return BattleInput::UseSkill((*skill).clone());
         }
     }
 
+    let extra_defend_chance = if fighter.has_personality(Personality::Calm)
+        || fighter.has_personality(Personality::Intelligence)
+    {
+        0.2
+    } else {
+        0.0
+    };
+
     if !fighter.has_personality(Personality::Insanity)
         && fighter.health().value != fighter.health().max
         && api
             .rng()
-            .gen_bool(if fighter.ether.value < (fighter.ether.max / 2) {
-                0.5
+            .gen_bool(if fighter.ether.value <= (fighter.ether.max / 2) {
+                0.5 + extra_defend_chance
             } else {
-                0.2
+                0.2 + extra_defend_chance
             })
     {
         return BattleInput::Defend;

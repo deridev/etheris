@@ -1,9 +1,10 @@
-use std::fmt::Debug;
+use std::{fmt::Debug, time::Duration};
 
+use anyhow::bail;
 use etheris_common::Identifiable;
 use etheris_data::emojis;
 use etheris_discord::{twilight_model::channel::message::component::ButtonStyle, *};
-use etheris_framework::{util::make_multiple_rows, *};
+use etheris_framework::{util::make_multiple_rows, watcher::WatcherOptions, *};
 use rand::seq::SliceRandom;
 
 use crate::{input_util, BattleApi, Fighter, FighterIndex};
@@ -14,6 +15,7 @@ pub struct ApiInput<T: Identifiable + Clone> {
     pub description: String,
     pub emoji: Option<Emoji<'static>>,
     pub active: bool,
+    pub ai_weight: u8,
     pub value: T,
 }
 
@@ -25,12 +27,21 @@ pub async fn select_input<T: Identifiable + Clone>(
     let fighter = api.fighter().clone();
 
     let Some(user_id) = fighter.user.map(|u| u.id) else {
-        let input = inputs.choose(api.rng()).cloned();
+        let mut valid_inputs = vec![];
+        for input in inputs.iter() {
+            if input.active && input.ai_weight > 0 {
+                valid_inputs.push(input.clone());
+            }
+        }
+
+        let input = valid_inputs.choose(api.rng()).cloned();
         return Ok(input);
     };
 
     let mut buttons = vec![];
+    let mut should_edit_embed = true;
     let mut embed = if let Some(embed) = embed {
+        should_edit_embed = false;
         embed
     } else {
         EmbedBuilder::new_common().set_author(EmbedAuthor {
@@ -55,18 +66,20 @@ pub async fn select_input<T: Identifiable + Clone>(
 
         buttons.push(button);
 
-        embed = embed.add_inlined_field(
-            format!(
-                "{}{}",
-                if let Some(emoji) = input.emoji {
-                    format!("{emoji} ")
-                } else {
-                    String::new()
-                },
-                input.name
-            ),
-            &input.description,
-        );
+        if should_edit_embed {
+            embed = embed.add_inlined_field(
+                format!(
+                    "{}{}",
+                    if let Some(emoji) = input.emoji {
+                        format!("{emoji} ")
+                    } else {
+                        String::new()
+                    },
+                    input.name
+                ),
+                &input.description,
+            );
+        }
     }
 
     let response = Response::from(embed)
@@ -218,4 +231,57 @@ pub async fn select_ally(api: &mut BattleApi<'_>) -> anyhow::Result<Option<Fight
 
     let fighter_index = FighterIndex(data.custom_id.parse::<usize>().unwrap_or(fighter.index.0));
     Ok(Some(api.battle().get_fighter(fighter_index).clone()))
+}
+
+pub async fn input_number(
+    api: &mut BattleApi<'_>,
+    response: impl Into<Response>,
+    valid_range: (f64, f64),
+) -> anyhow::Result<f64> {
+    let fighter_user_id = match &api.fighter().user {
+        Some(user) => user.id,
+        None => {
+            bail!("input_number expected a user fighter, not a AI");
+        }
+    };
+
+    let m = api.ctx().send(response).await?;
+
+    let Some(message) = api
+        .ctx()
+        .watcher
+        .await_single_message(
+            m.channel_id,
+            move |message| {
+                message.author.id == fighter_user_id
+                    && message
+                        .content
+                        .trim()
+                        .parse::<f64>()
+                        .is_ok_and(|n| n >= valid_range.0 && n <= valid_range.1)
+            },
+            WatcherOptions {
+                timeout: Duration::from_secs(60),
+            },
+        )
+        .await?
+    else {
+        bail!("input_number timed out");
+    };
+
+    let number = message.content.trim().parse::<f64>()?;
+
+    if let Some(last_message) = api.controller.last_message.clone() {
+        api.controller
+            .ctx
+            .client
+            .http
+            .delete_message(last_message.channel_id, last_message.id)
+            .await
+            .ok();
+
+        api.controller.last_message = None;
+    }
+
+    Ok(number)
 }

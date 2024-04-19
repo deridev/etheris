@@ -257,6 +257,7 @@ make_enemy!(
         brain: BrainKind::Simple,
         regions: &[(WorldRegion::Murkswamp, 1), (WorldRegion::Mudland, 1)],
         personalities: &[Personality::Aggressiveness],
+        potential: EnemyPotential::VeryLow,
         strength: 40,
         intelligence: 5,
         resistance: 400,

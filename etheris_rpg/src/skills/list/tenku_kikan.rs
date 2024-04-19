@@ -103,9 +103,11 @@ impl Skill for TenkuKikan {
             name: format!("{} (Réplica)", soul.name),
             user: None,
             brain: Some(soul.brain.unwrap_or_default()),
+            actions: vec![],
 
             inventory: vec![],
             drop: Default::default(),
+            potential: 0.5,
             personalities: soul.personalities.clone(),
 
             ether: soul.ether.into(),

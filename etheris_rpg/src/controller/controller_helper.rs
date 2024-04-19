@@ -3,6 +3,8 @@ use std::ops::Mul;
 use crate::*;
 use common::*;
 use etheris_common::Probability;
+use etheris_data::emojis;
+use etheris_discord::EmbedField;
 use etheris_framework::Response;
 
 fn melt_ice(melt_power: i32, api: &mut BattleApi<'_>) {
@@ -275,6 +277,10 @@ pub async fn should_risk_life(
             continue;
         }
 
+        if fighter.health().value == 0 {
+            continue;
+        }
+
         let fighter = fighter.clone();
         let confirmation = if !settings.is_risking_life_allowed {
             false
@@ -451,4 +457,100 @@ pub async fn tick_cycle(
     }
 
     Ok(())
+}
+
+pub fn create_fighter_embed_fields(
+    fighter: &Fighter,
+    target_index: Option<FighterIndex>,
+) -> EmbedField {
+    let mut fighter = fighter.clone();
+    let index = fighter.index;
+
+    let is_target = Some(index) == target_index;
+    let target_string = if is_target {
+        "🎯 ".to_string()
+    } else {
+        String::new()
+    };
+
+    let mut displays = vec![];
+
+    if fighter.resistance.value > 0 {
+        displays.push(format!(
+            "{} {}",
+            emojis::RESISTANCE,
+            fighter.resistance.value
+        ))
+    }
+
+    if fighter.vitality.value != fighter.vitality.max || fighter.resistance.value <= 0 {
+        displays.push(format!("{} {}", emojis::VITALITY, fighter.vitality.value));
+    }
+
+    displays.push(format!("{} {}", emojis::ETHER, fighter.ether.value));
+
+    if fighter.overload > 5.0 {
+        displays.push(format!("🧨 **Sobrecarga**: {}%", fighter.overload as i64));
+    }
+
+    match fighter.balance {
+        0..=15 => displays.push("Equilíbrio Zero".to_string()),
+        16..=40 => displays.push("Nenhum Equilíbrio".to_string()),
+        41..=60 => displays.push("Equilíbrio Muito Baixo".to_string()),
+        61..=80 => displays.push("Equilíbrio Baixo".to_string()),
+        _ => (),
+    }
+
+    match &fighter.composure {
+        Composure::Standing => (),
+        Composure::OnGround => displays.push("**No Chão**".to_string()),
+        Composure::OnAir(n) => displays.push(format!("**{n}m No Ar**")),
+    }
+
+    fighter.effects.sort_by_key(|k| k.kind);
+
+    for effect in fighter.effects.iter() {
+        match effect.kind {
+            EffectKind::Flaming => displays.push(format!("♨️ **Queimando**: {}%", effect.amount)),
+            EffectKind::Burning => displays.push(format!("🔥 **Combustão**: {}%", effect.amount)),
+            EffectKind::Shocked => displays.push(format!("⚡ **Choque**: {}%", effect.amount)),
+            EffectKind::Paralyzed => {
+                displays.push(format!("😵‍💫 **Paralisado**: {} turnos", effect.amount))
+            }
+            EffectKind::Wet => displays.push(format!("💧 **Molhado**: {}%", effect.amount)),
+            EffectKind::Ice => displays.push(format!("❄️ **Congelando**: {}%", effect.amount)),
+            EffectKind::Frozen => {
+                displays.push(format!("🧊 **Congelado**: {} turnos", effect.amount))
+            }
+            EffectKind::Bleeding => {
+                displays.push(format!("🩸 **Sangramento**: {}%", effect.amount))
+            }
+            EffectKind::Curse => displays.push(format!("⚫ **Maldição**: {}%", effect.amount)),
+            EffectKind::Exhausted => {
+                displays.push(format!("😞 **Exausto**: {} turnos", effect.amount))
+            }
+
+            EffectKind::LowProtection => {
+                displays.push(format!("🛡️ **Proteção Leve**: {} turnos", effect.amount))
+            }
+        }
+    }
+
+    EmbedField {
+        name: format!(
+            "{target_string}{}{}",
+            if is_target {
+                format!("__{}__", fighter.name)
+            } else {
+                fighter.name.to_owned()
+            },
+            if fighter.defense == 0 {
+                String::new()
+            } else {
+                format!(" ({})", emojis::SHIELD)
+            }
+        ),
+        value: displays.join("\n"),
+        inline: true,
+    }
 }

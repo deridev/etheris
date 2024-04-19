@@ -44,6 +44,7 @@ use_skill!(blood_theft);
 use_skill!(blood_spear);
 use_skill!(overcoming);
 use_skill!(hakikotenchou);
+use_skill!(skill_mirror);
 
 pub static ALL_SKILLS: Lazy<Vec<Box<dyn super::Skill + Send + Sync>>> = Lazy::new(|| {
     SkillKind::list()
@@ -90,5 +91,6 @@ pub fn get_boxed_skill_from_kind(kind: SkillKind) -> Box<dyn super::Skill + Send
         SkillKind::BloodSpear => Box::<BloodSpear>::default(),
         SkillKind::Overcoming => Box::<Overcoming>::default(),
         SkillKind::Hakikotenchou => Box::<Hakikotenchou>::default(),
+        SkillKind::SkillMirror => Box::<SkillMirror>::default(),
     }
 }

@@ -5,13 +5,14 @@ use std::{
 };
 
 use bitflags::bitflags;
-use etheris_common::{Attribute, Probability};
+use etheris_common::{calculate_power_level, Attribute, Probability};
 use etheris_data::{
     items::{self, Item},
     personality::Personality,
     weapon::WeaponKind,
     SkillKind,
 };
+use etheris_database::character_model::BattleAction;
 use etheris_discord::{twilight_model::user::User, ButtonBuilder, Emoji};
 use tokio::sync::Mutex;
 
@@ -194,6 +195,9 @@ pub struct Fighter {
 
     pub pl: i64,
     pub finishers: Vec<Finisher>,
+    pub actions: Vec<BattleAction>,
+    pub power: f64,
+    pub potential: f64,
 
     pub image: Option<Arc<Vec<u8>>>,
 
@@ -255,6 +259,13 @@ impl Fighter {
             image: None,
 
             finishers,
+            actions: data.actions.clone(),
+            power: if data.brain == Some(BrainKind::Insane) {
+                data.potential
+            } else {
+                0.5
+            },
+            potential: data.potential,
 
             is_defeated: false,
             defeated_by: None,
@@ -297,11 +308,13 @@ impl Fighter {
     }
 
     pub fn strength_multiplier(&self) -> f32 {
-        1.0 + (self.strength_level as f32) * 0.4
+        let base = 1.5 + (self.strength_level as f32);
+        base * (self.power as f32) * 0.4
     }
 
     pub fn intelligence_multiplier(&self) -> f32 {
-        1.0 + (self.intelligence_level as f32) * 0.35
+        let base = 1.5 + (self.intelligence_level as f32);
+        base * (self.power as f32) * 0.35
     }
 
     pub fn mixed_multiplier(&self, strength_weight: f32, intelligence_weight: f32) -> f32 {
@@ -368,6 +381,28 @@ impl Fighter {
 
     pub fn has_personality(&self, personality: Personality) -> bool {
         self.personalities.contains(&personality)
+    }
+
+    pub fn recalculate_pl(&mut self) {
+        let weighted_skills = {
+            let mut weight = 0.0;
+            for skill in self.skills.iter() {
+                let cost = skill.base_kind.knowledge_cost();
+                weight += (cost as f64) / 0.2;
+            }
+
+            weight / 5.0
+        };
+
+        self.pl = calculate_power_level(
+            self.vitality,
+            self.resistance,
+            self.ether,
+            self.strength_level,
+            self.intelligence_level,
+            self.power,
+            weighted_skills,
+        );
     }
 
     pub fn regenerate_all(&mut self) {

@@ -167,6 +167,7 @@ static WEAK_THIEF: Lazy<Enemy> = Lazy::new(|| Enemy {
     personalities: &[Personality::Cowardice],
     allies: None,
     weapon: None,
+    potential: EnemyPotential::Low,
     resistance: 110,
     vitality: 200,
     intelligence: 3,
@@ -337,6 +338,7 @@ make_enemy!(
         brain: BrainKind::Simple,
         regions: &[],
         personalities: &[Personality::Courage],
+        potential: EnemyPotential::Low,
         strength: 8,
         intelligence: 3,
         resistance: 90,
@@ -876,6 +878,8 @@ make_event!(
     Event {
         identifier: "basic_plains_fork_in_the_road",
         spawn: EventSpawn {
+            // So common I have to nerf it
+            base_probability: Probability::new(40),
             weighted_regions: vec![
                 (WorldRegion::Greenagis, 3),
                 (WorldRegion::Emerelis, 3),

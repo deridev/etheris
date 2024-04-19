@@ -5,7 +5,7 @@ pub const ALL_ITEMS: &[Item] = &[
     GOLDEN_ROBOT_POEM,
     OLD_ABANDONED_BASEMENT_DIARY,
     ENTITY_039_REPORT,
-    HAKIKO_LEGEND
+    HAKIKO_LEGEND,
 ];
 
 pub const GOLDEN_ROBOT_POEM: Item = Item {

@@ -1,4 +1,5 @@
 use etheris_data::items::Item;
+use etheris_database::character_model::BattleAction;
 use etheris_discord::{
     twilight_model::channel::message::component::ButtonStyle, ButtonBuilder, Emoji,
 };
@@ -15,10 +16,11 @@ pub enum BattleInput {
     Attack,
     Defend,
     UseSkill(FighterSkill),
-    Finish(Finisher),
     GetUp,
     Upkick,
     UseItem(Item),
+    UseAction(BattleAction),
+    Finish(Finisher),
 }
 
 #[derive(List, Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
@@ -28,10 +30,11 @@ pub enum BattleInputKind {
     Attack,
     Defend,
     UseSkill,
-    Finish,
     GetUp,
     Upkick,
     UseItem,
+    Actions,
+    Finish,
 }
 
 impl BattleInputKind {
@@ -44,6 +47,7 @@ impl BattleInputKind {
             Self::Finish => api.can_finish_target(),
             Self::GetUp | Self::Upkick => api.fighter().composure == Composure::OnGround,
             Self::UseItem => !api.fighter().inventory.is_empty(),
+            Self::Actions => !api.fighter().actions.is_empty(),
         }
     }
 
@@ -62,6 +66,7 @@ impl BattleInputKind {
             Self::GetUp => "get_up",
             Self::Upkick => "upkick",
             Self::UseItem => "use_item",
+            Self::Actions => "actions",
         }
     }
 
@@ -76,6 +81,7 @@ impl BattleInputKind {
             Self::GetUp => "Levantar",
             Self::Upkick => "Upkick (chutar)",
             Self::UseItem => "Usar Item",
+            Self::Actions => "Ações",
         }
     }
 
@@ -90,6 +96,14 @@ impl BattleInputKind {
             Self::GetUp => Emoji::Unicode("🏋️"),
             Self::Upkick => Emoji::Unicode("🦵"),
             Self::UseItem => Emoji::Unicode("🎒"),
+            Self::Actions => Emoji::Unicode("🏃"),
+        }
+    }
+
+    pub fn button_style(&self) -> ButtonStyle {
+        match self {
+            Self::Finish => ButtonStyle::Danger,
+            _ => ButtonStyle::Secondary,
         }
     }
 
@@ -107,7 +121,7 @@ impl BattleInputKind {
             .set_custom_id(self.id())
             .set_label(self.name())
             .set_emoji(self.emoji())
-            .set_style(ButtonStyle::Secondary)
+            .set_style(self.button_style())
     }
 }
 
@@ -117,6 +131,6 @@ impl From<BattleInputKind> for ButtonBuilder {
             .set_custom_id(value.id())
             .set_label(value.name())
             .set_emoji(value.emoji())
-            .set_style(ButtonStyle::Secondary)
+            .set_style(value.button_style())
     }
 }

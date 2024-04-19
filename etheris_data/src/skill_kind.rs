@@ -1,3 +1,4 @@
+use etheris_common::Identifiable;
 use serde::{Deserialize, Serialize};
 
 use crate::{personality::Personality, BrainKind};
@@ -51,6 +52,7 @@ pub enum SkillKind {
     EtherShadow,
     CursedBlood,
     Hakikotenchou,
+    SkillMirror,
 }
 
 impl SkillKind {
@@ -89,6 +91,7 @@ impl SkillKind {
             Self::AtomicHollow,
             Self::CursedBlood,
             Self::Hakikotenchou,
+            Self::SkillMirror,
         ]
     }
 
@@ -136,6 +139,7 @@ impl SkillKind {
             Self::TenkuKikan(_) => &[Personality::Arrogance],
             Self::CursedBlood => &[Personality::Courage],
             Self::Hakikotenchou => &[Personality::Calm, Personality::Intelligence],
+            Self::SkillMirror => &[Personality::Insanity, Personality::Cowardice],
         }
     }
 
@@ -170,11 +174,12 @@ impl SkillKind {
             Self::CursedBlood => 35,
             Self::ParalyzingBet => 40,
             Self::EtherShadow => 45,
-            Self::YinYang => 50,
+            Self::SkillMirror => 55,
             Self::AtomicHollow => 60,
+            Self::YinYang => 70,
             Self::TenkuKikan(_) => 80,
-            Self::FinalCrucifix => 100,
-            Self::Hakikotenchou => 110,
+            Self::FinalCrucifix => 130,
+            Self::Hakikotenchou => 90,
         }
     }
 
@@ -206,12 +211,18 @@ impl SkillKind {
             | Self::AtomicHollow
             | Self::CursedBlood
             | Self::BloodTheft => 3,
-            Self::WaterJet | Self::FlamingBall | Self::EtherShadow => 4,
+            Self::WaterJet | Self::FlamingBall | Self::EtherShadow | Self::SkillMirror => 4,
             Self::YinYang | Self::Hakikotenchou => 5,
             Self::TenkuKikan(..) => 6,
             Self::ParalyzingBet => 6,
             Self::FinalCrucifix => 7,
         }
+    }
+}
+
+impl Identifiable for SkillKind {
+    fn identifier(&self) -> String {
+        format!("{:?}", self)
     }
 }
 

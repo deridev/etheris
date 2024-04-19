@@ -18,6 +18,7 @@ impl EventBuildState {
 
 pub type EventBuilder = fn(EventBuildState) -> Event;
 
+pub mod desert_basic;
 pub mod forest_basic;
 pub mod general_basic;
 pub mod general_special;
@@ -53,6 +54,10 @@ pub static ALL_EVENTS: Lazy<Vec<EventBuilder>> = Lazy::new(|| {
         forest_basic::basic_forest_strange_shrine,
         forest_basic::basic_forest_animal_tracks,
         forest_basic::basic_forest_suspicious_tree,
+        // Desert
+        desert_basic::basic_desert_exploration,
+        desert_basic::basic_desert_digging,
+        desert_basic::basic_desert_beginner_nomad_merchant,
         // Specific - Shredder
         shredder_basic::basic_shredder_first_encounter,
         shredder_basic::basic_shredder_robbery,
@@ -77,3 +82,33 @@ macro_rules! make_event {
 }
 
 pub use make_event;
+
+#[test]
+fn count_events() {
+    use etheris_data::world::regions::WorldRegion;
+    use etheris_discord::twilight_model::id::Id;
+    use etheris_util::generate_random_character_appearance;
+    use std::collections::HashMap;
+
+    let mut region_counter = HashMap::<WorldRegion, usize>::new();
+
+    for event in ALL_EVENTS.iter() {
+        let event = event(EventBuildState::new(CharacterModel::new(
+            Id::new(12345678),
+            "Dummy".to_string(),
+            vec![],
+            vec![],
+            generate_random_character_appearance(),
+        )));
+        for (region, ..) in event.spawn.weighted_regions.iter() {
+            *region_counter.entry(*region).or_insert(0) += 1;
+        }
+    }
+
+    let mut region_counter_sorted = region_counter.into_iter().collect::<Vec<_>>();
+    region_counter_sorted.sort_by_key(|(region, _)| *region);
+
+    for (region, count) in region_counter_sorted {
+        println!("{region} has {count} events");
+    }
+}

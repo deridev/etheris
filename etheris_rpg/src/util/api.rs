@@ -277,15 +277,15 @@ impl<'a> BattleApi<'a> {
             damage.accuracy = damage.accuracy.saturating_sub(accuracy_loss);
         }
 
-        if damage.accuracy < 255 {
-            let mut dodge_prob = Probability::new(if target.balance > 90 { 5 } else { 0 });
+        if damage.accuracy < u8::MAX {
+            let mut dodge_prob = Probability::new(if target.balance > 90 { 3 } else { 0 });
             if target.has_effect(EffectKind::Paralyzed) || target.has_effect(EffectKind::Frozen) {
                 dodge_prob = Probability::NEVER;
             }
 
             let unlucky_miss_prob = Probability::new(2);
             let bad_accuracy_prob = Probability::new(
-                100u8.saturating_sub(damage.accuracy + if target.balance > 80 { 15 } else { 0 }),
+                105u8.saturating_sub(damage.accuracy + if target.balance > 80 { 15 } else { 0 }),
             );
 
             let good_accuracy =

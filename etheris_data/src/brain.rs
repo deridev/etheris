@@ -14,4 +14,7 @@
 pub enum BrainKind {
     #[default]
     Simple,
+
+    /// A insane brain will always try to kill the target. Never giving up.
+    Insane,
 }
