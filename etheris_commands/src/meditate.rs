@@ -68,7 +68,7 @@ pub async fn meditate(mut ctx: CommandContext) -> anyhow::Result<()> {
 
     let mut character = parse_user_character!(ctx, author);
 
-    let (author_fighter, inner_shadow_fighter) = {
+    let (_, inner_shadow_fighter) = {
         let author_fighter = all_fighters.iter().find(|f| f.team == 0 && f.user.is_some());
         let inner_shadow_fighter = all_fighters.iter().find(|f| f.team == 1 && f.name == inner_shadow_name);
 
@@ -77,7 +77,7 @@ pub async fn meditate(mut ctx: CommandContext) -> anyhow::Result<()> {
 
     let has_won = result.winners.iter().any(|w| w.team == 0);
 
-    let total_dmg_dealt_ratio = inner_shadow_fighter.health().max as f32 / (author_fighter.health().value as f32 + 0.01);
+    let total_dmg_dealt_ratio = inner_shadow_fighter.health().max as f32 / (inner_shadow_fighter.health().value as f32 + 0.01);
 
     if has_won {
         let mut knowledge_xp = 150 + (total_dmg_dealt_ratio * 400.0).round() as u32;
@@ -139,7 +139,7 @@ pub async fn meditate(mut ctx: CommandContext) -> anyhow::Result<()> {
         ).await?;
     } else {
         let knowledge_xp = 1 + (total_dmg_dealt_ratio * 10.0).round() as u32;
-        let intelligence_xp = 3 + (total_dmg_dealt_ratio * 40.0).round() as u32;
+        let intelligence_xp = 3 + (total_dmg_dealt_ratio * 30.0).round() as u32;
 
         ctx.db().characters().save(character).await?;
 
