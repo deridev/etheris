@@ -26,10 +26,11 @@ impl Skill for ImbuedPunch {
 
         let critical = Probability::new(5).generate_random_bool();
 
+        let base_damage = api.rng().gen_range(3..=7); 
         let damage = api.rng().gen_range(if critical { 25..=33 } else { 15..=22 });
 
         let multiplier = fighter.mixed_multiplier(0.7, 0.4);
-        let damage = ((damage as f32) * multiplier) as i32;
+        let damage = base_damage + ((damage as f32) * multiplier) as i32;
 
         let damage = api.apply_damage(
             target.index,

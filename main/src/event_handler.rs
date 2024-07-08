@@ -4,6 +4,7 @@ use etheris_database::EtherisDatabase;
 use etheris_discord::{
     twilight_gateway::Event,
     twilight_model::gateway::payload::incoming::{InteractionCreate, Ready},
+    InteractionType,
 };
 use etheris_framework::{watcher::Watcher, EtherisClient};
 
@@ -44,7 +45,9 @@ impl EventHandler {
                 client.init(database).await.unwrap();
             }
             Event::InteractionCreate(interaction_create) => {
-                self.interaction_create(interaction_create).await.ok();
+                if let Err(e) = self.interaction_create(interaction_create).await {
+                    eprintln!("Error on interaction create:\n{}\n", e);
+                }
             }
             _ => {}
         };
@@ -63,7 +66,11 @@ impl EventHandler {
         self,
         interaction: Box<InteractionCreate>,
     ) -> anyhow::Result<()> {
-        command_handler::execute_command(interaction, self.client, self.watcher, self.database)
-            .await
+        if interaction.kind == InteractionType::ApplicationCommand {
+            command_handler::execute_command(interaction, self.client, self.watcher, self.database)
+                .await?;
+        }
+
+        Ok(())
     }
 }

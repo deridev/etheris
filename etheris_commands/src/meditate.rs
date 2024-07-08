@@ -77,11 +77,14 @@ pub async fn meditate(mut ctx: CommandContext) -> anyhow::Result<()> {
 
     let has_won = result.winners.iter().any(|w| w.team == 0);
 
-    let total_dmg_dealt_ratio = inner_shadow_fighter.health().max as f32 / (inner_shadow_fighter.health().value as f32 + 0.01);
+    let total_dmg_dealt_ratio = 1.0 - inner_shadow_fighter.health().value as f32 / (inner_shadow_fighter.health().max as f32);
 
     if has_won {
-        let mut knowledge_xp = 150 + (total_dmg_dealt_ratio * 400.0).round() as u32;
-        let mut intelligence_xp = 200 + (total_dmg_dealt_ratio * 600.0).round() as u32;
+        let mut knowledge_xp = 25 + (total_dmg_dealt_ratio * 60.0).round() as u32;
+        let mut intelligence_xp = 100 + (total_dmg_dealt_ratio * 300.0).round() as u32;
+
+        knowledge_xp = (knowledge_xp as f64 * character.mental_level.reward_multiplier()) as u32;
+        intelligence_xp = (intelligence_xp as f64 * character.mental_level.reward_multiplier()) as u32;
 
         let next_mental_level = match character.mental_level {
             MentalLevel::Laymen => Some(MentalLevel::Beginner),

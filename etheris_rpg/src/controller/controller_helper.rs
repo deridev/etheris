@@ -227,7 +227,7 @@ pub async fn tick_every_effect(
                             Default::default(),
                         ));
 
-                        let dmg = (api.fighter().health().max as f32).mul(0.2) as i32;
+                        let dmg = (api.fighter().health().max as f32).mul(0.15) as i32;
                         api.fighter_mut().take_damage(
                             effect.culprit,
                             DamageSpecifier {

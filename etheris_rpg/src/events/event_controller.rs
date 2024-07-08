@@ -435,8 +435,10 @@ impl EventController {
                     )?;
 
                     let mut controller = BattleController::new(battle, self.ctx.clone());
-                    controller.run().await?
+                    Some(controller.run().await?)
                 };
+
+                let result = result.unwrap_or_default();
 
                 let all_fighters = result
                     .winners

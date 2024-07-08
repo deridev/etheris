@@ -14,7 +14,7 @@ impl Skill for FinalCrucifix {
             identifier: "final_crucifix",
             name: "Crucifixo Final",
             description: "Um ataque desesperado e final: sacrifica parte da sua vida para liberar uma explosão GIGANTE em forma de crucifixo. Dano em área. Depois de usar, seu ether não irá mais regenerar.",
-            explanation: "Apesar de não ser muito complicado, pois é apenas uma explosão gigante em forma de crucifixo, utilizar ether em MASSIVAS quantidades não é para iniciantes. Essa habilidade ainda sacrifica sua regeneração natural de ether, que pode ser fatal se você não descansar logo após invocar o Crucifixo Final.",
+            explanation: "Apesar de não ser muito complicado, pois é apenas uma explosão gigante em forma de crucifixo, utilizar ether em MASSIVAS quantidades não é para iniciantes. Essa habilidade ainda sacrifica sua regeneração natural de ether por horas, que pode ser fatal se você não descansar logo após invocar o Crucifixo Final.",
             complexity: SkillComplexity::VeryHard,
             use_cost: SkillCost { ether: 100 },
         }
@@ -58,8 +58,9 @@ impl Skill for FinalCrucifix {
                 continue;
             }
             
-            let ally_damage = (api.rng().gen_range(10..=15) as f32 * multiplier) as i32;
-            let enemy_damage = (api.rng().gen_range(45..=60) as f32 * multiplier) as i32;
+            let base_damage = api.rng().gen_range(15..=30); 
+            let ally_damage = base_damage + (api.rng().gen_range(10..=15) as f32 * multiplier) as i32;
+            let enemy_damage = base_damage + (api.rng().gen_range(45..=60) as f32 * multiplier) as i32;
 
             let fighter = api.battle().get_fighter(index).clone();
             let dmg = if fighter.team == fighter_team {

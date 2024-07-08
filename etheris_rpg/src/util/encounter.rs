@@ -12,7 +12,7 @@ pub async fn prompt_encounter(
     ctx: &mut CommandContext,
     user: User,
     enemies: Vec<FighterData>,
-) -> anyhow::Result<BattleResult> {
+) -> anyhow::Result<Option<BattleResult>> {
     let Some(character) = ctx
         .db()
         .characters()
@@ -61,7 +61,7 @@ pub async fn prompt_encounter(
                 -5..=10 => "Semelhante",
                 11..=30 => "Mais fraco",
                 31..=60 => "Muito mais fraco",
-                61..=1000 => "Extremamente mais fraco",
+                61..=1000000 => "Extremamente mais fraco",
                 _ => "Incalculável",
             };
 
@@ -74,7 +74,7 @@ pub async fn prompt_encounter(
                 -5..=10 => "Semelhante",
                 11..=30 => "Menos inteligente",
                 31..=60 => "Muito menos inteligente",
-                61..=1000 => "Extremamente menos inteligente",
+                61..=1000000 => "Extremamente menos inteligente",
                 _ => "Incalculável",
             };
 
@@ -141,7 +141,7 @@ pub async fn prompt_encounter(
         .await?;
 
     if !confirmation {
-        return Ok(Default::default());
+        return Ok(None);
     }
 
     let mut fighters = enemies;
@@ -162,5 +162,5 @@ pub async fn prompt_encounter(
     )?;
 
     let mut controller = BattleController::new(battle, ctx.clone());
-    controller.run().await
+    Ok(Some(controller.run().await?))
 }

@@ -50,10 +50,7 @@ const fn _default_resistance() -> StatAttribute {
     }
 }
 const fn _default_vitality() -> StatAttribute {
-    StatAttribute {
-        max: 200,
-        value: 200,
-    }
+    StatAttribute { max: 30, value: 30 }
 }
 const fn _default_ether() -> StatAttribute {
     StatAttribute { max: 20, value: 20 }
@@ -204,6 +201,22 @@ pub enum MentalLevel {
     Legend,
 }
 
+impl MentalLevel {
+    pub fn reward_multiplier(&self) -> f64 {
+        match self {
+            Self::Laymen => 0.3,
+            Self::Beginner => 0.6,
+            Self::Novice => 0.8,
+            Self::Accustomed => 1.0,
+            Self::Spirited => 1.1,
+            Self::Strong => 1.2,
+            Self::Master => 1.4,
+            Self::Champion => 1.6,
+            Self::Legend => 2.0,
+        }
+    }
+}
+
 impl Display for MentalLevel {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
@@ -220,6 +233,55 @@ impl Display for MentalLevel {
     }
 }
 
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Deserialize, Serialize)]
+pub struct HistoryEntry {
+    pub kind: HistoryEntryKind,
+    pub date: DatabaseDateTime,
+}
+
+impl HistoryEntry {
+    pub fn new(kind: HistoryEntryKind) -> Self {
+        Self {
+            kind,
+            date: DatabaseDateTime::now(),
+        }
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Deserialize, Serialize)]
+pub enum HistoryEntryKind {
+    DefeatedBy(String),
+    DefeatedByUser(String, ObjectId),
+    Died,
+    Trained,
+    Studied,
+    Meditated,
+    Born,
+    Defeated(String),
+    DefeatedUser(String, ObjectId),
+    Rested,
+    Explored,
+    BoughtItem(i64, String),
+}
+
+impl Display for HistoryEntryKind {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::DefeatedBy(name) => write!(f, "Foi derrotado(a) por {}", name),
+            Self::DefeatedByUser(name, ..) => write!(f, "Foi derrotado por(a) {}", name),
+            Self::Died => write!(f, "Morreu"),
+            Self::Trained => write!(f, "Treinou"),
+            Self::Studied => write!(f, "Estudou"),
+            Self::Meditated => write!(f, "Meditou"),
+            Self::Born => write!(f, "Nasceu"),
+            Self::Defeated(name) => write!(f, "Foi derrotado(a) por {}", name),
+            Self::DefeatedUser(name, ..) => write!(f, "Foi derrotado(a) por {}", name),
+            Self::Rested => write!(f, "Descansou"),
+            Self::Explored => write!(f, "Explorou"),
+            Self::BoughtItem(amount, item) => write!(f, "Comprou {}x {}", amount, item),
+        }
+    }
+}
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
 pub struct CharacterModel {
     #[serde(rename = "_id")]
@@ -235,6 +297,7 @@ pub struct CharacterModel {
     pub battle_inventory: Vec<InventoryItem>,
     pub personalities: Vec<Personality>,
     pub actions: HashSet<BattleAction>,
+    pub history: Vec<HistoryEntry>,
 
     pub mental_level: MentalLevel,
     pub potential: f64,
@@ -312,6 +375,7 @@ impl CharacterModel {
             tags: HashSet::new(),
             inventory: vec![],
             battle_inventory: vec![],
+            history: vec![HistoryEntry::new(HistoryEntryKind::Born)],
 
             mental_level: MentalLevel::Laymen,
             potential: 0.5,
@@ -361,6 +425,10 @@ impl CharacterModel {
         } else {
             Some(etheris_util::character_image::generate_character_image_buffer(&self.appearance))
         }
+    }
+
+    pub fn create_history_entry(&mut self, kind: HistoryEntryKind) {
+        self.history.push(HistoryEntry::new(kind));
     }
 
     pub fn has_flag(&self, flag: CharacterFlag) -> bool {
@@ -458,14 +526,15 @@ impl CharacterModel {
 
     pub fn learn_skill(&mut self, skill: SkillKind) {
         if self
-            .skills
+            .learned_skills
             .iter()
             .any(|s| discriminant(s) == discriminant(&skill))
         {
             return;
         }
 
-        self.learnable_skills.retain(|s| *s != skill);
+        self.learnable_skills
+            .retain(|s| discriminant(s) != discriminant(&skill));
         self.learned_skills.push(skill);
     }
 

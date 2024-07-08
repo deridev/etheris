@@ -1,3 +1,5 @@
+use std::cmp::Ordering;
+
 use etheris_common::Probability;
 use etheris_data::personality::Personality;
 use rand::{seq::SliceRandom, Rng};
@@ -6,21 +8,50 @@ use crate::*;
 
 pub async fn default_should_risk_life(api: BattleApi<'_>) -> bool {
     let fighter = api.fighter();
-    let pl_diff = fighter.pl - api.target().pl;
+    let target = api.target();
+    let pl_diff = fighter.pl - target.pl;
 
-    let probs = fighter
+    let base_prob = fighter
         .personalities
         .iter()
-        .map(|p| p.prob_of_risking_life());
-    let prob = probs.map(|p| p.value() as i32).sum::<i32>() / fighter.personalities.len() as i32;
+        .map(|p| p.prob_of_risking_life().value() as i32)
+        .sum::<i32>()
+        / fighter.personalities.len() as i32;
 
-    let mut prob = u8::try_from(prob).unwrap_or(50);
+    let mut prob = u8::try_from(base_prob).unwrap_or(50);
 
-    if api.target().flags.contains(FighterFlags::RISKING_LIFE) {
+    // Consider health status
+    let health_ratio = fighter.health().value as f64 / fighter.health().max as f64;
+    prob = prob.saturating_add((health_ratio * 20.0) as u8);
+
+    // Consider target's status
+    if target.flags.contains(FighterFlags::RISKING_LIFE) {
         prob = prob.saturating_add(if pl_diff > 0 { 30 } else { 15 });
     } else {
         prob = prob.saturating_sub(5);
     }
+
+    // Consider team situation
+    let team_members = api
+        .battle()
+        .teams()
+        .get(&fighter.team)
+        .cloned()
+        .unwrap_or_default();
+    let team_health_avg = team_members
+        .iter()
+        .map(|&index| {
+            let member = api.battle().get_fighter(index);
+            member.health().value as f64 / member.health().max as f64
+        })
+        .sum::<f64>()
+        / team_members.len() as f64;
+
+    prob = prob.saturating_add((team_health_avg * 10.0) as u8);
+
+    // Consider remaining ether
+    let ether_ratio = fighter.ether.value as f64 / fighter.ether.max as f64;
+    prob = prob.saturating_add((ether_ratio * 15.0) as u8);
 
     Probability::new(prob).generate_random_bool()
 }
@@ -47,119 +78,161 @@ pub async fn allow_fighter_to_enter_his_team(api: BattleApi<'_>, _index: Fighter
 pub async fn select_target(api: &mut BattleApi<'_>) {
     let fighter = api.fighter().clone();
 
-    if let Some(state) = fighter.ai_state {
-        let wants_to_change_target =
-            Probability::new(if fighter.has_personality(Personality::Aggressiveness) {
-                95
-            } else {
-                70
-            })
-            .generate_random_bool();
+    // Prioritize targets based on threat level and team strategy
+    let mut potential_targets: Vec<_> = api
+        .battle()
+        .alive_fighters
+        .iter()
+        .map(|&index| api.battle().get_fighter(index))
+        .filter(|f| f.team != fighter.team && !f.is_defeated)
+        .collect();
 
-        if wants_to_change_target
-            && state.focused_in != fighter.target
-            && !api.battle().get_fighter(state.focused_in).is_defeated
-            && api.battle().get_fighter(state.focused_in).team != fighter.team
-        {
-            api.fighter_mut().target = state.focused_in;
-        }
-    }
+    potential_targets.sort_by(|a, b| {
+        let a_threat = calculate_threat_level(api, a);
+        let b_threat = calculate_threat_level(api, b);
+        b_threat.partial_cmp(&a_threat).unwrap_or(Ordering::Equal)
+    });
 
-    if Probability::new(40).generate_random_bool() {
-        api.battle_mut().reallocate_fighter_target(fighter.index);
-    }
-
-    if api.battle().get_fighter(fighter.target).team == api.fighter().team
-        || api.battle().get_fighter(fighter.target).is_defeated
-    {
+    if let Some(new_target) = potential_targets.first() {
+        api.fighter_mut().target = new_target.index;
+    } else {
         api.battle_mut().reallocate_fighter_target(fighter.index);
     }
 }
 
+pub fn calculate_threat_level(api: &BattleApi<'_>, target: &Fighter) -> f64 {
+    let pl_ratio = target.pl as f64 / api.fighter().pl as f64;
+    let health_ratio = target.health().value as f64 / target.health().max as f64;
+    let skill_threat: f64 = target
+        .skills
+        .iter()
+        .map(|s| s.base_kind.knowledge_cost() as f64)
+        .sum::<f64>()
+        / target.skills.len() as f64;
+
+    pl_ratio * 0.4 + (1.0 - health_ratio) * 0.3 + skill_threat * 0.3
+}
+
 pub async fn select_a_input(mut api: BattleApi<'_>) -> BattleInput {
     let fighter = api.fighter().clone();
+    let target = api.target().clone();
 
     if api.can_finish_target() {
-        let finisher = fighter
-            .finishers
-            .choose_weighted(api.rng(), |f| if f.is_fatal() { 1 } else { 5 })
-            .expect("Finishers should not be empty");
-        return BattleInput::Finish(*finisher);
+        return select_finisher(&fighter, api.rng());
     }
 
     if fighter.composure == Composure::OnGround {
-        let target = api.target();
-        let mut upkick_prob = if target.health().value < (target.health().max / 4) {
-            Probability::new(20)
-        } else {
-            Probability::new(5)
-        };
-
-        if fighter.has_personality(Personality::Aggressiveness) {
-            upkick_prob.add(40);
-        } else if fighter.has_personality(Personality::Courage) {
-            upkick_prob.add(10);
-        }
-
-        if upkick_prob.generate_random_bool() {
-            return BattleInput::Upkick;
-        }
-
-        return BattleInput::GetUp;
+        return handle_ground_situation(&fighter, &target);
     }
 
-    let mut skills = vec![];
-    let mut high_skill_priority = false;
-    let mut low_skill_priority = true;
+    let skills = evaluate_skills(&fighter, &mut api).await;
 
-    for skill in fighter.skills.iter() {
-        let dyn_skill = skill.dynamic_skill.lock().await;
-        let prob = dyn_skill.ai_chance_to_pick(BattleApi::new(api.controller));
-        if dyn_skill.can_use(BattleApi::new(api.controller)) {
-            if prob.value() > 70 {
-                high_skill_priority = true;
-            }
-
-            if prob.value() >= 40 {
-                low_skill_priority = false;
-            }
-
-            if prob.generate_random_bool() {
-                skills.push(skill.clone());
-            }
-        }
+    if !skills.is_empty() && should_use_skill(&fighter, &skills, api.rng()) {
+        return BattleInput::UseSkill(skills[0].clone());
     }
 
-    if high_skill_priority
-        || api
-            .rng()
-            .gen_bool(if low_skill_priority { 0.15 } else { 0.75 })
-    {
-        if let Some(skill) = skills.choose(&mut api.rng()) {
-            return BattleInput::UseSkill((*skill).clone());
-        }
-    }
-
-    let extra_defend_chance = if fighter.has_personality(Personality::Calm)
-        || fighter.has_personality(Personality::Intelligence)
-    {
-        0.2
-    } else {
-        0.0
-    };
-
-    if !fighter.has_personality(Personality::Insanity)
-        && fighter.health().value != fighter.health().max
-        && api
-            .rng()
-            .gen_bool(if fighter.ether.value <= (fighter.ether.max / 2) {
-                0.5 + extra_defend_chance
-            } else {
-                0.2 + extra_defend_chance
-            })
-    {
+    if should_defend(&fighter, &target) {
         return BattleInput::Defend;
     }
 
     BattleInput::Attack
+}
+
+fn select_finisher(fighter: &Fighter, rng: &mut impl Rng) -> BattleInput {
+    let finisher = fighter
+        .finishers
+        .choose_weighted(rng, |f| {
+            let base_weight = if f.is_fatal() { 1 } else { 5 };
+            let personality_modifier = if fighter.has_personality(Personality::Aggressiveness) {
+                2
+            } else {
+                1
+            };
+            base_weight * personality_modifier
+        })
+        .expect("Finishers should not be empty");
+
+    BattleInput::Finish(*finisher)
+}
+
+fn handle_ground_situation(fighter: &Fighter, target: &Fighter) -> BattleInput {
+    let mut upkick_prob = if target.health().value < (target.health().max / 4) {
+        Probability::new(30)
+    } else {
+        Probability::new(10)
+    };
+
+    if fighter.has_personality(Personality::Aggressiveness) {
+        upkick_prob.add(40);
+    } else if fighter.has_personality(Personality::Courage) {
+        upkick_prob.add(15);
+    }
+
+    if upkick_prob.generate_random_bool() {
+        BattleInput::Upkick
+    } else {
+        BattleInput::GetUp
+    }
+}
+
+async fn evaluate_skills(fighter: &Fighter, api: &mut BattleApi<'_>) -> Vec<FighterSkill> {
+    let mut evaluated_skills = vec![];
+
+    for skill in fighter.skills.iter() {
+        let dyn_skill = skill.dynamic_skill.lock().await;
+        if dyn_skill.can_use(BattleApi::new(api.controller)) {
+            let chance = dyn_skill.ai_chance_to_pick(BattleApi::new(api.controller));
+            if chance.generate_random_bool() {
+                evaluated_skills.push((skill.clone(), chance.value()));
+            }
+        }
+    }
+
+    evaluated_skills.sort_by(|a, b| b.1.partial_cmp(&a.1).unwrap_or(Ordering::Equal));
+    evaluated_skills
+        .into_iter()
+        .map(|(skill, _)| skill)
+        .collect()
+}
+
+fn should_use_skill(fighter: &Fighter, skills: &[FighterSkill], rng: &mut impl Rng) -> bool {
+    if skills.is_empty() {
+        return false;
+    }
+
+    let skill_use_chance = if fighter.has_personality(Personality::Intelligence) {
+        0.8
+    } else if fighter.has_personality(Personality::Aggressiveness) {
+        0.6
+    } else {
+        0.5
+    };
+
+    rng.gen_bool(skill_use_chance)
+}
+
+fn should_defend(fighter: &Fighter, target: &Fighter) -> bool {
+    if fighter.has_personality(Personality::Insanity) {
+        return false;
+    }
+
+    let health_ratio = fighter.health().value as f64 / fighter.health().max as f64;
+    let ether_ratio = fighter.ether.value as f64 / fighter.ether.max as f64;
+    let target_health_ratio = target.health().value as f64 / target.health().max as f64;
+
+    let base_defend_chance = if fighter.has_personality(Personality::Calm)
+        || fighter.has_personality(Personality::Intelligence)
+    {
+        0.3
+    } else {
+        0.2
+    };
+
+    let health_factor = (1.0 - health_ratio) * 0.4;
+    let ether_factor = if ether_ratio <= 0.5 { 0.3 } else { 0.1 };
+    let target_factor = target_health_ratio * 0.2;
+
+    let total_chance = base_defend_chance + health_factor + ether_factor - target_factor;
+
+    rand::thread_rng().gen_bool(total_chance)
 }

@@ -24,10 +24,11 @@ impl Skill for Bite {
         let fighter = api.fighter().clone();
         let target = api.target().clone();
 
+        let base_damage = api.rng().gen_range(3..=6); 
         let damage = api.rng().gen_range(5..=10);
 
         let multiplier = fighter.mixed_multiplier(0.7, 0.4);
-        let damage = ((damage as f32) * multiplier) as i32;
+        let damage = base_damage + ((damage as f32) * multiplier) as i32;
 
         let damage = api.apply_damage(
             target.index,

@@ -44,10 +44,11 @@ impl Skill for AtomicHollow {
 
         const EFFECT_KINDS: &[EffectKind] = &[EffectKind::Burning, EffectKind::Ice, EffectKind::Bleeding, EffectKind::Shocked];
 
+        let base_damage = api.rng().gen_range(10..=15);
         let damage = api.rng().gen_range(3..=10);
 
         let multiplier = api.fighter().intelligence_multiplier();
-        let damage = ((damage as f32) * multiplier) as i32;
+        let damage = base_damage + ((damage as f32) * multiplier) as i32;
 
         let damage = api.apply_damage(
             target.index,

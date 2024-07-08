@@ -26,7 +26,8 @@ impl Skill for ResplendentPunch {
 
         let critical = Probability::new(10).generate_random_bool();
 
-        let damage = api.rng().gen_range(if critical { 30..=40 } else { 25..=30 });
+        let base_damage = api.rng().gen_range(10..=20); 
+        let damage = base_damage + api.rng().gen_range(if critical { 30..=40 } else { 25..=30 });
 
         let multiplier = (fighter.strength_multiplier() + fighter.intelligence_multiplier()) / 2.0;
         let damage = ((damage as f32) * multiplier) as i32;

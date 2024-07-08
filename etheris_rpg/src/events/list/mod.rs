@@ -65,8 +65,8 @@ pub static ALL_EVENTS: Lazy<Vec<EventBuilder>> = Lazy::new(|| {
         shredder_basic::shredder_ambush_for_payment,
         shredder_basic::shredder_training,
         // Lore - Vinizi
-        vinizi::vinizi_first_encounter,
-        vinizi::vinizi_first_stage,
+        //vinizi::vinizi_first_encounter,
+        //vinizi::vinizi_first_stage,
     ]
     .to_vec()
 });

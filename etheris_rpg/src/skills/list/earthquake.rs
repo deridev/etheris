@@ -24,13 +24,22 @@ impl Skill for Earthquake {
         let fighter_team = api.fighter().team;
         let multiplier = api.fighter().mixed_multiplier(0.3, 0.7);
 
-        let ally_damage = (api.rng().gen_range(6..=10) as f32 * multiplier) as i32;
-        let enemy_damage = (api.rng().gen_range(15..=25) as f32 * multiplier) as i32;
+        let base_damage = api.rng().gen_range(20..=35);
+        let ally_damage = base_damage + (api.rng().gen_range(6..=10) as f32 * multiplier) as i32;
+        let enemy_damage = base_damage + (api.rng().gen_range(15..=25) as f32 * multiplier) as i32;
 
         api.emit_message(format!("**{}** invocou um poderoso terremoto na arena!", api.fighter().name));
 
         for index in api.battle().alive_fighters.clone() {
             let fighter = api.battle().get_fighter(index).clone();
+            if fighter.height_above_ground() > 0 {
+                api.emit_random_message(&[
+                    format!("**{}** estava no ar e não foi afetado pelo terremoto!", fighter.name),
+                    format!("**{}** não se feriu com o terremoto por estar no ar!", fighter.name),
+                ]);
+                continue;
+            }
+
             let dmg = if fighter.team == fighter_team {
                 ally_damage
             } else {

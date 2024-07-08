@@ -35,14 +35,22 @@ fn make_input_rows(
         })
         .collect::<Vec<_>>();
 
-    let first_row = buttons
+    let mut first_row = buttons
         .iter()
         .filter_map(|(b, second_row)| if !second_row { Some(b.clone()) } else { None })
         .collect::<Vec<_>>();
-    let second_row = buttons
+    let mut second_row = buttons
         .iter()
         .filter_map(|(b, second_row)| if *second_row { Some(b.clone()) } else { None })
         .collect::<Vec<_>>();
+
+    while first_row.len() >= 5 {
+        let Some(last) = first_row.pop() else {
+            break;
+        };
+
+        second_row.insert(0, last);
+    }
 
     let mut rows = vec![ActionRowBuilder::new().add_buttons(first_row)];
 

@@ -48,8 +48,8 @@ impl Command {
 
         match command.as_str() {
             "help" => Some(Command::Help),
-            "translate" => Some(Command::Translate(splitted.skip(1).collect())),
-            "untranslate" => Some(Command::Untranslate(splitted.skip(1).collect())),
+            "translate" => Some(Command::Translate(splitted.collect::<Vec<_>>().join(" "))),
+            "untranslate" => Some(Command::Untranslate(splitted.collect::<Vec<_>>().join(" "))),
             "reset" => {
                 let subcommand = splitted.next()?.to_lowercase();
                 match subcommand.as_str() {

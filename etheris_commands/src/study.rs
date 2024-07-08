@@ -322,7 +322,10 @@ pub async fn aknowledge_skill(author: &User, ctx: &mut CommandContext) -> anyhow
     character.remove_flag(CharacterFlag::CanAknowledgeSkill);
     ctx.db().characters().save(character).await?;
 
-    ctx.send(Response::new_user_reply(author, format!("você descobriu a habilidade **{}**! Use **/aprender** para obtê-la para o seu personagem.", skill.data(&fighter).name))).await?;
+    ctx.send(
+        Response::new_user_reply(author, format!("você descobriu a habilidade **{}**! Use **/aprender** para obtê-la para o seu personagem.", skill.data(&fighter).name))
+            .add_emoji_prefix("💡")
+    ).await?;
 
     Ok(())
 }

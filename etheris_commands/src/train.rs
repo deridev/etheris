@@ -162,11 +162,11 @@ pub async fn health_training(
 
     character.health_xp = new_xp;
     character.stats.health_level += levels_upgraded;
-    character.stats.resistance.max += (levels_upgraded * 9) as i32;
-    character.stats.resistance.value += (levels_upgraded * 9) as i32;
+    character.stats.resistance.max += (levels_upgraded * 12) as i32;
+    character.stats.resistance.value += (levels_upgraded * 12) as i32;
 
-    character.stats.vitality.max += (levels_upgraded * 12) as i32;
-    character.stats.vitality.value += (levels_upgraded * 12) as i32;
+    character.stats.vitality.max += (levels_upgraded * 8) as i32;
+    character.stats.vitality.value += (levels_upgraded * 8) as i32;
 
     let mut messages: Vec<String> = Vec::with_capacity(3);
     let first_message = match character.stats.health_level - levels_upgraded {

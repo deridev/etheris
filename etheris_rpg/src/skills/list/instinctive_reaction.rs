@@ -40,8 +40,9 @@ impl Skill for InstinctiveReaction {
 
         api.fighter_mut().ether.value -= self.data(&fighter).use_cost.ether;
 
+        let base_damage = api.rng().gen_range(4..=10);
         let damage = api.rng().gen_range(12..=16);
-        let damage = (damage as f32 * api.fighter().mixed_multiplier(0.9, 0.1)) as i32;
+        let damage = base_damage + (damage as f32 * api.fighter().mixed_multiplier(0.9, 0.1)) as i32;
 
         let damage = api
             .apply_damage(

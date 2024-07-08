@@ -16,7 +16,7 @@ impl Skill for CursedBlood {
             description: "Usando seu sangue ou do seu alvo, aplica uma maldição no seu alvo que o faz tomar o dano que causa aos outros. Requer que você ou o alvo estejam sangrando.",
             explanation: "Não se sabe quem criou a Maldição do Karma: *Soridu'Karmi*, mas ela é uma poderosa maldição que faz com que todo o dano que você causa para alguém volte em parte para você. A habilidade do Sangue Amaldiçoado usa ether para aplicar a maldição no alvo, sendo assim uma habilidade complexa e poderosa.",
             complexity: SkillComplexity::Hard,
-            use_cost: SkillCost { ether: 35 },
+            use_cost: SkillCost { ether: 45 },
         }
     }
 
@@ -29,7 +29,7 @@ impl Skill for CursedBlood {
         let target = api.target().clone();
 
         let amount = if target.has_effect(EffectKind::Curse) {
-            api.rng().gen_range(25..=30)
+            api.rng().gen_range(15..=30)
         } else {
             api.rng().gen_range(40..=55)
         };

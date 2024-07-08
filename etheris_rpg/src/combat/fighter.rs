@@ -307,6 +307,13 @@ impl Fighter {
         )
     }
 
+    pub fn height_above_ground(&self) -> u8 {
+        match self.composure {
+            Composure::OnAir(n) => n,
+            _ => 0
+        }
+    }
+
     pub fn strength_multiplier(&self) -> f32 {
         let base = 1.5 + (self.strength_level as f32);
         base * (self.power as f32) * 0.4

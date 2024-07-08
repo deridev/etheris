@@ -30,6 +30,7 @@ mod daily;
 mod deallocate;
 mod equip;
 mod explore;
+mod hunt;
 mod infos;
 mod inventory;
 mod learn;
@@ -82,6 +83,7 @@ pub static COMMANDS: Lazy<CommandMap> = Lazy::new(|| {
     register_command!(map, work::WorkCommand);
     register_command!(map, stats::StatsCommand);
     register_command!(map, shop::ShopCommand);
+    register_command!(map, hunt::HuntCommand);
     register_command!(map, usecmd::UsecmdCommand);
     //register_command!(map, infos::HealthCommand);
     register_command!(map, inventory::InventoryCommand);
