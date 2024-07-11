@@ -158,6 +158,8 @@ impl EventController {
             Condition::HasItem(item, amount) => character.has_item(item, *amount),
             Condition::HasTag(tag) => character.has_tag(tag),
             Condition::HasPersonality(personality) => character.personalities.contains(personality),
+            Condition::HasEther(ether) => character.stats.ether.value >= *ether,
+            Condition::HasKarma(karma) => character.karma >= *karma,
             Condition::SimilarPowerTo(enemy) => pl_range.contains(&(enemy.power_level() as f64)),
             Condition::StrongerThan(enemy) => character.pl > enemy.power_level(),
             Condition::WeakerThan(enemy) => character.pl < enemy.power_level(),
@@ -351,6 +353,7 @@ impl EventController {
         Ok(())
     }
 
+    #[async_recursion::async_recursion]
     async fn execute_single_consequence(
         &mut self,
         mut consequence: Consequence,
@@ -381,6 +384,27 @@ impl EventController {
                 }
 
                 self.ctx.send(response).await?;
+            }
+            ConsequenceKind::ConditionalConsequence {
+                condition,
+                consequence,
+                else_consequence,
+            } => {
+                if self.compute_condition(&character, &condition) {
+                    let consequence = Consequence {
+                        kind: *(consequence.clone()),
+                        ..Default::default()
+                    };
+
+                    self.execute_single_consequence(consequence).await?;
+                } else if let Some(else_consequence) = else_consequence {
+                    let consequence = Consequence {
+                        kind: *(else_consequence.clone()),
+                        ..Default::default()
+                    };
+
+                    self.execute_single_consequence(consequence).await?;
+                }
             }
             ConsequenceKind::Event(event) => {
                 self.event_queue
@@ -825,6 +849,10 @@ impl EventController {
                     (character.action_points + amount).min(character.max_action_points);
                 self.ctx.db().characters().save(character).await?;
             }
+            ConsequenceKind::RemoveEther(ether) => {
+                character.stats.ether.value = character.stats.ether.value.saturating_sub(ether);
+                self.ctx.db().characters().save(character).await?;
+            }
             ConsequenceKind::AddTag(tag) => {
                 character.insert_tag(tag);
                 self.ctx.db().characters().save(character).await?;
@@ -861,7 +889,6 @@ impl EventController {
             return Ok(());
         };
 
-        let mut rng = StdRng::from_entropy();
         let mut enemies = vec![enemy.clone()];
 
         let allies = enemy.allies.unwrap_or_default();
@@ -876,7 +903,9 @@ impl EventController {
         let enemies = enemies
             .into_iter()
             .map(|e| {
-                let reward = e.drop.to_reward(&mut rng, character.pl, e.power_level());
+                let reward =
+                    e.drop
+                        .to_reward(&mut StdRng::from_entropy(), character.pl, e.power_level());
                 FighterData::new_from_enemy(1, reward, e)
             })
             .collect::<Vec<_>>();

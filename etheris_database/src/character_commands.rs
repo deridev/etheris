@@ -31,6 +31,10 @@ impl CharacterCommands {
         let weighted_skills = {
             let mut weight = 0.0;
             for skill in character.skills.iter() {
+                if skill == &SkillKind::Debug {
+                    continue;
+                }
+
                 let cost = skill.knowledge_cost();
                 weight += (cost as f64) / 0.2;
             }

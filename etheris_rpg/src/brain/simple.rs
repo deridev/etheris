@@ -11,7 +11,7 @@ impl Brain for SimpleBrain {
     }
 
     async fn should_risk_life(&mut self, api: BattleApi<'_>) -> bool {
-        defaults::default_should_risk_life(api).await
+        defaults::should_risk_life(api).await
     }
 
     async fn select_input(&mut self, api: BattleApi<'_>) -> BattleInput {

@@ -16,7 +16,8 @@ make_event!(
                 (WorldRegion::Mudland, 3),
                 (WorldRegion::Murkswamp, 2),
                 (WorldRegion::Midgrass, 1),
-                (WorldRegion::Sunreach, 4)
+                (WorldRegion::Sunreach, 4),
+                (WorldRegion::Wornpeaks, 5),
             ],
             ..Default::default()
         },
@@ -41,6 +42,7 @@ make_event!(
                             (Probability::new(40), items::ore::COAL_ORE, (0, 3)),
                             (Probability::new(30), items::ore::IRON_ORE, (0, 2)),
                             (Probability::new(15), items::ore::COPPER_ORE, (0, 1)),
+                            (Probability::new(2), items::ore::GOLD_ORE, (0, 1)),
                         ],
                         orbs: (0, 30),
                         xp: XpReward {
@@ -82,7 +84,8 @@ make_event!(general_basic_place_to_meditate, Event {
                     probability: Probability::new(70),
                     kind: ConsequenceKind::Rewards {
                         message: "você passou algumas horas meditando e sente seu corpo leve. Você ganhou pontos de ação!".to_string(), 
-                        iterations: 1, items: vec![], orbs: (0, 0), xp: XpReward {
+                        iterations: 1, items: vec![], orbs: (0, 0),
+                        xp: XpReward {
                             health: (10, 20), intelligence: (10, 15), strength: (0, 5), knowledge: (10, 30)
                         }
                     },

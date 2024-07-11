@@ -7,7 +7,7 @@ pub fn basic_forest_exploration(_state: EventBuildState) -> Event {
     Event {
         identifier: "basic_forest_exploration",
         spawn: EventSpawn {
-            weighted_regions: vec![(WorldRegion::Mudland, 10), (WorldRegion::Gloomwood, 10), (WorldRegion::Ethergrove, 10), (WorldRegion::Starbreeze, 10)],
+            weighted_regions: vec![(WorldRegion::Mudland, 10), (WorldRegion::Gloomwood, 10), (WorldRegion::Ethergrove, 10), (WorldRegion::Starbreeze, 10), (WorldRegion::Murkswamp, 10)],
             ..Default::default()
         },
         emoji: Emoji::from_unicode("🗺️"),
@@ -57,7 +57,7 @@ pub fn basic_forest_exploration(_state: EventBuildState) -> Event {
                 conditions: vec![Condition::HasItem(items::tool::AXE, 1)],
                 consequences: vec![Consequence {
                     kind: ConsequenceKind::Rewards {
-                        message: "o árvore foi cortado e você coletou madeira!".to_string(),
+                        message: "o árvore foi cortada e você coletou madeira!".to_string(),
                         iterations: 1,
                         items: vec![(Probability::new(100), items::material::RAW_TRUNK, (1, 3))],
                         orbs: (0, 0),
@@ -148,7 +148,12 @@ make_event!(
         identifier: "basic_forest_feet_stuck_in_vines",
         spawn: EventSpawn {
             base_probability: Probability::new(50),
-            weighted_regions: vec![(WorldRegion::Gloomwood, 1), (WorldRegion::Murkswamp, 3)],
+            weighted_regions: vec![
+                (WorldRegion::Gloomwood, 1),
+                (WorldRegion::Murkswamp, 3),
+                (WorldRegion::Ethergrove, 1),
+                (WorldRegion::Starbreeze, 1)
+            ],
             conditions: vec![]
         },
         emoji: Emoji::from_unicode("☘️"),
@@ -257,11 +262,11 @@ make_enemy!(
         brain: BrainKind::Simple,
         regions: &[(WorldRegion::Murkswamp, 1), (WorldRegion::Mudland, 1)],
         personalities: &[Personality::Aggressiveness],
-        potential: EnemyPotential::VeryLow,
+        potential: EnemyPotential::Low,
         strength: 40,
         intelligence: 5,
-        resistance: 400,
-        vitality: 800,
+        resistance: 600,
+        vitality: 200,
         ether: 50,
         weapon: None,
         allies: None,
@@ -506,6 +511,141 @@ make_event!(
                 ],
                 ..Default::default()
             }
+        ]
+    }
+);
+
+make_event!(
+    swamp_murky_waters,
+    Event {
+        identifier: "swamp_murky_waters",
+        spawn: EventSpawn {
+            weighted_regions: vec![(WorldRegion::Murkswamp, 3)],
+            ..Default::default()
+        },
+        emoji: Emoji::from_unicode("🥾"),
+        message: EventMessage::Single(
+            "você se depara com águas turvas e lamacentas. O que deseja fazer?"
+        ),
+        actions: vec![
+            common::ignore_action(),
+            Action {
+                name: "Atravessar".to_string(),
+                emoji: Some(Emoji::from_unicode("🏊")),
+                consequences: vec![
+                    Consequence {
+                        probability: Probability::new(60),
+                        kind: ConsequenceKind::Rewards {
+                            message: "você atravessou com sucesso e encontrou algo interessante!"
+                                .to_string(),
+                            iterations: 1,
+                            items: vec![
+                                (Probability::new(80), items::material::STONE, (2, 5)),
+                                (Probability::new(50), items::consumable::WATER, (1, 3)),
+                                (Probability::new(30), items::ore::IRON_ORE, (1, 2)),
+                            ],
+                            orbs: (15, 30),
+                            xp: XpReward {
+                                health: (10, 20),
+                                strength: (5, 15),
+                                ..Default::default()
+                            }
+                        },
+                        ..Default::default()
+                    },
+                    Consequence {
+                        probability: Probability::new(40),
+                        kind: ConsequenceKind::Prejudice {
+                            message: "você ficou preso na lama e se feriu!".to_string(),
+                            items_amount: (0, 0),
+                            max_item_valuability: 0,
+                            fixed_orbs: (0, 0),
+                            orbs_percentage: 0.0,
+                            specific_items: vec![],
+                            damage_percentage: 0.15,
+                            damage_limit: 75
+                        },
+                        ..Default::default()
+                    }
+                ],
+                ..Default::default()
+            }
+        ]
+    }
+);
+
+make_event!(
+    swamp_quicksand,
+    Event {
+        identifier: "swamp_quicksand",
+        spawn: EventSpawn {
+            base_probability: Probability::new(30),
+            weighted_regions: vec![(WorldRegion::Murkswamp, 1)],
+            conditions: vec![]
+        },
+        emoji: Emoji::from_unicode("🕳️"),
+        message: EventMessage::Single("Você se depara com uma área de areia movediça no pântano. O terreno parece instável e perigoso. O que você faz?"),
+        actions: vec![
+            Action {
+                name: "Tentar Atravessar Cuidadosamente".to_string(),
+                emoji: Some(Emoji::from_unicode("🚶")),
+                consequences: vec![
+                    Consequence {
+                        probability: Probability::new(60),
+                        kind: ConsequenceKind::Message {
+                            message: "Com passos cautelosos, você consegue atravessar a área de areia movediça sem incidentes.".to_string(),
+                            emoji: Some(Emoji::from_unicode("😌"))
+                        },
+                        ..Default::default()
+                    },
+                    Consequence {
+                        probability: Probability::new(40),
+                        kind: ConsequenceKind::Prejudice {
+                            message: "Você escorrega e fica preso na areia movediça! Consegue se libertar, mas perde alguns itens no processo.".to_string(),
+                            items_amount: (1, 3),
+                            max_item_valuability: 100,
+                            fixed_orbs: (10, 30),
+                            orbs_percentage: 0.05,
+                            specific_items: vec![],
+                            damage_percentage: 0.1,
+                            damage_limit: 50
+                        },
+                        ..Default::default()
+                    }
+                ],
+                ..Default::default()
+            },
+            Action {
+                name: "Usar Ether para Flutuar".to_string(),
+                emoji: Some(Emoji::from_unicode("🌀")),
+                conditions: vec![Condition::HasEther(30)],
+                consequences: vec![
+                    Consequence {
+                        kind: ConsequenceKind::Rewards {
+                            message: "Você usa seu ether para flutuar sobre a areia movediça, descobrindo um tesouro escondido no processo!".to_string(),
+                            iterations: 1,
+                            items: vec![
+                                (Probability::new(80), items::special::GIFT, (1, 1)),
+                                (Probability::new(60), items::ore::IRON_ORE, (1, 3)),
+                            ],
+                            orbs: (20, 50),
+                            xp: XpReward {
+                                intelligence: (10, 20),
+                                ..Default::default()
+                            }
+                        },
+                        extra_consequences: vec![
+                            Consequence {
+                                kind: ConsequenceKind::RemoveEther(30),
+                                ..Default::default()
+                            }
+                        ],
+                        ..Default::default()
+                    }
+                ],
+                ..Default::default()
+            },
+            common::ignore_action()
         ]
     }
 );

@@ -21,6 +21,7 @@ macro_rules! register_command {
     }};
 }
 
+mod adm;
 mod allocate;
 mod battle;
 mod common;
@@ -35,7 +36,6 @@ mod infos;
 mod inventory;
 mod learn;
 mod meditate;
-mod owner;
 mod profile;
 mod read;
 mod register;
@@ -93,7 +93,7 @@ pub static COMMANDS: Lazy<CommandMap> = Lazy::new(|| {
     register_command!(map, explore::ExploreCommand);
     register_command!(map, consume::ConsumeCommand);
     register_command!(map, craft::CraftCommand);
-    register_command!(map, owner::OwnerCommand);
+    register_command!(map, adm::AdmCommand);
     register_command!(map, sell::SellCommand);
     register_command!(map, meditate::MeditateCommand);
 

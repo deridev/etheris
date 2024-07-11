@@ -14,6 +14,7 @@ pub struct Modifier {
 pub enum ModKind {
     DmgMultiplier(f32),
     DefenseMultiplier(f32),
+    EtherRegenMultiplier(f32),
     EffectImmunity(EffectKind),
 }
 
@@ -82,6 +83,18 @@ impl Modifiers {
         for modifier in self.list.iter() {
             match modifier.kind {
                 ModKind::DefenseMultiplier(multiplier) => overall_multiplier *= multiplier,
+                _ => {}
+            }
+        }
+
+        overall_multiplier
+    }
+
+    pub fn overall_ether_regen_multiplier(&self) -> f32 {
+        let mut overall_multiplier = 1.0;
+        for modifier in self.list.iter() {
+            match modifier.kind {
+                ModKind::EtherRegenMultiplier(multiplier) => overall_multiplier *= multiplier,
                 _ => {}
             }
         }

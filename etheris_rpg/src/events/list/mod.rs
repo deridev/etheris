@@ -19,9 +19,12 @@ impl EventBuildState {
 pub type EventBuilder = fn(EventBuildState) -> Event;
 
 pub mod desert_basic;
+pub mod ethereal_forest_basic;
 pub mod forest_basic;
 pub mod general_basic;
 pub mod general_special;
+pub mod ice_fields_basic;
+pub mod mountains_basic;
 pub mod plains_basic;
 pub mod shredder_basic;
 
@@ -54,10 +57,30 @@ pub static ALL_EVENTS: Lazy<Vec<EventBuilder>> = Lazy::new(|| {
         forest_basic::basic_forest_strange_shrine,
         forest_basic::basic_forest_animal_tracks,
         forest_basic::basic_forest_suspicious_tree,
+        forest_basic::swamp_murky_waters,
+        forest_basic::swamp_quicksand,
         // Desert
         desert_basic::basic_desert_exploration,
         desert_basic::basic_desert_digging,
         desert_basic::basic_desert_beginner_nomad_merchant,
+        desert_basic::desert_oasis,
+        desert_basic::desert_sandstorm,
+        desert_basic::desert_ancient_ruins,
+        desert_basic::desert_mirage_merchant,
+        desert_basic::desert_scorpion_nest,
+        // Ethereal Forest
+        ethereal_forest_basic::basic_ethereal_forest_digging,
+        ethereal_forest_basic::ethereal_forest_whispering_trees,
+        ethereal_forest_basic::ethereal_forest_glowing_pond,
+        // Ice Fields
+        ice_fields_basic::icefields_exploration,
+        ice_fields_basic::icefields_frozen_lake,
+        ice_fields_basic::icefields_frost_wolf_pack,
+        ice_fields_basic::icefields_snow_storm,
+        // Mountains
+        mountains_basic::basic_mountain_exploration,
+        mountains_basic::basic_mountain_abandoned_campsite,
+        mountains_basic::basic_mountain_person_in_danger,
         // Specific - Shredder
         shredder_basic::basic_shredder_first_encounter,
         shredder_basic::basic_shredder_robbery,
@@ -65,8 +88,8 @@ pub static ALL_EVENTS: Lazy<Vec<EventBuilder>> = Lazy::new(|| {
         shredder_basic::shredder_ambush_for_payment,
         shredder_basic::shredder_training,
         // Lore - Vinizi
-        //vinizi::vinizi_first_encounter,
-        //vinizi::vinizi_first_stage,
+        vinizi::vinizi_first_encounter,
+        vinizi::vinizi_first_stage,
     ]
     .to_vec()
 });

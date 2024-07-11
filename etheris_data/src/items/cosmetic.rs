@@ -3,7 +3,6 @@ use etheris_common::Color;
 use etheris_discord::Emoji;
 
 const COSMETIC_TAGS: &[ItemTag] = &[ItemTag::Cosmetic];
-
 pub const ALL_ITEMS: &[Item] = &[STRAWHAT, EYE_BANDANA, GLASSES];
 
 pub const STRAWHAT: Item = Item {

@@ -5,8 +5,10 @@ use rand::Rng;
 use crate::list::prelude::*;
 
 async fn weapon_stick(mut api: BattleApi<'_>) -> anyhow::Result<()> {
+    let base_damage = api.rng().gen_range(2..=6);
+
     let damage = api.rng().gen_range(8..=16);
-    let damage = (damage as f32 * api.fighter().weapon_multiplier()) as i32;
+    let damage = base_damage + (damage as f32 * api.fighter().weapon_multiplier()) as i32;
 
     let damage = api
         .apply_damage(
@@ -33,8 +35,10 @@ async fn weapon_stick(mut api: BattleApi<'_>) -> anyhow::Result<()> {
 }
 
 async fn weapon_knife(mut api: BattleApi<'_>) -> anyhow::Result<()> {
+    let base_damage = api.rng().gen_range(4..=8);
+
     let damage = api.rng().gen_range(10..=18);
-    let damage = (damage as f32 * api.fighter().weapon_multiplier()) as i32;
+    let damage = base_damage + (damage as f32 * api.fighter().weapon_multiplier()) as i32;
 
     let damage = api
         .apply_damage(
@@ -61,11 +65,13 @@ async fn weapon_knife(mut api: BattleApi<'_>) -> anyhow::Result<()> {
 }
 
 async fn weapon_katana(mut api: BattleApi<'_>) -> anyhow::Result<()> {
+    let base_damage = api.rng().gen_range(8..=16);
+
     let damage_1 = api.rng().gen_range(4..=12);
     let damage_2 = api.rng().gen_range(4..=12);
 
-    let damage_1 = (damage_1 as f32 * api.fighter().weapon_multiplier()) as i32;
-    let damage_2 = (damage_2 as f32 * api.fighter().weapon_multiplier()) as i32;
+    let damage_1 = base_damage + (damage_1 as f32 * api.fighter().weapon_multiplier()) as i32;
+    let damage_2 = base_damage + (damage_2 as f32 * api.fighter().weapon_multiplier()) as i32;
 
     let damage_1 = api
         .apply_damage(
@@ -106,8 +112,9 @@ async fn weapon_katana(mut api: BattleApi<'_>) -> anyhow::Result<()> {
 }
 
 async fn weapon_spear(mut api: BattleApi<'_>) -> anyhow::Result<()> {
+    let base_damage = api.rng().gen_range(11..=12);
     let damage = api.rng().gen_range(12..=20);
-    let damage = (damage as f32 * api.fighter().weapon_multiplier()) as i32;
+    let damage = base_damage + (damage as f32 * api.fighter().weapon_multiplier()) as i32;
 
     let damage = api
         .apply_damage(
@@ -134,8 +141,9 @@ async fn weapon_spear(mut api: BattleApi<'_>) -> anyhow::Result<()> {
 }
 
 async fn weapon_bat(mut api: BattleApi<'_>) -> anyhow::Result<()> {
+    let base_damage = api.rng().gen_range(11..=15);
     let damage = api.rng().gen_range(15..=18);
-    let damage = (damage as f32 * api.fighter().weapon_multiplier()) as i32;
+    let damage = base_damage + (damage as f32 * api.fighter().weapon_multiplier()) as i32;
 
     let effect = if Probability::new(10).generate_random_bool() {
         Some(Effect::new(EffectKind::Bleeding, 60, api.fighter_index))
@@ -188,8 +196,9 @@ async fn weapon_bat(mut api: BattleApi<'_>) -> anyhow::Result<()> {
 }
 
 async fn weapon_umbrella(mut api: BattleApi<'_>) -> anyhow::Result<()> {
+    let base_damage = api.rng().gen_range(4..=15);
     let damage = api.rng().gen_range(10..=18);
-    let damage = (damage as f32 * api.fighter().weapon_multiplier()) as i32;
+    let damage = base_damage + (damage as f32 * api.fighter().weapon_multiplier()) as i32;
 
     let effect = if Probability::new(40).generate_random_bool() {
         Some(Effect::new(EffectKind::Bleeding, 60, api.fighter_index))
@@ -253,6 +262,37 @@ async fn weapon_umbrella(mut api: BattleApi<'_>) -> anyhow::Result<()> {
     Ok(())
 }
 
+async fn weapon_scorpion_fang(mut api: BattleApi<'_>) -> anyhow::Result<()> {
+    let base_damage = api.rng().gen_range(8..=20);
+    let damage = api.rng().gen_range(10..=20);
+    let damage = base_damage + (damage as f32 * api.fighter().weapon_multiplier()) as i32;
+
+    let target = api.target();
+    let target_name = target.name.clone();
+
+    let damage = api
+        .apply_damage(
+            target.index,
+            DamageSpecifier {
+                culprit: api.fighter().index,
+                kind: DamageKind::Physical,
+                amount: damage,
+                balance_effectiveness: 5,
+                accuracy: 90,
+                effect: Some(Effect::new(EffectKind::Poisoned, 7, api.fighter_index)),
+            },
+        )
+        .await;
+
+    api.emit_message(format!(
+        "**{}** atacou **{}** com uma presa de escorpião e causou **{damage}**",
+        api.fighter().name,
+        target_name
+    ));
+
+    Ok(())
+}
+
 pub async fn execute_weapon_attack(
     api: BattleApi<'_>,
     weapon: FighterWeapon,
@@ -264,5 +304,6 @@ pub async fn execute_weapon_attack(
         WeaponKind::Umbrella => weapon_umbrella(api).await,
         WeaponKind::Spear => weapon_spear(api).await,
         WeaponKind::Katana => weapon_katana(api).await,
+        WeaponKind::ScorpionFang => weapon_scorpion_fang(api).await,
     }
 }

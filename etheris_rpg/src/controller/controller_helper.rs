@@ -95,8 +95,8 @@ pub async fn tick_every_effect(
                             api.fighter_index,
                             DamageSpecifier {
                                 kind: DamageKind::Fire,
-                                amount: (api.fighter().health().max as f32 * 0.01) as i32,
-                                balance_effectiveness: 1,
+                                amount: (api.fighter().health().max as f32 * 0.03) as i32,
+                                balance_effectiveness: 4,
                                 accuracy: 100,
                                 ..Default::default()
                             },
@@ -250,6 +250,28 @@ pub async fn tick_every_effect(
                         ));
                     }
                 }
+                EffectKind::Poisoned => {
+                    api.fighter_mut().remove_effect(Effect::new(
+                        effect.kind,
+                        5,
+                        Default::default(),
+                    ));
+
+                    let dmg = api
+                        .apply_damage(
+                            api.fighter_index,
+                            DamageSpecifier {
+                                kind: DamageKind::Poisonous,
+                                amount: (api.fighter().health().max as f32 * 0.025) as i32,
+                                balance_effectiveness: 3,
+                                accuracy: 100,
+                                ..Default::default()
+                            },
+                        )
+                        .await;
+
+                    api.defer_message(format!("**{}** recebeu **{dmg}** do veneno!", fighter_name));
+                }
                 EffectKind::Exhausted => {
                     api.fighter_mut().remove_effect(Effect::new(
                         effect.kind,
@@ -272,7 +294,7 @@ pub async fn should_risk_life(
         let fighter = controller.battle.get_fighter_mut(*fighter_index);
         let fighter_name = fighter.name.clone();
 
-        if fighter.resistance.value > 0 || fighter.flags.contains(FighterFlags::ASKED_TO_RISK_LIFE)
+        if fighter.resistance.value > 0 || fighter.flags.contains(FighterFlags::ASKED_TO_RISK_LIFE) || fighter.flags.contains(FighterFlags::GAVE_UP)
         {
             continue;
         }
@@ -525,6 +547,10 @@ pub fn create_fighter_embed_fields(
             EffectKind::Bleeding => {
                 displays.push(format!("🩸 **Sangramento**: {}%", effect.amount))
             }
+            EffectKind::Poisoned => displays.push(format!(
+                "<:poison:1260219639624110090> **Veneno**: {}%",
+                effect.amount
+            )),
             EffectKind::Curse => displays.push(format!("⚫ **Maldição**: {}%", effect.amount)),
             EffectKind::Exhausted => {
                 displays.push(format!("😞 **Exausto**: {} turnos", effect.amount))

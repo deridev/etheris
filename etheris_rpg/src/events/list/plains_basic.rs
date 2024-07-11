@@ -341,8 +341,8 @@ make_enemy!(
         potential: EnemyPotential::Low,
         strength: 8,
         intelligence: 3,
-        resistance: 90,
-        vitality: 120,
+        resistance: 130,
+        vitality: 60,
         ether: 20,
         weapon: Some(WeaponKind::Stick),
         allies: None,
@@ -382,7 +382,10 @@ make_event!(
         emoji: Emoji::from_unicode("🍔"),
         message: EventMessage::Single("você viu um mendigo pedindo alguns orbs. Você quer ajudar?"),
         actions: vec![
-            common::ignore_action(),
+            common::ignore_action_with_extra_consequences(vec![Consequence {
+                kind: ConsequenceKind::RemoveKarma(1),
+                ..Default::default()
+            }]),
             Action {
                 name: "Ajudar".to_string(),
                 emoji: None,

@@ -1,4 +1,4 @@
-use etheris_data::world::regions::RegionKind;
+use etheris_data::{items, world::regions::RegionKind};
 
 use super::prelude::*;
 
@@ -207,6 +207,13 @@ fn vinizi_first_stage_interaction(state: EventBuildState) -> Event {
     if state.character.region.kind() == RegionKind::Mountains {
         for _ in 0..=3 {
             messages.push("`\"Me conta, [NAME], como você est... Espera... A gente está em uma montanha?! EI, EU TENHO MUITO MEDO DE ALTURA! O QUE VOCÊ ESTÁ FAZENDO AQUI, AMIGO? ALTURA É PERIGOSA, SABIA? VOCÊ DEVIA DESC-\"`. Vinizi teleportou antes de terminar a frase.".to_string());
+        }
+    }
+
+    if state.character.has_item(&items::lore::HAKIKO_LEGEND, 1) {
+        for _ in 0..=2 {
+            messages.push("`\"Ah, espera! [NAME], onde você conseguiu essa item? A Lenda de Hakiko?! Eu sou um grande fã do General Hakiko! Eu gostaria de ter tempo para estudar o Hakikotenchou, ha ha ha! Se bem qu-\"`. Vinizi teleportou antes de terminar a frase.".to_string());
+            messages.push("`\"Ei, [NAME]. Um dia desses eu conheci um descendente distante do Hakiko! Você consegue acreditar? Ele não é tão forte quando o General, mas possui uma determinação lendária. Será que um dia veremos uma nova lenda? Espero qu-\"`. Vinizi teleportou antes de terminar a frase.".to_string());
         }
     }
 

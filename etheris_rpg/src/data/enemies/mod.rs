@@ -137,13 +137,21 @@ pub static ALL_ENEMIES: Lazy<Vec<Enemy>> = Lazy::new(|| {
         weaklings::greenagis_mutant(),
         weaklings::weak_shredder(),
         weaklings::newbie_hunter(),
+        weaklings::novice_bandit(),
         weaklings::weak_mercenary(),
         weaklings::mud_golem(),
         weaklings::swamp_master(),
+        weaklings::swamp_executioner(),
         weaklings::weak_mercenary_leader(),
         // Weaklings+
         weaklings_plus::average_looter(),
+        weaklings_plus::small_scorpion(),
         weaklings_plus::marsh_marauder(),
+        weaklings_plus::ice_warrior(),
+        weaklings_plus::desert_raider(),
+        weaklings_plus::abominable_maquiran(),
+        weaklings_plus::frost_wolf(),
+        weaklings_plus::rocky_golem(),
     ]
     .to_vec()
 });

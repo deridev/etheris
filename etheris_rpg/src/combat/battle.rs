@@ -321,6 +321,9 @@ impl Battle {
                 (fighter.ether.max as f32 * 0.05) as i32
             };
 
+            let ether_rec = (ether_rec as f32 * fighter.modifiers.overall_ether_regen_multiplier())
+                .max(0.0) as i32;
+
             fighter.overload = if ether_rec == 0 {
                 fighter.overload
             } else {
@@ -344,7 +347,14 @@ impl Battle {
 
     pub fn next_fighter(&mut self) {
         if self.fighters_queue.is_empty() {
-            self.fighters_queue = self.alive_fighters.clone().into();
+            let hasnt_gave_up = |f: &&FighterIndex| !self.get_fighter(**f).flags.contains(FighterFlags::GAVE_UP);
+            self.fighters_queue = self
+                .alive_fighters
+                .iter()
+                .filter(hasnt_gave_up)
+                .cloned()
+                .collect::<Vec<_>>()
+                .into();
         }
 
         if self.fighters_queue.is_empty() {

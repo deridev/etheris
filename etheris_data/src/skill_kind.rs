@@ -18,6 +18,7 @@ pub struct Soul {
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
 pub enum SkillKind {
+    Debug,
     ImbuedPunch,
     SimpleCut,
     DefensiveJump,
@@ -53,11 +54,13 @@ pub enum SkillKind {
     CursedBlood,
     Hakikotenchou,
     SkillMirror,
+    EtherFlow,
 }
 
 impl SkillKind {
     pub fn list() -> Vec<SkillKind> {
         vec![
+            Self::Debug,
             Self::ImbuedPunch,
             Self::SimpleCut,
             Self::DefensiveJump,
@@ -92,11 +95,13 @@ impl SkillKind {
             Self::CursedBlood,
             Self::Hakikotenchou,
             Self::SkillMirror,
+            Self::EtherFlow,
         ]
     }
 
     pub fn personalities_affinity(&self) -> &'static [Personality] {
         match self {
+            Self::Debug => &[],
             Self::ImbuedPunch => &Personality::LIST,
             Self::SimpleCut => &[Personality::Cowardice, Personality::Arrogance],
             Self::DefensiveJump => &[Personality::Intelligence, Personality::Cowardice],
@@ -140,6 +145,7 @@ impl SkillKind {
             Self::CursedBlood => &[Personality::Courage],
             Self::Hakikotenchou => &[Personality::Calm, Personality::Intelligence],
             Self::SkillMirror => &[Personality::Insanity, Personality::Cowardice],
+            Self::EtherFlow => &[Personality::Calm],
         }
     }
 
@@ -161,6 +167,7 @@ impl SkillKind {
             Self::IcyShot => 12,
             Self::BloodDonation => 12,
             Self::WaterBlessing => 13,
+            Self::EtherFlow => 13,
             Self::BloodTheft => 14,
             Self::InstinctiveReaction => 14,
             Self::Overcoming => 15,
@@ -180,6 +187,7 @@ impl SkillKind {
             Self::TenkuKikan(_) => 80,
             Self::FinalCrucifix => 130,
             Self::Hakikotenchou => 90,
+            Self::Debug => u32::MAX,
         }
     }
 
@@ -202,6 +210,7 @@ impl SkillKind {
             | Self::WoundHealing
             | Self::ResplendentPunch
             | Self::BloodSpear
+            | Self::EtherFlow
             | Self::Overcoming => 2,
             Self::IcyShot
             | Self::ElectricSlap
@@ -216,6 +225,7 @@ impl SkillKind {
             Self::TenkuKikan(..) => 6,
             Self::ParalyzingBet => 6,
             Self::FinalCrucifix => 7,
+            Self::Debug => u32::MAX,
         }
     }
 }

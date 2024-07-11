@@ -146,6 +146,48 @@ make_enemy!(
 );
 
 make_enemy!(
+    novice_bandit,
+    Enemy {
+        identifier: "novice_bandit",
+        name: "Bandido Novato",
+        base_probability: Probability::ALWAYS,
+        brain: BrainKind::Simple,
+        regions: &[(WorldRegion::Greenagis, 3), (WorldRegion::Emerelis, 5)],
+        personalities: &[Personality::Aggressiveness, Personality::Cowardice],
+        potential: EnemyPotential::Low,
+        strength: 4,
+        intelligence: 2,
+        resistance: 70,
+        vitality: 35,
+        ether: 10,
+        weapon: Some(WeaponKind::Stick),
+        allies: None,
+        skills: vec![SkillKind::ImbuedPunch, SkillKind::Charge],
+        drop: EnemyReward {
+            orbs: (10, 20),
+            xp: (20, 30),
+            items: vec![
+                EnemyRewardItem {
+                    amount: (1, 1),
+                    item: items::material::STICK,
+                    probability: Probability::new(80),
+                },
+                EnemyRewardItem {
+                    amount: (1, 1),
+                    item: items::consumable::CORN,
+                    probability: Probability::new(50),
+                },
+                EnemyRewardItem {
+                    amount: (1, 1),
+                    item: items::material::RAW_TRUNK,
+                    probability: Probability::new(20),
+                },
+            ],
+        },
+    }
+);
+
+make_enemy!(
     newbie_hunter,
     Enemy {
         identifier: "newbie_hunter",
@@ -284,7 +326,7 @@ make_enemy!(
         strength: 22,
         intelligence: 10,
         resistance: 315,
-        vitality: 110,
+        vitality: 60,
         ether: 50,
         weapon: Some(WeaponKind::Stick),
         allies: None,
@@ -308,6 +350,48 @@ make_enemy!(
 );
 
 make_enemy!(
+    swamp_executioner,
+    Enemy {
+        identifier: "swamp_executioner",
+        name: "Carrasco do Pântano",
+        base_probability: Probability::ALWAYS,
+        brain: BrainKind::Simple,
+        regions: &[(WorldRegion::Murkswamp, 3),],
+        personalities: &[Personality::Courage, Personality::Insanity],
+        potential: EnemyPotential::Medium,
+        strength: 32,
+        intelligence: 5,
+        resistance: 364,
+        vitality: 111,
+        ether: 30,
+        weapon: Some(WeaponKind::Knife),
+        allies: None,
+        skills: vec![
+            SkillKind::CursedBlood,
+            SkillKind::SimpleCut,
+            SkillKind::Refresh,
+            SkillKind::InstinctiveReaction,
+        ],
+        drop: EnemyReward {
+            orbs: (25, 60),
+            xp: (40, 90),
+            items: vec![
+                EnemyRewardItem {
+                    amount: (1, 3),
+                    item: items::material::BONE,
+                    probability: Probability::new(20),
+                },
+                EnemyRewardItem {
+                    amount: (1, 1),
+                    item: items::cosmetic::EYE_BANDANA,
+                    probability: Probability::new(5),
+                },
+            ],
+        },
+    }
+);
+
+make_enemy!(
     swamp_master,
     Enemy {
         identifier: "swamp_master",
@@ -320,7 +404,7 @@ make_enemy!(
             (WorldRegion::Midgrass, 1),
         ],
         personalities: &[Personality::Intelligence, Personality::Insanity],
-        potential: EnemyPotential::Low,
+        potential: EnemyPotential::Medium,
         strength: 8,
         intelligence: 15,
         resistance: 208,

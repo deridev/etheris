@@ -25,6 +25,7 @@ pub async fn skill_analyze(
     let Some(skill) = character
         .learned_skills
         .iter()
+        .chain(character.skills.iter())
         .map(|s| get_boxed_skill_from_kind(s.clone()))
         .find(|s| {
             unidecode::unidecode(&skill).to_lowercase()

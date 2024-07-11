@@ -3,7 +3,7 @@ use crate::weapon::WeaponKind;
 use super::*;
 use etheris_discord::Emoji;
 
-const MATERIAL_TAGS: &[ItemTag] = &[ItemTag::Consumable];
+const MATERIAL_TAGS: &[ItemTag] = &[ItemTag::Material];
 
 pub const ALL_ITEMS: &[Item] = &[
     STONE,
@@ -14,6 +14,7 @@ pub const ALL_ITEMS: &[Item] = &[
     KNIFE,
     TOOL_HANDLE,
     BONE,
+    SCORPION_FANG,
 ];
 
 pub const STONE: Item = Item {
@@ -125,5 +126,20 @@ pub const BONE: Item = Item {
         is_sellable: true,
         ..PurchaseProperties::default()
     },
+    ..Item::default()
+};
+
+pub const SCORPION_FANG: Item = Item {
+    identifier: "scorpion_fang",
+    display_name: "Presa de Escorpião",
+    emoji: Emoji::from_emote(Some("scorpion_fang"), 1260221716286799992),
+    tags: MATERIAL_TAGS,
+    purchase_properties: PurchaseProperties {
+        base_price: 120,
+        base_sell_price: 60,
+        is_sellable: true,
+        ..PurchaseProperties::default()
+    },
+    weapon: Some(WeaponKind::ScorpionFang),
     ..Item::default()
 };

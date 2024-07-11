@@ -1,15 +1,31 @@
 use etheris_database::character_model::BattleAction;
 use etheris_framework::Response;
+use rand::prelude::SliceRandom;
 
 use crate::*;
 
 pub async fn execute_action(action: BattleAction, api: &mut BattleApi<'_>) -> anyhow::Result<()> {
     match action {
         BattleAction::GiveUp => {
-            api.fighter_mut().is_defeated = true;
-            api.fighter_mut().defeated_by = None;
-
+            api.fighter_mut().flags.insert(FighterFlags::GAVE_UP);
             api.emit_message(format!("**{}** desistiu!", api.fighter().name));
+
+            // Guard against letting all fighters give up
+            let alive_fighters = api.battle().alive_fighters.clone();
+            let alive_fighters = alive_fighters
+                .iter()
+                .map(|index| api.battle().get_fighter(*index).clone())
+                .collect::<Vec<_>>();
+
+            if !alive_fighters.is_empty()
+                && alive_fighters
+                    .iter()
+                    .all(|f| f.flags.contains(FighterFlags::GAVE_UP))
+            {
+                let random_fighter = alive_fighters.choose(&mut api.rng()).unwrap();
+                let fighter = api.battle_mut().get_fighter_mut(random_fighter.index);
+                fighter.flags.remove(FighterFlags::GAVE_UP);
+            }
             Ok(())
         }
         BattleAction::ControlPower => {

@@ -2,7 +2,6 @@ use super::*;
 use etheris_discord::Emoji;
 
 const TOOL_TAGS: &[ItemTag] = &[ItemTag::Tool];
-
 pub const ALL_ITEMS: &[Item] = &[
     TRANSLATOR, SHOVEL, PICKAXE, HAMMER, AXE, BAT, SPEAR, KATANA, UMBRELLA,
 ];

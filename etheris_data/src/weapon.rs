@@ -8,6 +8,7 @@ pub enum WeaponKind {
     Umbrella,
     Spear,
     Katana,
+    ScorpionFang,
 }
 
 impl WeaponKind {
@@ -18,7 +19,8 @@ impl WeaponKind {
             Self::Bat => 1.2,
             Self::Umbrella => 0.7,
             Self::Spear => 0.5,
-            Self::Katana => 0.6,
+            Self::Katana => 0.8,
+            Self::ScorpionFang => 1.1,
         }
     }
 
@@ -29,7 +31,8 @@ impl WeaponKind {
             Self::Bat => 0.1,
             Self::Umbrella => 0.3,
             Self::Spear => 0.7,
-            Self::Katana => 0.4,
+            Self::Katana => 0.8,
+            Self::ScorpionFang => 0.4,
         }
     }
 }

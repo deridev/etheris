@@ -14,8 +14,8 @@ make_enemy!(
         potential: EnemyPotential::Medium,
         strength: 10,
         intelligence: 20,
-        resistance: 400,
-        vitality: 100,
+        resistance: 450,
+        vitality: 50,
         ether: 40,
         weapon: None,
         allies: None,
@@ -28,11 +28,18 @@ make_enemy!(
         drop: EnemyReward {
             orbs: (80, 150),
             xp: (100, 150),
-            items: vec![EnemyRewardItem {
-                amount: (1, 1),
-                item: items::special::INVIGORATING_CRYSTAL,
-                probability: Probability::new(50),
-            }],
+            items: vec![
+                EnemyRewardItem {
+                    amount: (1, 1),
+                    item: items::special::INVIGORATING_CRYSTAL,
+                    probability: Probability::new(50),
+                },
+                EnemyRewardItem {
+                    amount: (1, 1),
+                    item: items::special::GIFT,
+                    probability: Probability::new(70),
+                }
+            ],
         },
     }
 );

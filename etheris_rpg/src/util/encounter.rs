@@ -57,9 +57,11 @@ pub async fn prompt_encounter(
             match (character.stats.strength_level as i64 - enemy.strength_level as i64) / 2 {
                 i64::MIN..=-100 => "Extremamente mais forte",
                 -60..=-30 => "Muito mais forte",
-                -29..=-6 => "Mais forte",
-                -5..=10 => "Semelhante",
-                11..=30 => "Mais fraco",
+                -29..=-11 => "Mais forte",
+                -10..=-3 => "Pouco mais forte",
+                -2..=2 => "Semelhante",
+                3..=14 => "Pouco mais fraco",
+                15..=30 => "Mais fraco",
                 31..=60 => "Muito mais fraco",
                 61..=1000000 => "Extremamente mais fraco",
                 _ => "Incalculável",
@@ -68,11 +70,13 @@ pub async fn prompt_encounter(
         let intelligence_message =
             match (character.stats.intelligence_level as i64 - enemy.intelligence_level as i64) / 2
             {
-                i64::MIN..=-100 => "Extremamente mais inteligente",
+                i64::MIN..=-100 => "Extremamente menos inteligente",
                 -60..=-30 => "Muito mais inteligente",
-                -29..=-6 => "Menos forte",
-                -5..=10 => "Semelhante",
-                11..=30 => "Menos inteligente",
+                -29..=-11 => "Mais inteligente",
+                -10..=-3 => "Pouco mais inteligente",
+                -2..=2 => "Semelhante",
+                3..=14 => "Pouco menos inteligente",
+                15..=30 => "Menos inteligente",
                 31..=60 => "Muito menos inteligente",
                 61..=1000000 => "Extremamente menos inteligente",
                 _ => "Incalculável",
@@ -93,9 +97,9 @@ pub async fn prompt_encounter(
             format!(
                 "{}\n{weapon_text}{} **{}**\n{} {}\n{} {}\n**Força**: {strength_message}\n**Inteligência**: {intelligence_message}\n\n**Habilidades**: `{}`",
                 enemy.personalities.iter().map(|p| bold(&p.to_string())).collect::<Vec<_>>().join(", "),
-                emojis::RESISTANCE, enemy.resistance.value,
-                emojis::VITALITY, enemy.vitality.value,
-                emojis::ETHER, enemy.ether.value,
+                emojis::RESISTANCE, (enemy.resistance.value as f64 * enemy.potential) as i64,
+                emojis::VITALITY, (enemy.vitality.value as f64 * enemy.potential) as i64,
+                emojis::ETHER, (enemy.ether.value as f64 * enemy.potential) as i64,
                 if enemy.skills.is_empty() {
                     String::from("Nenhuma")
                 } else {

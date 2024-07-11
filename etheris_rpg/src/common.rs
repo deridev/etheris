@@ -32,6 +32,8 @@ pub enum DamageKind {
     Electric,
     /// Water damage
     Water,
+    /// Poisonous damage
+    Poisonous,
     /// Cut damage made with ether
     Cut,
     /// Physycal cut damage (like knifes)

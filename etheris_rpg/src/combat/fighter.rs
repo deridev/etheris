@@ -34,6 +34,7 @@ bitflags! {
         const RISKING_LIFE = 1 << 2;
         const CANNOT_REGEN_ETHER = 1 << 3;
         const CANNOT_REGEN_ETHER_OVERLOAD = 1 << 4;
+        const GAVE_UP = 1 << 5;
     }
 }
 
@@ -120,6 +121,7 @@ pub enum EffectKind {
     Wet,
     Frozen,
     Bleeding,
+    Poisoned,
     Paralyzed,
     Curse,
     Exhausted,
@@ -164,6 +166,7 @@ impl FighterWeapon {
             WeaponKind::Spear => "Perfurar",
             WeaponKind::Katana => "Cortar",
             WeaponKind::Umbrella => "Bater",
+            WeaponKind::ScorpionFang => "Atacar",
         }
     }
 
@@ -310,7 +313,7 @@ impl Fighter {
     pub fn height_above_ground(&self) -> u8 {
         match self.composure {
             Composure::OnAir(n) => n,
-            _ => 0
+            _ => 0,
         }
     }
 

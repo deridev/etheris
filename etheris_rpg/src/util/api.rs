@@ -102,6 +102,10 @@ impl<'a> BattleApi<'a> {
     }
 
     pub fn can_finish_target(&self) -> bool {
+        if self.target().flags.contains(FighterFlags::GAVE_UP) {
+            return true;
+        }
+
         let mut finish_threshold = if self.target().balance < 50 {
             0.3
         } else {
@@ -511,6 +515,7 @@ impl<'a> BattleApi<'a> {
             EffectKind::Wet => format!("**{}** está molhado!", target_name),
             EffectKind::Frozen => format!("**{}** congelou!", target_name),
             EffectKind::Bleeding => format!("**{}** começou a sangrar!", target_name),
+            EffectKind::Poisoned => format!("**{}** está envenenado!", target_name),
             EffectKind::Curse => format!("**{}** está com uma maldição!", target_name),
             EffectKind::Exhausted => format!(
                 "**{}** está exausto e não pode mais regenerar ether!",

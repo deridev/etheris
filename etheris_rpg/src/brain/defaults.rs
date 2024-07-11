@@ -6,7 +6,7 @@ use rand::{seq::SliceRandom, Rng};
 
 use crate::*;
 
-pub async fn default_should_risk_life(api: BattleApi<'_>) -> bool {
+pub async fn should_risk_life(api: BattleApi<'_>) -> bool {
     let fighter = api.fighter();
     let target = api.target();
     let pl_diff = fighter.pl - target.pl;

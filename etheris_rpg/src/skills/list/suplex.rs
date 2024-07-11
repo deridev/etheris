@@ -29,7 +29,7 @@ impl Skill for Suplex {
         let target = api.target().clone();
 
         let base_damage = api.rng().gen_range(9..=15);
-        let damage = api.rng().gen_range(16..=23);
+        let damage = api.rng().gen_range(12..=23);
         let damage = base_damage + (damage as f32 * fighter.strength_multiplier()) as i32;
 
         let paralyze = Probability::new(20).generate_random_bool();
@@ -48,7 +48,6 @@ impl Skill for Suplex {
 
         if paralyze {
             api.emit_message(format!("**{}** deu suplex tão forte em **{}** que causou **{damage}** e paralisou seus músculos!", fighter.name, target.name));
-
         } else {
             api.emit_message(format!("**{}** deu um rápido suplex em **{}** que causou **{damage}**!", fighter.name, target.name));
         }

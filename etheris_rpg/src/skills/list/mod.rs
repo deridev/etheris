@@ -10,6 +10,8 @@ macro_rules! use_skill {
     };
 }
 
+use_skill!(debug);
+
 use_skill!(imbued_punch);
 use_skill!(cyclone_push);
 use_skill!(charge);
@@ -45,6 +47,7 @@ use_skill!(blood_spear);
 use_skill!(overcoming);
 use_skill!(hakikotenchou);
 use_skill!(skill_mirror);
+use_skill!(ether_flow);
 
 pub static ALL_SKILLS: Lazy<Vec<Box<dyn super::Skill + Send + Sync>>> = Lazy::new(|| {
     SkillKind::list()
@@ -57,6 +60,7 @@ pub fn get_boxed_skill_from_kind(kind: SkillKind) -> Box<dyn super::Skill + Send
     // PS: for this function to work properly, SkillKind::list() must be CORRECT.
 
     match kind {
+        SkillKind::Debug => Box::<Debug>::default(),
         SkillKind::ImbuedPunch => Box::<ImbuedPunch>::default(),
         SkillKind::SimpleCut => Box::<SimpleCut>::default(),
         SkillKind::TornadoKick => Box::<TornadoKick>::default(),
@@ -92,5 +96,6 @@ pub fn get_boxed_skill_from_kind(kind: SkillKind) -> Box<dyn super::Skill + Send
         SkillKind::Overcoming => Box::<Overcoming>::default(),
         SkillKind::Hakikotenchou => Box::<Hakikotenchou>::default(),
         SkillKind::SkillMirror => Box::<SkillMirror>::default(),
+        SkillKind::EtherFlow => Box::<EtherFlow>::default(),
     }
 }

@@ -110,9 +110,9 @@ impl Command {
 }
 
 #[command("Comando restrito.")]
-#[name("owner")]
+#[name("adm")]
 #[character_required(true)]
-pub async fn owner(
+pub async fn adm(
     mut ctx: CommandContext,
     #[rename("comando")]
     #[description("Comando a ser executado")]

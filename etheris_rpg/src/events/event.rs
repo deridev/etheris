@@ -56,6 +56,8 @@ pub enum Condition {
     HasOrbs(i64),
     HasItem(Item, usize),
     HasTag(&'static str),
+    HasEther(i32),
+    HasKarma(i32),
     HasPersonality(Personality),
     SimilarPowerTo(Enemy),
     StrongerThan(Enemy),
@@ -92,6 +94,13 @@ pub struct Action {
     pub conditions: Vec<Condition>,
     pub consequences: Vec<Consequence>,
     pub extra_consequences: Vec<Consequence>,
+}
+
+impl Action {
+    pub fn with_extra_consequences(mut self, consequence: Consequence) -> Self {
+        self.extra_consequences.push(consequence);
+        self
+    }
 }
 
 impl Default for Action {
@@ -143,6 +152,11 @@ pub struct BattleConsequence {
 
 #[derive(Debug, Clone, PartialEq, PartialOrd)]
 pub enum ConsequenceKind {
+    ConditionalConsequence {
+        condition: Condition,
+        consequence: Box<ConsequenceKind>,
+        else_consequence: Option<Box<ConsequenceKind>>,
+    },
     Message {
         message: String,
         emoji: Option<Emoji<'static>>,
@@ -177,6 +191,7 @@ pub enum ConsequenceKind {
     },
     RemoveItemDurability(Item, u32),
     RemoveItem(Item, usize),
+    RemoveEther(i32),
     AddActionPoint(u32),
     AddTag(String),
     RemoveTag(String),
