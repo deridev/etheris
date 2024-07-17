@@ -242,7 +242,7 @@ make_event!(
                             items: vec![
                                 (Probability::new(90), items::material::STONE, (2, 5)),
                                 (Probability::new(70), items::ore::IRON_ORE, (1, 3)),
-                                (Probability::new(30), items::special::INTELLIGENCE_CRYSTAL, (0, 1)),
+                                (Probability::new(2), items::special::INTELLIGENCE_CRYSTAL, (0, 1)),
                             ],
                             orbs: (20, 50),
                             xp: XpReward {
@@ -424,10 +424,10 @@ make_event!(
                             iterations: 2,
                             items: vec![
                                 (Probability::new(80), items::lore::GOLDEN_ROBOT_POEM, (0, 1)),
-                                (Probability::new(20), items::special::INTELLIGENCE_CRYSTAL, (1, 1)),
+                                (Probability::new(60), items::ore::COPPER_ORE, (0, 2)),
                                 (Probability::new(50), items::ore::GOLD_ORE, (1, 3)),
                                 (Probability::new(30), items::special::GIFT, (0, 1)),
-                                (Probability::new(60), items::ore::COPPER_ORE, (0, 2)),
+                                (Probability::new(15), items::special::INVIGORATING_CRYSTAL, (1, 1)),
                             ],
                             orbs: (25, 100),
                             xp: XpReward {

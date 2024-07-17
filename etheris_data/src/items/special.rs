@@ -56,7 +56,7 @@ pub const INTELLIGENCE_CRYSTAL: Item = Item {
     identifier: "intelligence_crystal",
     display_name: "Cristal da Inteligência",
     emoji: Emoji::from_emote(Some("intelligence_crystal"), 1175173728561270965),
-    tags: &[ItemTag::Consumable, ItemTag::Special],
+    tags: &[ItemTag::Consumable, ItemTag::Special, ItemTag::Crystal],
     has_consumption_function: true,
     purchase_properties: PurchaseProperties {
         base_price: 4000,
@@ -71,7 +71,7 @@ pub const INVIGORATING_CRYSTAL: Item = Item {
     identifier: "invigorating_crystal",
     display_name: "Cristal Revigorante",
     emoji: Emoji::from_emote(Some("invigorating_crystal"), 1175175892453052540),
-    tags: &[ItemTag::Consumable, ItemTag::Special],
+    tags: &[ItemTag::Consumable, ItemTag::Special, ItemTag::Crystal],
     has_consumption_function: true,
     purchase_properties: PurchaseProperties {
         base_price: 700,

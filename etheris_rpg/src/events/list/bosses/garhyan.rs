@@ -250,7 +250,7 @@ fn garhyan_defeated(_: EventBuildState) -> Event {
                         ..Default::default()
                     },
                     Consequence {
-                        kind: ConsequenceKind::Message { 
+                        kind: ConsequenceKind::Message {
                             message: "você sai do bunker, sabendo que derrotou um poderoso inimigo.".to_string(), 
                             emoji: None,
                         },
@@ -272,13 +272,13 @@ fn garhyan_defeated(_: EventBuildState) -> Event {
                         ..Default::default()
                     },
                     Consequence {
-                        kind: ConsequenceKind::Rewards { 
+                        kind: ConsequenceKind::Rewards {
                             message: "você achou alguns itens interessantes!".to_string(),
-                            iterations: 1, 
+                            iterations: 1,
                             items: vec![
-                                (Probability::ALWAYS, items::lore::RAT_LORDS_DIARY, (1, 1)) 
-                            ], 
-                            orbs: (20, 40), 
+                                (Probability::ALWAYS, items::lore::RAT_LORDS_DIARY, (1, 1))
+                            ],
+                            orbs: (20, 40),
                             xp: XpReward::default()
                         },
                         ..Default::default()

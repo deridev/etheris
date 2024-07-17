@@ -1,4 +1,5 @@
 use etheris_data::items::get_item;
+use items::ItemTag;
 
 use crate::prelude::*;
 
@@ -50,8 +51,25 @@ pub async fn allocate(
         return Ok(());
     };
 
-    if !item.stackable {
+    if !item.stackable || item.tags.contains(&ItemTag::Crystal) {
         quantity = 1;
+    }
+
+    if item.tags.contains(&ItemTag::Crystal)
+        && character
+            .battle_inventory
+            .iter()
+            .any(|i| get_item(&i.identifier).is_some_and(|i| i.tags.contains(&ItemTag::Crystal)))
+    {
+        ctx.send(
+            Response::new_user_reply(
+                &author,
+                "você só pode ter um cristal alocado no inventário de batalha! Use **/desalocar** para remover itens do inventário de batalha."
+            )
+            .add_emoji_prefix(emojis::ERROR)
+            .set_ephemeral(),
+        ).await?;
+        return Ok(());
     }
 
     if let Some(battle_inventory_item) = character.get_battle_inventory_item(&item) {

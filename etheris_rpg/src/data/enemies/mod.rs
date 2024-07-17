@@ -1,6 +1,7 @@
 use etheris_common::Probability;
 use etheris_data::{
-    items::Item, personality::Personality, weapon::WeaponKind, world::regions::WorldRegion, BossKind, SkillKind
+    items::Item, personality::Personality, weapon::WeaponKind, world::regions::WorldRegion,
+    BossKind, SkillKind,
 };
 use once_cell::sync::Lazy;
 use rand::Rng;

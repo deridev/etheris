@@ -1,7 +1,9 @@
 use std::fmt::Debug;
 
 use etheris_common::Probability;
-use etheris_data::{items::Item, personality::Personality, world::regions::WorldRegion, BossKind, ShopItem};
+use etheris_data::{
+    items::Item, personality::Personality, world::regions::WorldRegion, BossKind, ShopItem,
+};
 use etheris_discord::Emoji;
 use etheris_framework::CommandContext;
 

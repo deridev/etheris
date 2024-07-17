@@ -561,7 +561,7 @@ make_enemy!(
                 EnemyRewardItem {
                     amount: (1, 1),
                     item: items::lore::OLD_ABANDONED_BASEMENT_DIARY,
-                    probability: Probability::new(10),
+                    probability: Probability::new(2),
                 },
             ],
         },

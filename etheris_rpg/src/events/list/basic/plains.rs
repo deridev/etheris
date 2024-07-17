@@ -1125,3 +1125,76 @@ make_event!(
         ]
     }
 );
+
+make_event!(
+    basic_plains_long_path_choice,
+    Event {
+        identifier: "basic_plains_long_path_choice",
+        spawn: EventSpawn {
+            base_probability: Probability::new(60),
+            weighted_regions: vec![
+                (WorldRegion::Greenagis, 1),
+                (WorldRegion::Emerelis, 1),
+                (WorldRegion::Mudland, 1),
+                (WorldRegion::Murkswamp, 2),
+                (WorldRegion::Sunreach, 1),
+            ],
+            conditions: vec![]
+        },
+        emoji: Emoji::from_unicode("🛣️"),
+        message: EventMessage::Single("o caminho à sua frente é longo. Você pode escolher entre ir por outro caminho ou passar nadando. A correnteza é forte, mas pode ser um bom treino físico."),
+        actions: vec![
+            Action {
+                name: "Ir por Outro Caminho".to_string(),
+                emoji: Some(Emoji::from_unicode("🚶")),
+                consequences: vec![
+                    Consequence {
+                        kind: ConsequenceKind::Message {
+                            message: "você optou pelo caminho mais seguro e permaneceu seguro.".to_string(),
+                            emoji: Some(Emoji::from_unicode("🌳"))
+                        },
+                        ..Default::default()
+                    }
+                ],
+                ..Default::default()
+            },
+            Action {
+                name: "Passar Nadando".to_string(),
+                emoji: Some(Emoji::from_unicode("🏊")),
+                consequences: vec![
+                    Consequence {
+                        probability: Probability::new(60),
+                        kind: ConsequenceKind::Rewards {
+                            message: "você conseguiu nadar contra a correnteza e atravessar o rio!".to_string(),
+                            iterations: 1,
+                            items: vec![],
+                            orbs: (0, 0),
+                            xp: XpReward {
+                                health: (20, 40),
+                                intelligence: (0, 0),
+                                strength: (10, 30),
+                                knowledge: (0, 0)
+                            }
+                        },
+                        ..Default::default()
+                    },
+                    Consequence {
+                        probability: Probability::new(40),
+                        kind: ConsequenceKind::Prejudice {
+                            message: "a correnteza era muito forte e você foi arrastado!".to_string(),
+                            items_amount: (0, 0),
+                            max_item_valuability: 0,
+                            fixed_orbs: (0, 0),
+                            orbs_percentage: 0.0,
+                            specific_items: vec![],
+                            damage_percentage: 0.2,
+                            damage_limit: 100
+                        },
+                        ..Default::default()
+                    }
+                ],
+                ..Default::default()
+            }
+        ]
+    }
+);

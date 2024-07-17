@@ -443,7 +443,9 @@ impl BattleController {
 
             // Check if the character defeated a boss
             for fighter in self.battle.fighters.clone() {
-                if fighter.defeated_by != Some(fighter_index) && fighter.killed_by != Some(fighter_index) {
+                if fighter.defeated_by != Some(fighter_index)
+                    && fighter.killed_by != Some(fighter_index)
+                {
                     continue;
                 }
 
@@ -819,6 +821,50 @@ impl BattleController {
                     return Ok(());
                 }
 
+                // Special items
+                match item.display_name {
+                    "invigorating_crystal" => {
+                        let hp = (fighter.health().max as f32 * 0.25) as i32;
+                        let ether = (fighter.ether.max as f32 * 0.65) as i32;
+
+                        {
+                            let fighter = self.battle.get_fighter_mut(fighter.index);
+                            fighter.heal(fighter.index, hp);
+                            fighter.ether.add(ether);
+                        }
+
+                        self.emit_turn_message(format!(
+                            "**{}** usou um cristal revigorante e se revigorou!",
+                            fighter.name
+                        ));
+
+                        self.update_turn_history_message().await?;
+                        tokio::time::sleep(Duration::from_secs(1)).await;
+
+                        self.should_reinput = true;
+                        return Ok(());
+                    }
+                    "intelligence_crystal" => {
+                        {
+                            let fighter = self.battle.get_fighter_mut(fighter.index);
+                            fighter.intelligence_level += 10;
+                        }
+
+                        self.emit_turn_message(format!(
+                            "**{}** usou um cristal da inteligência e sentiu seu cérebro mais rápido e inteligente!",
+                            fighter.name
+                        ));
+
+                        self.update_turn_history_message().await?;
+                        tokio::time::sleep(Duration::from_secs(1)).await;
+
+                        self.should_reinput = true;
+                        return Ok(());
+                    }
+                    _ => {}
+                };
+
+                // Consumable items
                 let Some(consumption_properties) = item.consumption_properties else {
                     self.emit_turn_message(format!(
                         "**{}** tentou usar um item que não pode ser usado em batalha!",

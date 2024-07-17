@@ -9,7 +9,12 @@ use std::{
 use chrono::Duration;
 use etheris_common::{clear_string, config, Attribute};
 use etheris_data::{
-    appearance::CharacterAppearance, items::{self, Item}, personality::Personality, weapon::WeaponKind, world::regions::WorldRegion, BossKind, ItemValue, ItemValues, SkillKind
+    appearance::CharacterAppearance,
+    items::{self, Item},
+    personality::Personality,
+    weapon::WeaponKind,
+    world::regions::WorldRegion,
+    BossKind, ItemValue, ItemValues, SkillKind,
 };
 use etheris_discord::twilight_model::id::{marker::UserMarker, Id};
 use mongodb::bson::oid::ObjectId;

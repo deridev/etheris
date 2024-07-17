@@ -284,3 +284,113 @@ pub fn basic_general_traveller_riddle(_: EventBuildState) -> Event {
         actions,
     }
 }
+
+make_event!(
+    basic_general_gambler_encounter,
+    Event {
+        identifier: "basic_general_gambler_encounter",
+        spawn: EventSpawn {
+            base_probability: Probability::new(15),
+            weighted_regions: all_regions(1),
+            conditions: vec![]
+        },
+        emoji: Emoji::from_unicode("🎲"),
+        message: EventMessage::Single("um apostador te encontrou e ofereceu um jogo. Ambos apostam 100 orbs, e quem vencer leva tudo. Você quer jogar?"),
+        actions: vec![
+            common::ignore_action(),
+            Action {
+                name: "Jogar".to_string(),
+                emoji: Some(Emoji::from_unicode("🪙")),
+                consequences: vec![
+                    Consequence {
+                        kind: ConsequenceKind::ConditionalConsequence {
+                            condition: Condition::HasOrbs(100), // Assuming a minimum bet of 50 orbs
+                            consequence: Box::new(ConsequenceKind::Event(gambler_coin_toss)),
+                            else_consequence: Some(Box::new(ConsequenceKind::Message {
+                                message: "você não tem orbs suficientes para apostar.".to_string(),
+                                emoji: Some(Emoji::from_unicode("💸"))
+                            }))
+                        },
+                        ..Default::default()
+                    }
+                ],
+                ..Default::default()
+            }
+        ]
+    }
+);
+
+pub fn gambler_coin_toss(_: EventBuildState) -> Event {
+    Event {
+        identifier: "gambler_coin_toss",
+        spawn: EventSpawn::never(),
+        emoji: Emoji::from_unicode("🪙"),
+        message: EventMessage::Single("o apostador joga a moeda. Escolha cara ou coroa:"),
+        actions: vec![
+            Action {
+                name: "Cara".to_string(),
+                emoji: Some(Emoji::from_unicode("👑")),
+                consequences: vec![
+                    Consequence {
+                        probability: Probability::new(50),
+                        kind: ConsequenceKind::Rewards {
+                            message: "deu cara! Você ganhou a aposta!".to_string(),
+                            iterations: 1,
+                            items: vec![],
+                            orbs: (100, 100),
+                            xp: XpReward::default(),
+                        },
+                        ..Default::default()
+                    },
+                    Consequence {
+                        probability: Probability::new(50),
+                        kind: ConsequenceKind::Prejudice {
+                            message: "deu coroa. Você perdeu a aposta.".to_string(),
+                            items_amount: (0, 0),
+                            max_item_valuability: 0,
+                            fixed_orbs: (100, 100),
+                            orbs_percentage: 0.0,
+                            specific_items: vec![],
+                            damage_percentage: 0.0,
+                            damage_limit: 0,
+                        },
+                        ..Default::default()
+                    },
+                ],
+                ..Default::default()
+            },
+            Action {
+                name: "Coroa".to_string(),
+                emoji: Some(Emoji::from_unicode("👑")),
+                consequences: vec![
+                    Consequence {
+                        probability: Probability::new(50),
+                        kind: ConsequenceKind::Rewards {
+                            message: "deu coroa! Você ganhou a aposta!".to_string(),
+                            iterations: 1,
+                            items: vec![],
+                            orbs: (100, 100),
+                            xp: XpReward::default(),
+                        },
+                        ..Default::default()
+                    },
+                    Consequence {
+                        probability: Probability::new(50),
+                        kind: ConsequenceKind::Prejudice {
+                            message: "deu cara. Você perdeu a aposta.".to_string(),
+                            items_amount: (0, 0),
+                            max_item_valuability: 0,
+                            fixed_orbs: (100, 100),
+                            orbs_percentage: 0.0,
+                            specific_items: vec![],
+                            damage_percentage: 0.0,
+                            damage_limit: 0,
+                        },
+                        ..Default::default()
+                    },
+                ],
+                ..Default::default()
+            },
+        ],
+    }
+}

@@ -84,7 +84,10 @@ impl BossBrain {
             }
         }
 
-        if (self.phase == BossPhase::Desperate || api.rng().gen_bool(0.01)) && fighter.actions.contains(&BattleAction::ControlPower) && fighter.potential > fighter.power { 
+        if (self.phase == BossPhase::Desperate || api.rng().gen_bool(0.01))
+            && fighter.actions.contains(&BattleAction::ControlPower)
+            && fighter.potential > fighter.power
+        {
             *phase_weights.get_mut(&BattleInputKind::Actions).unwrap() = 0.8;
         } else {
             *phase_weights.get_mut(&BattleInputKind::Actions).unwrap() = 0.0;
@@ -191,7 +194,7 @@ impl Brain for BossBrain {
         if api.fighter().boss.is_some() {
             return true;
         }
-        
+
         let fighter = api.fighter();
         let base_prob = fighter
             .personalities

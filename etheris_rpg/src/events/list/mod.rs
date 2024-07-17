@@ -19,9 +19,9 @@ impl EventBuildState {
 pub type EventBuilder = fn(EventBuildState) -> Event;
 
 pub mod basic;
+pub mod bosses;
 pub mod general_special;
 pub mod shredder_basic;
-pub mod bosses;
 
 // Lore events
 pub mod vinizi;
@@ -35,9 +35,11 @@ pub static ALL_EVENTS: Lazy<Vec<EventBuilder>> = Lazy::new(|| {
         basic::general::basic_general_place_to_meditate,
         basic::general::basic_general_mysterious_chest,
         basic::general::basic_general_traveller_riddle,
+        basic::general::basic_general_gambler_encounter,
         general_special::special_track_miniorbs,
         general_special::creative_general_mysterious_portal,
         general_special::special_ether_fountain,
+        general_special::special_adventurer_soul,
         // Plains
         basic::plains::basic_plains_exploration,
         basic::plains::basic_plains_digging,
@@ -68,6 +70,7 @@ pub static ALL_EVENTS: Lazy<Vec<EventBuilder>> = Lazy::new(|| {
         basic::forest::basic_forest_apple_tree,
         basic::forest::basic_forest_fallen_tree,
         basic::forest::basic_forest_unusual_rock,
+        basic::forest::basic_forest_house,
         // Desert
         basic::desert::basic_desert_exploration,
         basic::desert::basic_desert_digging,

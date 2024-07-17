@@ -71,6 +71,7 @@ pub enum ItemTag {
     Ore,
     Cosmetic,
     Special,
+    Crystal,
     Specific,
 }
 

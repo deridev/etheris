@@ -452,39 +452,42 @@ make_event!(
     }
 );
 
-make_enemy!(weak_guard, Enemy {
-    identifier: "weak_guard",
-    name: "Guarda Despreparado",
-    brain: BrainKind::Simple,
-    boss: None,
-    regions: &[],
-    base_probability: Probability::ALWAYS,
-    personalities: &[Personality::Courage],
-    potential: EnemyPotential::Medium,
-    immunities: BodyImmunities::new(),
-    resistance: 230,
-    vitality: 70,
-    strength: 16,
-    intelligence: 9,
-    ether: 30,
-    allies: None,
-    weapon: Some(WeaponKind::Bat),
-    skills: vec![
-        SkillKind::TornadoKick,
-        SkillKind::ImbuedPunch,
-        SkillKind::Suplex,
-        SkillKind::Charge,
-    ],
-    drop: EnemyReward {
-        orbs: (10, 15),
-        xp: (20, 50),
-        items: vec![EnemyRewardItem {
-            item: items::tool::BAT,
-            amount: (1, 1),
-            probability: Probability::new(100),
-        }],
-    },
-});
+make_enemy!(
+    weak_guard,
+    Enemy {
+        identifier: "weak_guard",
+        name: "Guarda Despreparado",
+        brain: BrainKind::Simple,
+        boss: None,
+        regions: &[],
+        base_probability: Probability::ALWAYS,
+        personalities: &[Personality::Courage],
+        potential: EnemyPotential::Medium,
+        immunities: BodyImmunities::new(),
+        resistance: 230,
+        vitality: 70,
+        strength: 16,
+        intelligence: 9,
+        ether: 30,
+        allies: None,
+        weapon: Some(WeaponKind::Bat),
+        skills: vec![
+            SkillKind::TornadoKick,
+            SkillKind::ImbuedPunch,
+            SkillKind::Suplex,
+            SkillKind::Charge,
+        ],
+        drop: EnemyReward {
+            orbs: (10, 15),
+            xp: (20, 50),
+            items: vec![EnemyRewardItem {
+                item: items::tool::BAT,
+                amount: (1, 1),
+                probability: Probability::new(100),
+            }],
+        },
+    }
+);
 
 make_event!(
     shredder_heist,
@@ -593,9 +596,9 @@ fn shredder_heist_success(_: EventBuildState) -> Event {
                             message: "você recebe sua parte do butim.".to_string(),
                             iterations: 1,
                             items: vec![
-                                (Probability::new(100), items::special::INTELLIGENCE_CRYSTAL, (1, 1)),
                                 (Probability::new(100), items::special::INVIGORATING_CRYSTAL, (1, 1)),
-                                (Probability::new(100), items::special::GIFT, (1, 1))
+                                (Probability::new(100), items::special::GIFT, (1, 1)),
+                                (Probability::new(30), items::special::INTELLIGENCE_CRYSTAL, (1, 1)),
                             ],
                             orbs: (100, 400),
                             xp: XpReward::default()

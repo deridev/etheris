@@ -1,4 +1,5 @@
 pub mod appearance;
+mod boss;
 pub mod building;
 pub mod emojis;
 pub mod items;
@@ -7,7 +8,6 @@ pub mod personality;
 pub mod util;
 pub mod weapon;
 pub mod world;
-mod boss;
 pub use boss::*;
 
 mod skill_kind;

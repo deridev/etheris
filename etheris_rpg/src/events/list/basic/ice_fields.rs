@@ -1,4 +1,4 @@
-use etheris_data::{items, personality::Personality};
+use etheris_data::{items, personality::Personality, ShopItem};
 use weaklings_plus::frost_wolf;
 
 use super::prelude::*;
@@ -36,10 +36,12 @@ make_event!(basic_icefields_exploration, Event {
                     probability: Probability::new(70),
                     kind: ConsequenceKind::Rewards {
                         message: "você encontrou alguns itens úteis durante sua caminhada".to_string(),
-                        iterations: 1,
+                        iterations: 2,
                         items: vec![
                             (Probability::new(80), items::consumable::WATER, (1, 3)),
+                            (Probability::new(10), items::consumable::MILK, (1, 1)),
                             (Probability::new(50), items::material::STONE, (1, 3)),
+                            (Probability::new(50), items::material::STICK, (1, 2)),
                             (Probability::new(30), items::ore::COAL_ORE, (1, 2))
                         ],
                         orbs: (5, 20),
@@ -56,12 +58,80 @@ make_event!(basic_icefields_exploration, Event {
                     probability: Probability::new(10),
                     kind: ConsequenceKind::Event(basic_icefields_snow_storm),
                     ..Default::default()
+                },
+                Consequence {
+                    probability: Probability::new(5),
+                    kind: ConsequenceKind::Event(basic_icefields_nomad_merchant),
+                    ..Default::default()
                 }
             ],
             ..Default::default()
         }
     ]
 });
+
+make_event!(
+    basic_icefields_nomad_merchant,
+    Event {
+        identifier: "basic_icefields_nomad_merchant",
+        spawn: EventSpawn::never(),
+        emoji: Emoji::from_unicode("💸"),
+        message: EventMessage::Multiple(&[
+            "um vendedor gritou de longe te chamando para comprar algo. O que você quer fazer?",
+            "alguém tocou no seu ombro. Quando você olhou para trás, era um vendedor nômade, de mantos azuis. Quer dar uma olhada nos seus itens à venda?",
+        ]),
+        actions: vec![
+            common::ignore_action(),
+            Action {
+                name: "Ver Loja".to_string(),
+                emoji: Some(Emoji::from_unicode("🏪")),
+                consequences: vec![
+                    Consequence {
+                        kind: ConsequenceKind::Shop {
+                            name: "Vendedor Nômade do Deserto".to_string(),
+                            items: vec![
+                                ShopItem::new_item(4, items::consumable::WATER, 1.1),
+                                ShopItem::new_item(15, items::consumable::WHEAT, 1.2),
+                                ShopItem::new_item(6, items::consumable::APPLE, 1.1),
+                                ShopItem::new_item(8, items::consumable::CHEESE, 1.2),
+                                ShopItem::new_item(2, items::consumable::CHOCOLATE, 1.2),
+                                ShopItem::new_item(3, items::consumable::SALT, 1.2),
+                                ShopItem::new_item(3, items::consumable::SUGAR, 1.1),
+                                ShopItem::new_item(1, items::tool::SHOVEL, 0.7),
+                                ShopItem::new_item(1, items::tool::PICKAXE, 1.3),
+                                ShopItem::new_item(1, items::tool::HAMMER, 1.1),
+                                ShopItem::new_item(1, items::tool::AXE, 1.1),
+                                ShopItem::new_sellable_item(23, items::material::STONE, 1.2, 0.6),
+                                ShopItem::new_sellable_item(15, items::material::STICK, 1.2, 0.7),
+                                ShopItem::new_sellable_item(15, items::material::PAPER, 1.2, 0.7),
+                                ShopItem::new_sellable_item(1, items::material::KNIFE, 1.3, 0.7),
+                                ShopItem::new_sellable_item(5, items::ore::COAL_ORE, 1.4, 0.7),
+                                ShopItem::new_sellable_item(0, items::ore::IRON_ORE, 1.4, 0.7),
+                                ShopItem::new_sellable_item(0, items::ore::COPPER_ORE, 1.4, 0.7),
+                                ShopItem::new_sellable_item(5, items::ore::TIN_ORE, 1.4, 0.9),
+                                ShopItem::new_sellable_item(0, items::ore::LEAD_ORE, 1.4, 0.9),
+
+                                if Probability::new(50).generate_random_bool() {
+                                    ShopItem::new_item(1, items::special::GIFT, 1.2)
+                                } else {
+                                    ShopItem::new_item(1, items::special::TRAP, 1.2)
+                                },
+
+                                if Probability::new(50).generate_random_bool() {
+                                    ShopItem::new_item(1, items::lore::ENTITY_039_REPORT, 1.0)
+                                } else {
+                                    ShopItem::new_item(1, items::lore::ENTITY_104_REPORT, 1.1)
+                                }.with_description("Só... Não pergunte como eu consegui isso."),
+                            ]
+                        },
+                        ..Default::default()
+                    }
+                ],
+                ..Default::default()
+            },
+        ],
+    }
+);
 
 make_event!(
     basic_icefields_frozen_lake,

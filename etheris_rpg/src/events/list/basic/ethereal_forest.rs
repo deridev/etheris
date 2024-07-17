@@ -120,7 +120,7 @@ make_event!(
                             items: vec![
                                 (Probability::new(100), items::consumable::APPLE, (2, 4)),
                                 (Probability::new(100), items::consumable::GREEN_APPLE, (2, 4)),
-                                (Probability::new(20), items::special::INTELLIGENCE_CRYSTAL, (1, 1)),
+                                (Probability::new(2), items::special::INTELLIGENCE_CRYSTAL, (0, 1)),
                             ],
                             orbs: (20, 50),
                             xp: XpReward::default()
@@ -260,7 +260,7 @@ make_event!(
                         kind: ConsequenceKind::Rewards {
                             message: "você sente sua mente se expandir com conhecimentos antigos!".to_string(),
                             iterations: 1,
-                            items: vec![(Probability::new(100), items::special::INTELLIGENCE_CRYSTAL, (1, 1))],
+                            items: vec![(Probability::new(15), items::special::INTELLIGENCE_CRYSTAL, (1, 1))],
                             orbs: (0, 0),
                             xp: XpReward {
                                 health: (0, 0),

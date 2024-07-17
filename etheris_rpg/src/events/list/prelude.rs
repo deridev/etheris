@@ -1,7 +1,7 @@
 pub use crate::{
     common::*,
     data::{enemies::*, *},
-    events::list::{make_event, EventBuilder, EventBuildState, common},
+    events::list::{common, make_event, EventBuildState, EventBuilder},
     events::*,
 };
 

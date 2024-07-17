@@ -338,3 +338,84 @@ pub fn special_ether_fountain(state: EventBuildState) -> Event {
         ]
     }
 }
+
+make_event!(
+    special_adventurer_soul,
+    Event {
+        identifier: "special_adventurer_soul",
+        spawn: EventSpawn {
+            base_probability: Probability::new(5),
+            weighted_regions: all_regions(1),
+            conditions: vec![]
+        },
+        emoji: Emoji::from_unicode("👻"),
+        message: EventMessage::Single("você encontrou a alma de outro aventureiro materializada acima da terra, misteriosamente. Você sente que pode absorver seus conhecimentos. Quanto você deseja absorver?"),
+        actions: vec![
+            common::ignore_action(),
+            Action {
+                name: "Absorver Pouco".to_string(),
+                emoji: Some(Emoji::from_unicode("🧠")),
+                consequences: vec![
+                    Consequence {
+                        probability: Probability::new(95), // High chance of success
+                        kind: ConsequenceKind::Rewards {
+                            message: "você absorveu um pouco do conhecimento da alma.".to_string(),
+                            iterations: 1,
+                            items: vec![],
+                            orbs: (0, 0),
+                            xp: XpReward {
+                                health: (5, 20),
+                                intelligence: (5, 20),
+                                strength: (5, 20),
+                                knowledge: (5, 20),
+                            }
+                        },
+                        ..Default::default()
+                    },
+                    Consequence {
+                        probability: Probability::new(5), // Small chance of failure
+                        kind: ConsequenceKind::Message {
+                            message: "a alma colapsou antes que você pudesse absorver seu conhecimento.".to_string(),
+                            emoji: Some(Emoji::from_unicode("💨"))
+                        },
+                        ..Default::default()
+                    }
+                ],
+                ..Default::default()
+            },
+            Action {
+                name: "Absorver Bastante".to_string(),
+                emoji: Some(Emoji::from_unicode("🧠")),
+                consequences: vec![
+                    Consequence {
+                        probability: Probability::new(60), // Lower chance of success
+                        kind: ConsequenceKind::Rewards {
+                            message: "você absorveu uma grande quantidade de conhecimento da alma.".to_string(),
+                            iterations: 1,
+                            items: vec![
+                                (Probability::new(10), items::tool::TRANSLATOR, (1, 1)),
+                            ],
+                            orbs: (0, 0),
+                            xp: XpReward {
+                                health: (30, 50),
+                                intelligence: (30, 50),
+                                strength: (30, 50),
+                                knowledge: (30, 50)
+                            }
+                        },
+                        ..Default::default()
+                    },
+                    Consequence {
+                        probability: Probability::new(40), // Higher chance of failure
+                        kind: ConsequenceKind::Message {
+                            message: "a alma colapsou antes que você pudesse absorver seu conhecimento.".to_string(),
+                            emoji: Some(Emoji::from_unicode("💨"))
+                        },
+                        ..Default::default()
+                    }
+                ],
+                ..Default::default()
+            }
+        ]
+    }
+);

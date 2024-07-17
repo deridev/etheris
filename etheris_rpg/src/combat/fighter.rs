@@ -8,7 +8,10 @@ use std::{
 use bitflags::bitflags;
 use etheris_common::{calculate_power_level, Attribute, Probability};
 use etheris_data::{
-    items::{self, Item}, personality::Personality, weapon::WeaponKind, BossKind, SkillKind
+    items::{self, Item},
+    personality::Personality,
+    weapon::WeaponKind,
+    BossKind, SkillKind,
 };
 use etheris_database::character_model::BattleAction;
 use etheris_discord::{twilight_model::user::User, ButtonBuilder, Emoji};

@@ -438,8 +438,8 @@ make_event!(
         identifier: "basic_forest_animal_tracks",
         spawn: EventSpawn {
             weighted_regions: vec![
-                (WorldRegion::Gloomwood, 2),
-                (WorldRegion::Mudland, 2),
+                (WorldRegion::Gloomwood, 1),
+                (WorldRegion::Mudland, 1),
                 (WorldRegion::Murkswamp, 1)
             ],
             ..Default::default()
@@ -474,7 +474,7 @@ make_event!(
                             xp: XpReward {
                                 strength: (10, 20),
                                 ..Default::default()
-                            }   
+                            }
                         },
                         ..Default::default()
                     }
@@ -928,5 +928,203 @@ make_event!(
                 ..Default::default()
             }
         ]
+    }
+);
+
+make_event!(
+    basic_forest_house,
+    Event {
+        identifier: "basic_forest_house",
+        spawn: EventSpawn {
+            base_probability: Probability::new(10),
+            weighted_regions: vec![
+                (WorldRegion::Gloomwood, 1),
+                (WorldRegion::Mudland, 1),
+                (WorldRegion::Ethergrove, 1),
+                (WorldRegion::Starbreeze, 1)
+            ],
+            ..Default::default()
+        },
+        emoji: Emoji::from_unicode("🏚️"),
+        message: EventMessage::Multiple(&[
+            "há uma casa abandonada em meio à floresta. O que você quer fazer?",
+            "enquanto caminha, você vê uma mansão abandonada.",
+        ]),
+        actions: vec![
+            common::ignore_action(),
+            Action {
+                name: "Entrar".to_string(),
+                emoji: None,
+                consequences: vec![Consequence {
+                    kind: ConsequenceKind::Event(inside_forest_house),
+                    ..Default::default()
+                }],
+                ..Default::default()
+            },
+        ],
+    }
+);
+
+make_event!(
+    inside_forest_house,
+    Event {
+        identifier: "inside_forest_house",
+        spawn: EventSpawn::never(),
+        emoji: Emoji::from_unicode("🏚️"),
+        message: EventMessage::Single("você está dentro da casa abandonada. Que cômodo deseja explorar?"),
+        actions: vec![
+            Action {
+                name: "Cozinha".to_string(),
+                emoji: Some(Emoji::from_unicode("🍳")),
+                consequences: vec![
+                    Consequence {
+                        probability: Probability::new(95),
+                        kind: ConsequenceKind::Rewards {
+                            message: "você encontrou alguns itens na cozinha!".to_string(),
+                            iterations: 3,
+                            items: vec![
+                                (Probability::new(60), items::material::KNIFE, (1, 1)),
+                                (Probability::new(80), items::consumable::MILK, (1, 2)),
+                                (Probability::new(60), items::consumable::CHOCOLATE, (1, 1)),
+                                (Probability::new(80), items::consumable::APPLE, (1, 2)),
+                                (Probability::new(80), items::consumable::GREEN_APPLE, (1, 1)),
+                                (Probability::new(40), items::consumable::WATER, (1, 2)),
+                            ],
+                            orbs: (0, 0),
+                            xp: XpReward::default(),
+                        },
+                        ..Default::default()
+                    },
+                    common::consequence_didnt_find_anything(Probability::new(5)),
+                ],
+                ..Default::default()
+            },
+            Action {
+                name: "Porão".to_string(),
+                emoji: Some(Emoji::Unicode("🕳️")),
+                probability: Probability::new(3),
+                consequences: vec![
+                    Consequence {
+                        probability: Probability::new(80),
+                        kind: ConsequenceKind::Rewards {
+                            message: "você encontrou alguns itens no porão!".to_string(),
+                            iterations: 1,
+                            items: vec![
+                                (Probability::ALWAYS, items::lore::OLD_ABANDONED_BASEMENT_DIARY, (1, 1)),
+                                (Probability::new(5), items::special::INTELLIGENCE_CRYSTAL, (1, 1)),
+                            ],
+                            orbs: (0, 0),
+                            xp: XpReward::default(),
+                        },
+                        ..Default::default()
+                    },
+                    common::consequence_didnt_find_anything(Probability::new(20)),
+                ],
+                ..Default::default()
+            },
+            Action {
+                name: "Sótão".to_string(),
+                emoji: Some(Emoji::Unicode("🧳")),
+                consequences: vec![
+                    Consequence {
+                        probability: Probability::new(80),
+                        kind: ConsequenceKind::Rewards {
+                            message: "você encontrou alguns itens empoeirados no sótão!".to_string(),
+                            iterations: 2,
+                            items: vec![
+                                (Probability::new(70), items::material::STONE, (1, 1)),
+                                (Probability::new(50), items::cosmetic::STRAWHAT, (1, 1)),
+                                (Probability::new(50), items::cosmetic::EYE_BANDANA, (1, 1)),
+                                (Probability::new(40), items::cosmetic::GLASSES, (1, 1)),
+                                (Probability::new(30), items::special::GIFT, (1, 1)),
+                                (Probability::new(30), items::special::TRAP, (1, 1)),
+                                (Probability::new(20), items::lore::GOLDEN_ROBOT_POEM, (1, 1)),
+                            ],
+                            orbs: (5, 15),
+                            xp: XpReward {
+                                intelligence: (5, 10),
+                                ..Default::default()
+                            },
+                        },
+                        ..Default::default()
+                    },
+                    Consequence {
+                        probability: Probability::new(20),
+                        kind: ConsequenceKind::Message {
+                            message: "o sótão está vazio, exceto por algumas teias de aranha.".to_string(),
+                            emoji: Some(Emoji::Unicode("🕸️")),
+                        },
+                        ..Default::default()
+                    },
+                ],
+                ..Default::default()
+            },
+            Action {
+                name: "Biblioteca".to_string(),
+                emoji: Some(Emoji::Unicode("📚")),
+                consequences: vec![
+                    Consequence {
+                        probability: Probability::new(90),
+                        kind: ConsequenceKind::Rewards {
+                            message: "você encontrou alguns livros interessantes na biblioteca!".to_string(),
+                            iterations: 1,
+                            items: vec![
+                                (Probability::new(80), items::special::RECIPE_BOOK, (1, 1)),
+                                (Probability::new(1), items::lore::ENTITY_039_REPORT, (1, 1)),
+                                (Probability::new(1), items::lore::ENTITY_104_REPORT, (1, 1)),
+                                (Probability::new(1), items::lore::HAKIKO_LEGEND, (1, 1)),
+                                (Probability::new(1), items::special::INTELLIGENCE_CRYSTAL, (1, 1)),
+                            ],
+                            orbs: (10, 20),
+                            xp: XpReward {
+                                intelligence: (10, 20),
+                                knowledge: (15, 25),
+                                ..Default::default()
+                            },
+                        },
+                        ..Default::default()
+                    },
+                    common::consequence_didnt_find_anything(Probability::new(10)),
+                ],
+                ..Default::default()
+            },
+            Action {
+                name: "Quarto Principal".to_string(),
+                emoji: Some(Emoji::Unicode("🛏️")),
+                consequences: vec![
+                    Consequence {
+                        probability: Probability::new(85),
+                        kind: ConsequenceKind::Rewards {
+                            message: "você vasculhou o quarto principal e encontrou alguns itens!".to_string(),
+                            iterations: 3,
+                            items: vec![
+                                (Probability::new(70), items::material::TOOL_HANDLE, (1, 2)),
+                                (Probability::new(60), items::consumable::SALT, (1, 3)),
+                                (Probability::new(50), items::tool::HAMMER, (1, 1)),
+                                (Probability::new(40), items::tool::AXE, (1, 1)),
+                                (Probability::new(30), items::tool::UMBRELLA, (1, 1)),
+                                (Probability::new(20), items::special::TRAP, (1, 1)),
+                            ],
+                            orbs: (15, 30),
+                            xp: XpReward {
+                                strength: (5, 10),
+                                health: (5, 10),
+                                ..Default::default()
+                            },
+                        },
+                        ..Default::default()
+                    },
+                    Consequence {
+                        probability: Probability::new(15),
+                        kind: ConsequenceKind::Message {
+                            message: "o quarto principal parece ter sido saqueado. Não há nada de valor aqui.".to_string(),
+                            emoji: Some(Emoji::Unicode("😞")),
+                        },
+                        ..Default::default()
+                    },
+                ],
+                ..Default::default()
+            },
+        ],
     }
 );
