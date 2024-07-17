@@ -7,6 +7,8 @@ pub mod personality;
 pub mod util;
 pub mod weapon;
 pub mod world;
+mod boss;
+pub use boss::*;
 
 mod skill_kind;
 pub use skill_kind::*;

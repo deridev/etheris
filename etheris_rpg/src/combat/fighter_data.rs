@@ -1,5 +1,5 @@
 use etheris_common::{calculate_power_level, Attribute};
-use etheris_data::{items, personality::Personality, weapon::WeaponKind, SkillKind};
+use etheris_data::{items, personality::Personality, weapon::WeaponKind, BossKind, SkillKind};
 use etheris_database::character_model::{BattleAction, CharacterModel};
 use etheris_discord::twilight_model::user::User;
 
@@ -7,6 +7,7 @@ use crate::{
     brain::BrainKind,
     data::{enemies::Enemy, Reward},
     list::prelude::BattleItem,
+    BodyImmunities,
 };
 
 #[derive(Debug, Clone, PartialEq)]
@@ -14,6 +15,7 @@ pub struct FighterData {
     pub team: u8,
     pub name: String,
     pub user: Option<User>,
+    pub boss: Option<BossKind>,
 
     pub brain: Option<BrainKind>,
     pub actions: Vec<BattleAction>,
@@ -25,6 +27,7 @@ pub struct FighterData {
     pub strength_level: u32,
     pub intelligence_level: u32,
     pub potential: f64,
+    pub immunities: BodyImmunities,
 
     pub weapon: Option<WeaponKind>,
 
@@ -46,6 +49,7 @@ impl FighterData {
             team,
             name: character.name.to_owned(),
             user: Some(user),
+            boss: None,
 
             brain: None,
             actions: character.actions.iter().copied().collect(),
@@ -71,6 +75,7 @@ impl FighterData {
             ether: character.stats.ether.into(),
 
             weapon: character.weapon,
+            immunities: BodyImmunities::new(),
 
             drop,
         }
@@ -80,6 +85,7 @@ impl FighterData {
         FighterData {
             team,
             personalities: enemy.personalities.to_owned(),
+            boss: enemy.boss,
             drop,
             brain: Some(enemy.brain),
             actions: vec![BattleAction::ControlPower],
@@ -94,6 +100,7 @@ impl FighterData {
             vitality: Attribute::from(enemy.vitality),
             weapon: enemy.weapon,
             skills: enemy.skills.to_vec(),
+            immunities: enemy.immunities,
         }
     }
 

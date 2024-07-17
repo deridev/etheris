@@ -55,6 +55,7 @@ pub enum SkillKind {
     Hakikotenchou,
     SkillMirror,
     EtherFlow,
+    Pyrotransmutation,
 }
 
 impl SkillKind {
@@ -96,6 +97,7 @@ impl SkillKind {
             Self::Hakikotenchou,
             Self::SkillMirror,
             Self::EtherFlow,
+            Self::Pyrotransmutation,
         ]
     }
 
@@ -146,6 +148,7 @@ impl SkillKind {
             Self::Hakikotenchou => &[Personality::Calm, Personality::Intelligence],
             Self::SkillMirror => &[Personality::Insanity, Personality::Cowardice],
             Self::EtherFlow => &[Personality::Calm],
+            Self::Pyrotransmutation => &[Personality::Aggressiveness, Personality::Cowardice],
         }
     }
 
@@ -175,8 +178,9 @@ impl SkillKind {
             Self::Refresh => 16,
             Self::WaterJet => 17,
             Self::FlamingBall => 20,
-            Self::Earthquake => 21,
-            Self::WoundHealing => 22,
+            Self::Pyrotransmutation => 21,
+            Self::Earthquake => 22,
+            Self::WoundHealing => 24,
             Self::BloodSpear => 25,
             Self::CursedBlood => 35,
             Self::ParalyzingBet => 40,
@@ -219,7 +223,8 @@ impl SkillKind {
             | Self::Earthquake
             | Self::AtomicHollow
             | Self::CursedBlood
-            | Self::BloodTheft => 3,
+            | Self::BloodTheft
+            | Self::Pyrotransmutation => 3,
             Self::WaterJet | Self::FlamingBall | Self::EtherShadow | Self::SkillMirror => 4,
             Self::YinYang | Self::Hakikotenchou => 5,
             Self::TenkuKikan(..) => 6,

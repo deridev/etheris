@@ -9,12 +9,7 @@ use std::{
 use chrono::Duration;
 use etheris_common::{clear_string, config, Attribute};
 use etheris_data::{
-    appearance::CharacterAppearance,
-    items::{self, Item},
-    personality::Personality,
-    weapon::WeaponKind,
-    world::regions::WorldRegion,
-    ItemValue, ItemValues, SkillKind,
+    appearance::CharacterAppearance, items::{self, Item}, personality::Personality, weapon::WeaponKind, world::regions::WorldRegion, BossKind, ItemValue, ItemValues, SkillKind
 };
 use etheris_discord::twilight_model::id::{marker::UserMarker, Id};
 use mongodb::bson::oid::ObjectId;
@@ -233,55 +228,6 @@ impl Display for MentalLevel {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Deserialize, Serialize)]
-pub struct HistoryEntry {
-    pub kind: HistoryEntryKind,
-    pub date: DatabaseDateTime,
-}
-
-impl HistoryEntry {
-    pub fn new(kind: HistoryEntryKind) -> Self {
-        Self {
-            kind,
-            date: DatabaseDateTime::now(),
-        }
-    }
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Deserialize, Serialize)]
-pub enum HistoryEntryKind {
-    DefeatedBy(String),
-    DefeatedByUser(String, ObjectId),
-    Died,
-    Trained,
-    Studied,
-    Meditated,
-    Born,
-    Defeated(String),
-    DefeatedUser(String, ObjectId),
-    Rested,
-    Explored,
-    BoughtItem(i64, String),
-}
-
-impl Display for HistoryEntryKind {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            Self::DefeatedBy(name) => write!(f, "Foi derrotado(a) por {}", name),
-            Self::DefeatedByUser(name, ..) => write!(f, "Foi derrotado por(a) {}", name),
-            Self::Died => write!(f, "Morreu"),
-            Self::Trained => write!(f, "Treinou"),
-            Self::Studied => write!(f, "Estudou"),
-            Self::Meditated => write!(f, "Meditou"),
-            Self::Born => write!(f, "Nasceu"),
-            Self::Defeated(name) => write!(f, "Foi derrotado(a) por {}", name),
-            Self::DefeatedUser(name, ..) => write!(f, "Foi derrotado(a) por {}", name),
-            Self::Rested => write!(f, "Descansou"),
-            Self::Explored => write!(f, "Explorou"),
-            Self::BoughtItem(amount, item) => write!(f, "Comprou {}x {}", amount, item),
-        }
-    }
-}
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
 pub struct CharacterModel {
     #[serde(rename = "_id")]
@@ -297,7 +243,6 @@ pub struct CharacterModel {
     pub battle_inventory: Vec<InventoryItem>,
     pub personalities: Vec<Personality>,
     pub actions: HashSet<BattleAction>,
-    pub history: Vec<HistoryEntry>,
 
     pub mental_level: MentalLevel,
     pub potential: f64,
@@ -306,6 +251,8 @@ pub struct CharacterModel {
     pub skills: Vec<SkillKind>,
     pub learned_skills: Vec<SkillKind>,
     pub learnable_skills: Vec<SkillKind>,
+
+    pub defeated_bosses: HashSet<BossKind>,
 
     pub region: WorldRegion,
     pub weapon: Option<WeaponKind>,
@@ -375,7 +322,6 @@ impl CharacterModel {
             tags: HashSet::new(),
             inventory: vec![],
             battle_inventory: vec![],
-            history: vec![HistoryEntry::new(HistoryEntryKind::Born)],
 
             mental_level: MentalLevel::Laymen,
             potential: 0.5,
@@ -388,6 +334,7 @@ impl CharacterModel {
 
             region: WorldRegion::Greenagis,
             weapon: None,
+            defeated_bosses: HashSet::new(),
 
             karma: 0,
             action_points: 30, // Start with a lot of action points to keep engagement at the start
@@ -425,10 +372,6 @@ impl CharacterModel {
         } else {
             Some(etheris_util::character_image::generate_character_image_buffer(&self.appearance))
         }
-    }
-
-    pub fn create_history_entry(&mut self, kind: HistoryEntryKind) {
-        self.history.push(HistoryEntry::new(kind));
     }
 
     pub fn has_flag(&self, flag: CharacterFlag) -> bool {

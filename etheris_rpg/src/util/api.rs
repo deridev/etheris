@@ -240,6 +240,29 @@ impl<'a> BattleApi<'a> {
             damage.amount = ((damage.amount as f32) * modifiers_dmg) as i32;
         }
 
+        let immunity_applied_here = match damage.kind {
+            DamageKind::Fire => Some(ImmunityKind::Fire),
+            DamageKind::Ice => Some(ImmunityKind::Ice),
+            DamageKind::Water => Some(ImmunityKind::Water),
+            DamageKind::Poisonous => Some(ImmunityKind::Poison),
+            DamageKind::Cut => Some(ImmunityKind::Cut),
+            DamageKind::PhysicalCut => Some(ImmunityKind::Cut),
+            DamageKind::Physical => Some(ImmunityKind::Physical),
+            DamageKind::Electric => Some(ImmunityKind::Electric),
+            DamageKind::Special => Some(ImmunityKind::Special),
+            DamageKind::SpecialPhysical => Some(ImmunityKind::Special),
+            _ => None,
+        };
+
+        if let Some(immunity) = immunity_applied_here {
+            let damage_multiplier = self
+                .battle()
+                .get_fighter(target_index)
+                .body_immunities
+                .dmg_multiplier_from_immunity(immunity);
+            damage.amount = ((damage.amount as f64) * damage_multiplier) as i32;
+        }
+
         let mut missed = false;
         let mut dodged = false;
         let mut defended = false;

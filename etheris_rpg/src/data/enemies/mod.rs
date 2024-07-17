@@ -1,12 +1,11 @@
 use etheris_common::Probability;
 use etheris_data::{
-    items::Item, personality::Personality, weapon::WeaponKind, world::regions::WorldRegion,
-    SkillKind,
+    items::Item, personality::Personality, weapon::WeaponKind, world::regions::WorldRegion, BossKind, SkillKind
 };
 use once_cell::sync::Lazy;
 use rand::Rng;
 
-use crate::{brain::BrainKind, FighterData};
+use crate::{brain::BrainKind, BodyImmunities, FighterData};
 
 use super::{Reward, RewardItem};
 
@@ -100,15 +99,17 @@ impl EnemyPotential {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct Enemy {
     pub identifier: &'static str,
     pub name: &'static str,
     pub base_probability: Probability,
+    pub boss: Option<BossKind>,
     pub brain: BrainKind,
     pub regions: &'static [(WorldRegion, i32)],
     pub personalities: &'static [Personality],
     pub potential: EnemyPotential,
+    pub immunities: BodyImmunities,
     pub strength: u32,
     pub intelligence: u32,
     pub resistance: i32,
@@ -126,12 +127,16 @@ impl Enemy {
     }
 }
 
+pub mod bosses;
 pub mod special;
 pub mod weaklings;
 pub mod weaklings_plus;
 pub static ALL_ENEMIES: Lazy<Vec<Enemy>> = Lazy::new(|| {
     [
+        //special::debug(),
         special::miniorbs(),
+        //  BOSSES
+        bosses::garhyan(),
         // Weaklings
         weaklings::giant_rat(),
         weaklings::greenagis_mutant(),
@@ -143,6 +148,9 @@ pub static ALL_ENEMIES: Lazy<Vec<Enemy>> = Lazy::new(|| {
         weaklings::swamp_master(),
         weaklings::swamp_executioner(),
         weaklings::weak_mercenary_leader(),
+        weaklings::forest_guardian(),
+        weaklings::dangerous_bear(),
+        weaklings::weak_thief(),
         // Weaklings+
         weaklings_plus::average_looter(),
         weaklings_plus::small_scorpion(),
@@ -152,6 +160,7 @@ pub static ALL_ENEMIES: Lazy<Vec<Enemy>> = Lazy::new(|| {
         weaklings_plus::abominable_maquiran(),
         weaklings_plus::frost_wolf(),
         weaklings_plus::rocky_golem(),
+        weaklings_plus::trained_thief(),
     ]
     .to_vec()
 });

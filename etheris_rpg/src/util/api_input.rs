@@ -193,10 +193,10 @@ pub async fn select_ally(api: &mut BattleApi<'_>) -> anyhow::Result<Option<Fight
         api.ctx()
             .update_specific_message(&message, response)
             .await
-            .unwrap();
+            .ok();
         message
     } else {
-        let message = api.ctx().send(response).await.unwrap();
+        let message = api.ctx().send(response).await?;
         api.controller.last_message = Some(message.clone());
         message
     };

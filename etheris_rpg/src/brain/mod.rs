@@ -1,7 +1,9 @@
+mod boss;
 pub mod defaults;
 mod insane;
 mod simple;
 
+pub use boss::BossBrain;
 pub use insane::InsaneBrain;
 pub use simple::SimpleBrain;
 
@@ -25,5 +27,6 @@ pub fn make_brain(kind: BrainKind) -> Box<dyn Brain + Send + 'static> {
     match kind {
         BrainKind::Simple => Box::new(SimpleBrain),
         BrainKind::Insane => Box::new(InsaneBrain),
+        BrainKind::Boss => Box::new(BossBrain::new()),
     }
 }

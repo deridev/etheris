@@ -1,5 +1,7 @@
 use etheris_data::items;
 
+use crate::ImmunityKind;
+
 use super::*;
 
 make_enemy!(
@@ -9,6 +11,7 @@ make_enemy!(
         name: "Saqueador",
         base_probability: Probability::ALWAYS,
         brain: BrainKind::Simple,
+        boss: None,
         regions: &[(WorldRegion::Tenypt, 6), (WorldRegion::Mudland, 3)],
         personalities: &[
             Personality::Aggressiveness,
@@ -16,6 +19,7 @@ make_enemy!(
             Personality::Cowardice,
         ],
         potential: EnemyPotential::High,
+        immunities: BodyImmunities::new(),
         strength: 20,
         intelligence: 7,
         resistance: 421,
@@ -61,9 +65,11 @@ make_enemy!(
         name: "Saqueador do Deserto",
         base_probability: Probability::ALWAYS,
         brain: BrainKind::Simple,
+        boss: None,
         regions: &[(WorldRegion::Tenypt, 7), (WorldRegion::Sandywater, 5)],
         personalities: &[Personality::Aggressiveness, Personality::Courage],
         potential: EnemyPotential::Medium,
+        immunities: BodyImmunities::new().with_little_resistance(ImmunityKind::Poison),
         strength: 18,
         intelligence: 6,
         resistance: 350,
@@ -102,9 +108,13 @@ make_enemy!(
         name: "Escopião Pequeno",
         base_probability: Probability::ALWAYS,
         brain: BrainKind::Simple,
+        boss: None,
         regions: &[(WorldRegion::Tenypt, 8), (WorldRegion::Sandywater, 2)],
         personalities: &[Personality::Insanity, Personality::Aggressiveness,],
         potential: EnemyPotential::Low,
+        immunities: BodyImmunities::new()
+            .with_little_weakness(ImmunityKind::Fire)
+            .with_little_resistance(ImmunityKind::Poison),
         strength: 30,
         intelligence: 7,
         resistance: 180,
@@ -136,6 +146,7 @@ make_enemy!(
         name: "Saqueador do Pântano",
         base_probability: Probability::ALWAYS,
         brain: BrainKind::Simple,
+        boss: None,
         regions: &[(WorldRegion::Murkswamp, 8)],
         personalities: &[
             Personality::Arrogance,
@@ -143,6 +154,7 @@ make_enemy!(
             Personality::Aggressiveness,
         ],
         potential: EnemyPotential::Medium,
+        immunities: BodyImmunities::new(),
         strength: 23,
         intelligence: 8,
         resistance: 200,
@@ -175,9 +187,13 @@ make_enemy!(
         name: "Guerreiro do Gelo",
         base_probability: Probability::ALWAYS,
         brain: BrainKind::Simple,
+        boss: None,
         regions: &[(WorldRegion::Icefields, 8)],
         personalities: &[Personality::Courage, Personality::Arrogance],
         potential: EnemyPotential::High,
+        immunities: BodyImmunities::new()
+            .with_resistance(ImmunityKind::Ice, 0.8)
+            .with_weakness(ImmunityKind::Fire, 0.3),
         strength: 25,
         intelligence: 10,
         resistance: 400,
@@ -222,9 +238,13 @@ make_enemy!(
         name: "Lobo do Gelo",
         base_probability: Probability::ALWAYS,
         brain: BrainKind::Simple,
+        boss: None,
         regions: &[(WorldRegion::Icefields, 3), (WorldRegion::Wornpeaks, 1)],
         personalities: &[Personality::Courage],
         potential: EnemyPotential::Medium,
+        immunities: BodyImmunities::new()
+            .with_resistance(ImmunityKind::Ice, 0.5)
+            .with_little_resistance(ImmunityKind::Bleeding),
         strength: 17,
         intelligence: 5,
         resistance: 250,
@@ -263,9 +283,11 @@ make_enemy!(
         name: "Abominável Ma'Quiran",
         base_probability: Probability::ALWAYS,
         brain: BrainKind::Simple,
+        boss: None,
         regions: &[(WorldRegion::Icefields, 3)],
         personalities: &[Personality::Courage],
         potential: EnemyPotential::Low,
+        immunities: BodyImmunities::new().with_resistance(ImmunityKind::Electric, 0.5),
         strength: 6,
         intelligence: 41,
         resistance: 300,
@@ -305,8 +327,13 @@ make_enemy!(
         name: "Golem Rochoso",
         base_probability: Probability::ALWAYS,
         brain: BrainKind::Simple,
+        boss: None,
         regions: &[(WorldRegion::Wornpeaks, 3)],
         personalities: &[Personality::Aggressiveness, Personality::Insanity],
+        immunities: BodyImmunities::new()
+            .with_resistance(ImmunityKind::Bleeding, 1.0)
+            .with_resistance(ImmunityKind::Cut, 0.2)
+            .with_weakness(ImmunityKind::Physical, 0.5),
         potential: EnemyPotential::High,
         strength: 38,
         intelligence: 3,
@@ -337,5 +364,43 @@ make_enemy!(
                 },
             ],
         },
+    }
+);
+
+make_enemy!(
+    trained_thief,
+    Enemy {
+        identifier: "trained_thief",
+        name: "Ladrão Treinado",
+        brain: BrainKind::Simple,
+        boss: None,
+        regions: &[],
+        base_probability: Probability::ALWAYS,
+        personalities: &[Personality::Cowardice],
+        potential: EnemyPotential::Low,
+        immunities: BodyImmunities::new().with_little_resistance(ImmunityKind::Bleeding),
+        resistance: 280,
+        vitality: 110,
+        strength: 19,
+        intelligence: 8,
+        ether: 30,
+        allies: None,
+        weapon: None,
+        skills: vec![
+            SkillKind::TornadoKick,
+            SkillKind::MirrorDamage,
+            SkillKind::ResplendentPunch,
+            SkillKind::Charge,
+            SkillKind::IcyBreath,
+        ],
+        drop: EnemyReward {
+            orbs: (10, 90),
+            xp: (20, 70),
+            items: vec![EnemyRewardItem {
+                item: items::tool::PICKAXE,
+                amount: (1, 1),
+                probability: Probability::new(30),
+            }],
+        }
     }
 );

@@ -18,75 +18,91 @@ impl EventBuildState {
 
 pub type EventBuilder = fn(EventBuildState) -> Event;
 
-pub mod desert_basic;
-pub mod ethereal_forest_basic;
-pub mod forest_basic;
-pub mod general_basic;
+pub mod basic;
 pub mod general_special;
-pub mod ice_fields_basic;
-pub mod mountains_basic;
-pub mod plains_basic;
 pub mod shredder_basic;
+pub mod bosses;
 
 // Lore events
 pub mod vinizi;
 pub static ALL_EVENTS: Lazy<Vec<EventBuilder>> = Lazy::new(|| {
     [
+        // Bosses
+        bosses::garhyan::garhyan_shredder_first_invitation,
+        bosses::garhyan::garhyan_rematch,
         // General
+        basic::general::basic_general_rock_mining,
+        basic::general::basic_general_place_to_meditate,
+        basic::general::basic_general_mysterious_chest,
+        basic::general::basic_general_traveller_riddle,
         general_special::special_track_miniorbs,
-        general_basic::basic_rock_mining,
-        general_basic::general_basic_place_to_meditate,
+        general_special::creative_general_mysterious_portal,
+        general_special::special_ether_fountain,
         // Plains
-        plains_basic::basic_plains_exploration,
-        plains_basic::basic_plains_digging,
-        plains_basic::basic_plains_person_wanting_materials,
-        plains_basic::basic_plains_begger,
-        plains_basic::basic_plains_water_well,
-        plains_basic::basic_plains_person_in_danger,
-        plains_basic::basic_plains_trapped,
-        plains_basic::basic_plains_old_man_help,
-        plains_basic::basic_plains_abandoned_campsite,
-        plains_basic::basic_plains_fork_in_the_road,
-        plains_basic::basic_plains_wounded_traveler,
+        basic::plains::basic_plains_exploration,
+        basic::plains::basic_plains_digging,
+        basic::plains::basic_plains_person_wanting_materials,
+        basic::plains::basic_plains_begger,
+        basic::plains::basic_plains_water_well,
+        basic::plains::basic_plains_person_in_danger,
+        basic::plains::basic_plains_trapped,
+        basic::plains::basic_plains_old_man_help,
+        basic::plains::basic_plains_abandoned_campsite,
+        basic::plains::basic_plains_fork_in_the_road,
+        basic::plains::basic_plains_wounded_traveler,
+        basic::plains::basic_plains_abandoned_picnic,
+        basic::plains::basic_plains_fallen_tree,
+        basic::plains::basic_plains_small_stream,
         // Forest
-        forest_basic::basic_forest_exploration,
-        forest_basic::basic_forest_digging,
-        forest_basic::basic_forest_dangerous_button,
-        forest_basic::basic_forest_feet_stuck_in_vines,
-        forest_basic::basic_forest_knowledge_books_pedestal,
-        forest_basic::basic_forest_strange_shrine,
-        forest_basic::basic_forest_animal_tracks,
-        forest_basic::basic_forest_suspicious_tree,
-        forest_basic::swamp_murky_waters,
-        forest_basic::swamp_quicksand,
+        basic::forest::basic_forest_exploration,
+        basic::forest::basic_forest_digging,
+        basic::forest::basic_forest_dangerous_button,
+        basic::forest::basic_forest_feet_stuck_in_vines,
+        basic::forest::basic_forest_knowledge_books_pedestal,
+        basic::forest::basic_forest_strange_shrine,
+        basic::forest::basic_forest_animal_tracks,
+        basic::forest::basic_forest_suspicious_tree,
+        basic::forest::basic_swamp_murky_waters,
+        basic::forest::basic_swamp_quicksand,
+        basic::forest::basic_forest_ancient_tree_library,
+        basic::forest::basic_forest_apple_tree,
+        basic::forest::basic_forest_fallen_tree,
+        basic::forest::basic_forest_unusual_rock,
         // Desert
-        desert_basic::basic_desert_exploration,
-        desert_basic::basic_desert_digging,
-        desert_basic::basic_desert_beginner_nomad_merchant,
-        desert_basic::desert_oasis,
-        desert_basic::desert_sandstorm,
-        desert_basic::desert_ancient_ruins,
-        desert_basic::desert_mirage_merchant,
-        desert_basic::desert_scorpion_nest,
+        basic::desert::basic_desert_exploration,
+        basic::desert::basic_desert_digging,
+        basic::desert::basic_desert_beginner_nomad_merchant,
+        basic::desert::basic_desert_oasis,
+        basic::desert::basic_desert_sandstorm,
+        basic::desert::basic_desert_ancient_ruins,
+        basic::desert::basic_desert_mirage_merchant,
+        basic::desert::basic_desert_scorpion_nest,
         // Ethereal Forest
-        ethereal_forest_basic::basic_ethereal_forest_digging,
-        ethereal_forest_basic::ethereal_forest_whispering_trees,
-        ethereal_forest_basic::ethereal_forest_glowing_pond,
+        basic::ethereal_forest::basic_ethereal_forest_digging,
+        basic::ethereal_forest::ethereal_forest_whispering_trees,
+        basic::ethereal_forest::ethereal_forest_glowing_pond,
         // Ice Fields
-        ice_fields_basic::icefields_exploration,
-        ice_fields_basic::icefields_frozen_lake,
-        ice_fields_basic::icefields_frost_wolf_pack,
-        ice_fields_basic::icefields_snow_storm,
+        basic::ice_fields::basic_icefields_exploration,
+        basic::ice_fields::basic_icefields_frozen_lake,
+        basic::ice_fields::icefields_frost_wolf_pack,
+        basic::ice_fields::basic_icefields_snow_storm,
         // Mountains
-        mountains_basic::basic_mountain_exploration,
-        mountains_basic::basic_mountain_abandoned_campsite,
-        mountains_basic::basic_mountain_person_in_danger,
+        basic::mountains::basic_mountain_exploration,
+        basic::mountains::basic_mountain_abandoned_campsite,
+        basic::mountains::basic_mountain_person_in_danger,
+        basic::mountains::basic_montain_unstable_path,
+        basic::mountains::basic_mountain_mysterious_cave,
+        basic::mountains::basic_mountain_avalanche_event,
+        basic::mountains::basic_mountain_climber,
+        basic::mountains::basic_mountain_abandoned_cabin,
         // Specific - Shredder
         shredder_basic::basic_shredder_first_encounter,
         shredder_basic::basic_shredder_robbery,
         shredder_basic::shredder_ambush,
         shredder_basic::shredder_ambush_for_payment,
         shredder_basic::shredder_training,
+        shredder_basic::shredder_recruitment,
+        shredder_basic::shredder_heist,
         // Lore - Vinizi
         vinizi::vinizi_first_encounter,
         vinizi::vinizi_first_stage,

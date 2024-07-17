@@ -3,8 +3,8 @@ use weaklings_plus::frost_wolf;
 
 use super::prelude::*;
 
-make_event!(icefields_exploration, Event {
-    identifier: "icefields_exploration",
+make_event!(basic_icefields_exploration, Event {
+    identifier: "basic_icefields_exploration",
     spawn: EventSpawn {
         weighted_regions: vec![(WorldRegion::Icefields, 10)],
         ..Default::default()
@@ -49,12 +49,12 @@ make_event!(icefields_exploration, Event {
                 },
                 Consequence {
                     probability: Probability::new(15),
-                    kind: ConsequenceKind::Event(icefields_frozen_lake),
+                    kind: ConsequenceKind::Event(basic_icefields_frozen_lake),
                     ..Default::default()
                 },
                 Consequence {
                     probability: Probability::new(10),
-                    kind: ConsequenceKind::Event(icefields_snow_storm),
+                    kind: ConsequenceKind::Event(basic_icefields_snow_storm),
                     ..Default::default()
                 }
             ],
@@ -64,11 +64,12 @@ make_event!(icefields_exploration, Event {
 });
 
 make_event!(
-    icefields_frozen_lake,
+    basic_icefields_frozen_lake,
     Event {
-        identifier: "icefields_frozen_lake",
+        identifier: "basic_icefields_frozen_lake",
         spawn: EventSpawn {
             weighted_regions: vec![(WorldRegion::Icefields, 1)],
+            base_probability: Probability::new(50),
             ..Default::default()
         },
         emoji: Emoji::from_unicode("❄️"),
@@ -88,8 +89,9 @@ make_event!(
                             message: "você conseguiu quebrar o gelo e recuperar o objeto brilhante!".to_string(),
                             iterations: 1,
                             items: vec![
-                                (Probability::new(100), items::ore::GOLD_ORE, (1, 3)),
-                                (Probability::new(40), items::ore::DIAMOND_ORE, (1, 1)),
+                                (Probability::new(100), items::special::GIFT, (1, 1)),
+                                (Probability::new(30), items::ore::GOLD_ORE, (1, 1)),
+                                (Probability::new(5), items::ore::DIAMOND_ORE, (1, 1)),
                             ],
                             orbs: (50, 100),
                             xp: XpReward {
@@ -130,8 +132,9 @@ make_event!(
                             message: "você conseguiu atravessar o gelo com cuidado e encontrou um tesouro escondido!".to_string(),
                             iterations: 1,
                             items: vec![
-                                (Probability::new(100), items::ore::GOLD_ORE, (2, 4)),
-                                (Probability::new(30), items::special::INTELLIGENCE_CRYSTAL, (1, 1)),
+                                (Probability::new(100), items::ore::COPPER_ORE, (1, 1)),
+                                (Probability::new(60), items::ore::GOLD_ORE, (1, 1)),
+                                (Probability::new(2), items::special::INTELLIGENCE_CRYSTAL, (1, 1)),
                             ],
                             orbs: (30, 80),
                             xp: XpReward {
@@ -162,8 +165,8 @@ make_event!(
     }
 );
 
-make_event!(icefields_snow_storm, Event {
-    identifier: "icefields_snow_storm",
+make_event!(basic_icefields_snow_storm, Event {
+    identifier: "basic_icefields_snow_storm",
     spawn: EventSpawn {
         weighted_regions: vec![(WorldRegion::Icefields, 3)],
         ..Default::default()

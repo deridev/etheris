@@ -430,6 +430,7 @@ impl BattleController {
             .iter()
             .filter_map(|f| f.user.as_ref().map(|user| (user.clone(), f.clone())))
         {
+            let fighter_index = fighter.index;
             let Some(mut character) = self
                 .ctx
                 .db()
@@ -439,6 +440,17 @@ impl BattleController {
             else {
                 continue;
             };
+
+            // Check if the character defeated a boss
+            for fighter in self.battle.fighters.clone() {
+                if fighter.defeated_by != Some(fighter_index) && fighter.killed_by != Some(fighter_index) {
+                    continue;
+                }
+
+                if let Some(boss) = fighter.boss {
+                    character.defeated_bosses.insert(boss);
+                }
+            }
 
             // Kill the character
             if character.alive && fighter.killed_by.is_some() {
@@ -935,7 +947,7 @@ impl BattleController {
         for fighter in alive_fighters {
             embed = embed.add_field(create_fighter_embed_fields(
                 &fighter,
-                Some(current_fighter.index),
+                Some(current_fighter.target),
             ));
         }
 

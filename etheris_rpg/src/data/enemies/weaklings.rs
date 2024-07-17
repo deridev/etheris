@@ -1,5 +1,7 @@
 use etheris_data::items;
 
+use crate::ImmunityKind;
+
 use super::*;
 
 make_enemy!(
@@ -9,9 +11,11 @@ make_enemy!(
         name: "Rato Gigante",
         base_probability: Probability::ALWAYS,
         brain: BrainKind::Simple,
+        boss: None,
         regions: &[(WorldRegion::Greenagis, 4),],
         personalities: &[Personality::Cowardice],
         potential: EnemyPotential::VeryLow,
+        immunities: BodyImmunities::new().with_little_resistance(ImmunityKind::Poison),
         strength: 2,
         intelligence: 1,
         resistance: 60,
@@ -39,8 +43,10 @@ make_enemy!(
         name: "Mutante de Greenagis",
         base_probability: Probability::ALWAYS,
         brain: BrainKind::Simple,
-        regions: &[(WorldRegion::Greenagis, 3),],
+        boss: None,
+        regions: &[(WorldRegion::Greenagis, 6)],
         personalities: &[Personality::Cowardice],
+        immunities: BodyImmunities::new(),
         potential: EnemyPotential::VeryLow,
         strength: 2,
         intelligence: 3,
@@ -56,7 +62,7 @@ make_enemy!(
             items: vec![EnemyRewardItem {
                 amount: (1, 1),
                 item: items::tool::SHOVEL,
-                probability: Probability::new(10),
+                probability: Probability::new(1),
             }],
         },
     }
@@ -69,6 +75,7 @@ make_enemy!(
         name: "Saqueador Iniciante",
         base_probability: Probability::ALWAYS,
         brain: BrainKind::Simple,
+        boss: None,
         regions: &[
             (WorldRegion::Greenagis, 1),
             (WorldRegion::Emerelis, 4),
@@ -76,6 +83,7 @@ make_enemy!(
         ],
         personalities: &[Personality::Aggressiveness, Personality::Arrogance],
         potential: EnemyPotential::VeryLow,
+        immunities: BodyImmunities::new(),
         strength: 5,
         intelligence: 2,
         resistance: 110,
@@ -110,9 +118,11 @@ make_enemy!(
         name: "Retalhador Fraco",
         base_probability: Probability::ALWAYS,
         brain: BrainKind::Simple,
+        boss: None,
         regions: &[(WorldRegion::Gloomwood, 1), (WorldRegion::Mudland, 1)],
         personalities: &[Personality::Cowardice, Personality::Aggressiveness],
         potential: EnemyPotential::Low,
+        immunities: BodyImmunities::new().with_little_resistance(ImmunityKind::Fire),
         strength: 15,
         intelligence: 6,
         resistance: 230,
@@ -152,9 +162,11 @@ make_enemy!(
         name: "Bandido Novato",
         base_probability: Probability::ALWAYS,
         brain: BrainKind::Simple,
+        boss: None,
         regions: &[(WorldRegion::Greenagis, 3), (WorldRegion::Emerelis, 5)],
         personalities: &[Personality::Aggressiveness, Personality::Cowardice],
         potential: EnemyPotential::Low,
+        immunities: BodyImmunities::new(),
         strength: 4,
         intelligence: 2,
         resistance: 70,
@@ -194,6 +206,7 @@ make_enemy!(
         name: "Caçador de Novatos",
         base_probability: Probability::ALWAYS,
         brain: BrainKind::Simple,
+        boss: None,
         regions: &[
             (WorldRegion::Greenagis, 3),
             (WorldRegion::Emerelis, 3),
@@ -201,6 +214,7 @@ make_enemy!(
         ],
         personalities: &[Personality::Arrogance, Personality::Cowardice],
         potential: EnemyPotential::Low,
+        immunities: BodyImmunities::new(),
         strength: 5,
         intelligence: 2,
         resistance: 180,
@@ -233,6 +247,7 @@ make_enemy!(
         name: "Vagante Insano",
         base_probability: Probability::new(70),
         brain: BrainKind::Simple,
+        boss: None,
         regions: &[
             (WorldRegion::Greenagis, 1),
             (WorldRegion::Emerelis, 1),
@@ -241,6 +256,10 @@ make_enemy!(
         ],
         personalities: &[Personality::Cowardice, Personality::Insanity],
         potential: EnemyPotential::Medium,
+        immunities: BodyImmunities::new()
+            .with_little_resistance(ImmunityKind::Poison)
+            .with_little_resistance(ImmunityKind::Electric)
+            .with_little_resistance(ImmunityKind::Bleeding),
         strength: 20,
         intelligence: 3,
         resistance: 250,
@@ -274,12 +293,57 @@ make_enemy!(
 );
 
 make_enemy!(
+    forest_guardian,
+    Enemy {
+        identifier: "forest_guardian",
+        name: "Guardião da Floresta",
+        base_probability: Probability::ALWAYS,
+        brain: BrainKind::Simple,
+        boss: None,
+        regions: &[(WorldRegion::Mudland, 1), (WorldRegion::Gloomwood, 4)],
+        personalities: &[Personality::Courage, Personality::Intelligence],
+        potential: EnemyPotential::Medium,
+        immunities: BodyImmunities::new().with_little_resistance(ImmunityKind::Physical),
+        strength: 10,
+        intelligence: 12,
+        resistance: 160,
+        vitality: 50,
+        ether: 60,
+        weapon: Some(WeaponKind::Bat),
+        allies: None,
+        skills: vec![
+            SkillKind::ImbuedPunch,
+            SkillKind::WaterBlessing,
+            SkillKind::Refresh,
+            SkillKind::DefensiveJump,
+        ],
+        drop: EnemyReward {
+            orbs: (20, 40),
+            xp: (35, 55),
+            items: vec![
+                EnemyRewardItem {
+                    amount: (1, 1),
+                    item: items::tool::AXE,
+                    probability: Probability::new(10),
+                },
+                EnemyRewardItem {
+                    amount: (1, 2),
+                    item: items::consumable::APPLE,
+                    probability: Probability::new(50),
+                },
+            ],
+        },
+    }
+);
+
+make_enemy!(
     weak_mercenary,
     Enemy {
         identifier: "weak_mercenary",
         name: "Mercenário",
         base_probability: Probability::ALWAYS,
         brain: BrainKind::Simple,
+        boss: None,
         regions: &[
             (WorldRegion::Greenagis, 2),
             (WorldRegion::Emerelis, 5),
@@ -289,6 +353,7 @@ make_enemy!(
         ],
         personalities: &[Personality::Calm, Personality::Courage],
         potential: EnemyPotential::Medium,
+        immunities: BodyImmunities::new().with_little_weakness(ImmunityKind::Ice),
         strength: 9,
         intelligence: 5,
         resistance: 130,
@@ -320,9 +385,13 @@ make_enemy!(
         name: "Golem de Lama",
         base_probability: Probability::ALWAYS,
         brain: BrainKind::Simple,
+        boss: None,
         regions: &[(WorldRegion::Mudland, 1), (WorldRegion::Murkswamp, 4)],
         personalities: &[Personality::Calm, Personality::Insanity],
         potential: EnemyPotential::Medium,
+        immunities: BodyImmunities::new()
+            .with_little_weakness(ImmunityKind::Water)
+            .with_little_weakness(ImmunityKind::Ice),
         strength: 22,
         intelligence: 10,
         resistance: 315,
@@ -356,9 +425,11 @@ make_enemy!(
         name: "Carrasco do Pântano",
         base_probability: Probability::ALWAYS,
         brain: BrainKind::Simple,
+        boss: None,
         regions: &[(WorldRegion::Murkswamp, 3),],
         personalities: &[Personality::Courage, Personality::Insanity],
         potential: EnemyPotential::Medium,
+        immunities: BodyImmunities::new().with_little_resistance(ImmunityKind::Physical),
         strength: 32,
         intelligence: 5,
         resistance: 364,
@@ -398,6 +469,7 @@ make_enemy!(
         name: "Mestre do Pântano",
         base_probability: Probability::ALWAYS,
         brain: BrainKind::Simple,
+        boss: None,
         regions: &[
             (WorldRegion::Mudland, 3),
             (WorldRegion::Murkswamp, 5),
@@ -405,6 +477,7 @@ make_enemy!(
         ],
         personalities: &[Personality::Intelligence, Personality::Insanity],
         potential: EnemyPotential::Medium,
+        immunities: BodyImmunities::new(),
         strength: 8,
         intelligence: 15,
         resistance: 208,
@@ -444,6 +517,7 @@ make_enemy!(
         name: "Mercenário Chefe",
         base_probability: Probability::ALWAYS,
         brain: BrainKind::Simple,
+        boss: None,
         regions: &[
             (WorldRegion::Gloomwood, 2),
             (WorldRegion::Mudland, 2),
@@ -454,6 +528,7 @@ make_enemy!(
         ],
         personalities: &[Personality::Calm, Personality::Courage],
         potential: EnemyPotential::Medium,
+        immunities: BodyImmunities::new().with_little_resistance(ImmunityKind::Bleeding),
         strength: 25,
         intelligence: 8,
         resistance: 250,
@@ -470,8 +545,8 @@ make_enemy!(
             SkillKind::Refresh,
         ],
         drop: EnemyReward {
-            orbs: (40, 90),
-            xp: (10, 30),
+            orbs: (40, 110),
+            xp: (10, 50),
             items: vec![
                 EnemyRewardItem {
                     amount: (1, 1),
@@ -489,6 +564,76 @@ make_enemy!(
                     probability: Probability::new(10),
                 },
             ],
+        },
+    }
+);
+
+make_enemy!(
+    dangerous_bear,
+    Enemy {
+        identifier: "dangerous_bear",
+        name: "Urso Perigoso",
+        base_probability: Probability::NEVER,
+        brain: BrainKind::Simple,
+        boss: None,
+        regions: &[(WorldRegion::Murkswamp, 1), (WorldRegion::Mudland, 1)],
+        personalities: &[Personality::Aggressiveness],
+        potential: EnemyPotential::Low,
+        immunities: BodyImmunities::new().with_little_resistance(ImmunityKind::Bleeding),
+        strength: 40,
+        intelligence: 5,
+        resistance: 400,
+        vitality: 100,
+        ether: 40,
+        weapon: None,
+        allies: None,
+        skills: vec![
+            SkillKind::ImbuedPunch,
+            SkillKind::Charge,
+            SkillKind::ElectricSlap,
+            SkillKind::Refresh,
+            SkillKind::ResplendentPunch
+        ],
+        drop: EnemyReward {
+            orbs: (40, 90),
+            xp: (80, 120),
+            items: vec![],
+        }
+    }
+);
+
+make_enemy!(
+    weak_thief,
+    Enemy {
+        identifier: "weak_thief",
+        name: "Ladrão Comum",
+        brain: BrainKind::Simple,
+        boss: None,
+        regions: &[],
+        base_probability: Probability::ALWAYS,
+        personalities: &[Personality::Cowardice],
+        potential: EnemyPotential::Low,
+        immunities: BodyImmunities::new(),
+        resistance: 180,
+        vitality: 55,
+        intelligence: 3,
+        strength: 6,
+        ether: 15,
+        allies: None,
+        weapon: None,
+        skills: vec![
+            SkillKind::TornadoKick,
+            SkillKind::MirrorDamage,
+            SkillKind::ImbuedPunch,
+        ],
+        drop: EnemyReward {
+            orbs: (10, 15),
+            xp: (20, 50),
+            items: vec![EnemyRewardItem {
+                item: items::tool::SHOVEL,
+                amount: (1, 1),
+                probability: Probability::new(30),
+            }],
         },
     }
 );

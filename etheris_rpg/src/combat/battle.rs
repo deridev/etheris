@@ -347,7 +347,8 @@ impl Battle {
 
     pub fn next_fighter(&mut self) {
         if self.fighters_queue.is_empty() {
-            let hasnt_gave_up = |f: &&FighterIndex| !self.get_fighter(**f).flags.contains(FighterFlags::GAVE_UP);
+            let hasnt_gave_up =
+                |f: &&FighterIndex| !self.get_fighter(**f).flags.contains(FighterFlags::GAVE_UP);
             self.fighters_queue = self
                 .alive_fighters
                 .iter()

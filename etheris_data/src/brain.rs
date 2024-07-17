@@ -17,4 +17,7 @@ pub enum BrainKind {
 
     /// A insane brain will always try to kill the target. Never giving up.
     Insane,
+
+    /// A boss brain thinks more.
+    Boss,
 }

@@ -53,6 +53,7 @@ impl Skill for EtherShadow {
         api.battle_mut().join_fighter(FighterData { 
             team: fighter.team, 
             name: format!("Sombra de {}", fighter.name), 
+            boss: None,
             user: None, 
             brain: Some(BrainKind::Simple),
             actions: fighter.actions.clone(),
@@ -66,7 +67,8 @@ impl Skill for EtherShadow {
             resistance: Attribute::from(resistance), 
             vitality: Attribute::from(vitality),
             ether: Attribute::from(ether), 
-            drop: Default::default()
+            drop: Default::default(),
+            immunities: fighter.body_immunities.clone()
         });
 
         api.emit_message(format!("**{}** invocou uma sombra de si mesmo para ajudar na batalha!", fighter.name));

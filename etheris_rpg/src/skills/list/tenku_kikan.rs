@@ -104,6 +104,7 @@ impl Skill for TenkuKikan {
             user: None,
             brain: Some(soul.brain.unwrap_or_default()),
             actions: vec![],
+            boss: None,
 
             inventory: vec![],
             drop: Default::default(),
@@ -119,6 +120,7 @@ impl Skill for TenkuKikan {
 
             weapon: None,
             skills: soul.skills,
+            immunities: BodyImmunities::new()
         });
 
         api.add_overload(api.fighter_index, 15.0).await;

@@ -1,7 +1,7 @@
 use std::fmt::Debug;
 
 use etheris_common::Probability;
-use etheris_data::{items::Item, personality::Personality, world::regions::WorldRegion, ShopItem};
+use etheris_data::{items::Item, personality::Personality, world::regions::WorldRegion, BossKind, ShopItem};
 use etheris_discord::Emoji;
 use etheris_framework::CommandContext;
 
@@ -11,7 +11,8 @@ use super::{
     list::{EventBuildState, EventBuilder},
     ControllerAction, ControllerFlag,
 };
-#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+
+#[derive(Debug, Clone, PartialEq)]
 pub struct EventSpawn {
     pub conditions: Vec<Condition>,
     pub base_probability: Probability,
@@ -38,7 +39,7 @@ impl Default for EventSpawn {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum EventMessage {
     Single(&'static str),
     SingleString(String),
@@ -47,7 +48,7 @@ pub enum EventMessage {
     Conditional(Vec<(Condition, String)>),
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum Condition {
     None,
     Not(Box<Condition>),
@@ -59,13 +60,14 @@ pub enum Condition {
     HasEther(i32),
     HasKarma(i32),
     HasPersonality(Personality),
+    DefeatedBoss(BossKind),
     SimilarPowerTo(Enemy),
     StrongerThan(Enemy),
     WeakerThan(Enemy),
     Probability(Probability),
 }
 
-#[derive(Debug, Clone, PartialEq, PartialOrd)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct Event {
     pub identifier: &'static str,
     pub emoji: Emoji<'static>,
@@ -86,7 +88,7 @@ impl Default for Event {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, PartialOrd)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct Action {
     pub name: String,
     pub probability: Probability,
@@ -116,7 +118,7 @@ impl Default for Action {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, PartialOrd)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct Consequence {
     pub probability: Probability,
     pub conditions: Vec<Condition>,
@@ -140,9 +142,10 @@ pub trait CustomConsequence {
     async fn execute<'a>(&self, ctx: &'a mut CommandContext) -> anyhow::Result<()>;
 }
 
-#[derive(Debug, Clone, PartialEq, PartialOrd, Default)]
+#[derive(Debug, Clone, PartialEq, Default)]
 pub struct BattleConsequence {
     pub enemies: Vec<Enemy>,
+    pub allies: Vec<Enemy>,
     pub prompt: bool,
     pub on_win_knockout_event: Option<EventBuilder>,
     pub on_win_kill_event: Option<EventBuilder>,
@@ -150,7 +153,7 @@ pub struct BattleConsequence {
     pub on_lose_die_event: Option<EventBuilder>,
 }
 
-#[derive(Debug, Clone, PartialEq, PartialOrd)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum ConsequenceKind {
     ConditionalConsequence {
         condition: Condition,
@@ -191,6 +194,7 @@ pub enum ConsequenceKind {
     },
     RemoveItemDurability(Item, u32),
     RemoveItem(Item, usize),
+    AddEther(i32),
     RemoveEther(i32),
     AddActionPoint(u32),
     AddTag(String),

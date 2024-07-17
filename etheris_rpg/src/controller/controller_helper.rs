@@ -53,6 +53,7 @@ pub async fn tick_every_effect(
 ) -> anyhow::Result<()> {
     for fighter_index in fighters {
         let fighter = controller.battle.get_fighter_mut(*fighter_index);
+        let immunities = fighter.body_immunities.clone();
         let fighter_name = fighter.name.clone();
 
         for effect in fighter.effects.clone() {
@@ -60,18 +61,26 @@ pub async fn tick_every_effect(
             api.fighter_index = *fighter_index;
             api.target_index = *fighter_index;
 
+            let immunity_dmg_multiplier = if let Some(immunity) = effect.kind.affected_immunity() {
+                immunities.dmg_multiplier_from_immunity(immunity)
+            } else {
+                1.0
+            };
+
             match effect.kind {
                 EffectKind::Flaming => {
                     api.fighter_mut()
                         .remove_effect(Effect::new(effect.kind, 5, effect.culprit));
                     melt_ice(10, &mut api);
 
+                    let dmg = 2 + (api.fighter().health().max as f32 * 0.01) as i32;
+
                     let dmg = api
                         .apply_damage(
                             api.fighter_index,
                             DamageSpecifier {
                                 kind: DamageKind::Fire,
-                                amount: (api.fighter().health().max as f32 * 0.01) as i32,
+                                amount: (dmg as f64 * immunity_dmg_multiplier) as i32,
                                 balance_effectiveness: 1,
                                 accuracy: 100,
                                 ..Default::default()
@@ -90,12 +99,14 @@ pub async fn tick_every_effect(
 
                     melt_ice(20, &mut api);
 
+                    let dmg = 8 + (api.fighter().health().max as f32 * 0.03) as i32;
+
                     let dmg = api
                         .apply_damage(
                             api.fighter_index,
                             DamageSpecifier {
                                 kind: DamageKind::Fire,
-                                amount: (api.fighter().health().max as f32 * 0.03) as i32,
+                                amount: (dmg as f64 * immunity_dmg_multiplier) as i32,
                                 balance_effectiveness: 4,
                                 accuracy: 100,
                                 ..Default::default()
@@ -227,13 +238,13 @@ pub async fn tick_every_effect(
                             Default::default(),
                         ));
 
-                        let dmg = (api.fighter().health().max as f32).mul(0.15) as i32;
+                        let dmg = 20 + (api.fighter().health().max as f32).mul(0.15) as i32;
                         api.fighter_mut().take_damage(
                             effect.culprit,
                             DamageSpecifier {
                                 culprit: effect.culprit,
                                 kind: DamageKind::Special,
-                                amount: dmg,
+                                amount: (dmg as f64 * immunity_dmg_multiplier) as i32,
                                 balance_effectiveness: 0,
                                 accuracy: 100,
                                 effect: None,
@@ -257,12 +268,13 @@ pub async fn tick_every_effect(
                         Default::default(),
                     ));
 
+                    let dmg = 6 + (api.fighter().health().max as f32 * 0.025) as i32;
                     let dmg = api
                         .apply_damage(
                             api.fighter_index,
                             DamageSpecifier {
                                 kind: DamageKind::Poisonous,
-                                amount: (api.fighter().health().max as f32 * 0.025) as i32,
+                                amount: (dmg as f64 * immunity_dmg_multiplier) as i32,
                                 balance_effectiveness: 3,
                                 accuracy: 100,
                                 ..Default::default()
@@ -294,7 +306,9 @@ pub async fn should_risk_life(
         let fighter = controller.battle.get_fighter_mut(*fighter_index);
         let fighter_name = fighter.name.clone();
 
-        if fighter.resistance.value > 0 || fighter.flags.contains(FighterFlags::ASKED_TO_RISK_LIFE) || fighter.flags.contains(FighterFlags::GAVE_UP)
+        if fighter.resistance.value > 0
+            || fighter.flags.contains(FighterFlags::ASKED_TO_RISK_LIFE)
+            || fighter.flags.contains(FighterFlags::GAVE_UP)
         {
             continue;
         }

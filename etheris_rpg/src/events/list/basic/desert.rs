@@ -34,7 +34,13 @@ pub fn basic_desert_exploration(_state: EventBuildState) -> Event {
                     common::consequence_didnt_find_anything(Probability::new(5)),
                     Consequence {
                         probability: Probability::new(50),
-                        kind: ConsequenceKind::Rewards { message: "você achou algumas coisas pelo caminho".to_string(), iterations: 1, items: vec![], orbs: (12, 24), xp: XpReward::default() },
+                        kind: ConsequenceKind::Rewards {
+                            message: "você achou algumas coisas pelo caminho".to_string(),
+                            iterations: 1,
+                            items: vec![],
+                            orbs: (12, 24),
+                            xp: XpReward::default()
+                        },
                         ..Default::default()
                     },
                     Consequence {
@@ -168,9 +174,9 @@ make_event!(
 );
 
 make_event!(
-    desert_sandstorm,
+    basic_desert_sandstorm,
     Event {
-        identifier: "desert_sandstorm",
+        identifier: "basic_desert_sandstorm",
         spawn: EventSpawn {
             weighted_regions: vec![(WorldRegion::Tenypt, 5), (WorldRegion::Sandywater, 3)],
             ..Default::default()
@@ -226,7 +232,7 @@ make_event!(
             Action {
                 name: "Usar Ether para Criar Barreira".to_string(),
                 emoji: Some(Emoji::from_unicode("🛡️")),
-                conditions: vec![Condition::HasEther(50)],
+                conditions: vec![Condition::HasEther(20)],
                 consequences: vec![
                     Consequence {
                         probability: Probability::new(70),
@@ -247,7 +253,7 @@ make_event!(
                         },
                         extra_consequences: vec![
                             Consequence {
-                                kind: ConsequenceKind::RemoveEther(50),
+                                kind: ConsequenceKind::RemoveEther(20),
                                 ..Default::default()
                             }
                         ],
@@ -261,7 +267,7 @@ make_event!(
                         },
                         extra_consequences: vec![
                             Consequence {
-                                kind: ConsequenceKind::RemoveEther(50),
+                                kind: ConsequenceKind::RemoveEther(20),
                                 ..Default::default()
                             },
                             Consequence {
@@ -328,9 +334,9 @@ make_event!(
 );
 
 make_event!(
-    desert_oasis,
+    basic_desert_oasis,
     Event {
-        identifier: "desert_oasis",
+        identifier: "basic_desert_oasis",
         spawn: EventSpawn {
             base_probability: Probability::new(10),
             weighted_regions: vec![(WorldRegion::Tenypt, 1), (WorldRegion::Sandywater, 1)],
@@ -394,9 +400,9 @@ make_event!(
 );
 
 make_event!(
-    desert_ancient_ruins,
+    basic_desert_ancient_ruins,
     Event {
-        identifier: "desert_ancient_ruins",
+        identifier: "basic_desert_ancient_ruins",
         spawn: EventSpawn {
             base_probability: Probability::new(8),
             weighted_regions: vec![(WorldRegion::Tenypt, 1), (WorldRegion::Sandywater, 2)],
@@ -484,9 +490,9 @@ make_event!(
 );
 
 make_event!(
-    desert_mirage_merchant,
+    basic_desert_mirage_merchant,
     Event {
-        identifier: "desert_mirage_merchant",
+        identifier: "basic_desert_mirage_merchant",
         spawn: EventSpawn {
             base_probability: Probability::new(10),
             weighted_regions: vec![(WorldRegion::Tenypt, 1), (WorldRegion::Sandywater, 1)],
@@ -550,9 +556,9 @@ make_event!(
 );
 
 make_event!(
-    desert_scorpion_nest,
+    basic_desert_scorpion_nest,
     Event {
-        identifier: "desert_scorpion_nest",
+        identifier: "basic_desert_scorpion_nest",
         spawn: EventSpawn {
             base_probability: Probability::new(30),
             weighted_regions: vec![(WorldRegion::Tenypt, 1), (WorldRegion::Sandywater, 3)],
@@ -605,7 +611,7 @@ make_event!(
             Action {
                 name: "Usar Ether para Acalmar".to_string(),
                 emoji: Some(Emoji::from_unicode("✨")),
-                conditions: vec![Condition::HasEther(30)],
+                conditions: vec![Condition::HasEther(15)],
                 consequences: vec![
                     Consequence {
                         probability: Probability::new(80),
@@ -624,7 +630,7 @@ make_event!(
                         },
                         extra_consequences: vec![
                             Consequence {
-                                kind: ConsequenceKind::RemoveEther(30),
+                                kind: ConsequenceKind::RemoveEther(15),
                                 ..Default::default()
                             }
                         ],
@@ -638,7 +644,7 @@ make_event!(
                         },
                         extra_consequences: vec![
                             Consequence {
-                                kind: ConsequenceKind::RemoveEther(30),
+                                kind: ConsequenceKind::RemoveEther(15),
                                 ..Default::default()
                             }
                         ],

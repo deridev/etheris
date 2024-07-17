@@ -6,8 +6,9 @@ use etheris_data::{
     BrainKind, ShopItem, SkillKind,
 };
 use rand::{rngs::StdRng, seq::SliceRandom, Rng, SeedableRng};
+use weaklings::{giant_rat, weak_thief};
 
-use self::prelude::weaklings::giant_rat;
+use crate::BodyImmunities;
 
 use super::prelude::*;
 
@@ -83,15 +84,13 @@ make_event!(
             ]),
             Action {
                 name: "Ajudar o Velho".to_string(),
-                emoji: None,
-                conditions: vec![],
                 consequences: vec![
                     Consequence {
                         kind: ConsequenceKind::Rewards {
                             message: "O velho homem agradece sua ajuda e lhe entrega uma recompensa.".to_string(),
                             iterations: 1,
                             items: vec![
-                                (Probability::new(100), items::consumable::APPLE, (2, 6)),
+                                (Probability::new(100), items::consumable::CHEESE, (1, 3)),
                                 (Probability::new(80), items::tool::SHOVEL, (1, 1)),
                                 (Probability::new(50), items::material::KNIFE, (1, 1)),
                             ],
@@ -158,37 +157,6 @@ make_event!(
     }
 );
 
-static WEAK_THIEF: Lazy<Enemy> = Lazy::new(|| Enemy {
-    identifier: "weak_thief",
-    name: "Ladrão Comum",
-    brain: BrainKind::Simple,
-    base_probability: Probability::ALWAYS,
-    regions: &[],
-    personalities: &[Personality::Cowardice],
-    allies: None,
-    weapon: None,
-    potential: EnemyPotential::Low,
-    resistance: 180,
-    vitality: 55,
-    intelligence: 3,
-    strength: 6,
-    ether: 15,
-    skills: vec![
-        SkillKind::TornadoKick,
-        SkillKind::MirrorDamage,
-        SkillKind::ImbuedPunch,
-    ],
-    drop: EnemyReward {
-        orbs: (10, 15),
-        xp: (20, 50),
-        items: vec![EnemyRewardItem {
-            item: items::tool::SHOVEL,
-            amount: (1, 1),
-            probability: Probability::new(30),
-        }],
-    },
-});
-
 pub fn basic_plains_weak_thief(state: EventBuildState) -> Event {
     let inventory = state
         .character
@@ -241,9 +209,9 @@ pub fn basic_plains_weak_thief(state: EventBuildState) -> Event {
         spawn: EventSpawn::never(),
         emoji: Emoji::from_unicode("🔫"),
         message: EventMessage::Conditional(vec![
-            (Condition::SimilarPowerTo(WEAK_THIEF.to_owned()), format!("um ladrão te ameaçou e {asking_text}. A força dele é semelhante à sua. Como você quer reagir?")),
-            (Condition::StrongerThan(WEAK_THIEF.to_owned()), format!("um ladrão te ameaçou e {asking_text}. Ele não aparenta ameaça alguma para sua força. Como você quer reagir?")),
-            (Condition::WeakerThan(WEAK_THIEF.to_owned()), format!("um ladrão te ameaçou e {asking_text}. Você sentiu uma poderosa pressão de ether vindo dele, é um inimigo perigoso. Como você quer reagir?")),
+            (Condition::SimilarPowerTo(weak_thief()), format!("um ladrão te ameaçou e {asking_text}. A força dele é semelhante à sua. Como você quer reagir?")),
+            (Condition::StrongerThan(weak_thief()), format!("um ladrão te ameaçou e {asking_text}. Ele não aparenta ameaça alguma para sua força. Como você quer reagir?")),
+            (Condition::WeakerThan(weak_thief()), format!("um ladrão te ameaçou e {asking_text}. Você sentiu uma poderosa pressão de ether vindo dele, é um inimigo perigoso. Como você quer reagir?")),
         ]),
         actions: vec![
             Action {
@@ -262,7 +230,7 @@ pub fn basic_plains_weak_thief(state: EventBuildState) -> Event {
                 emoji: None,
                 consequences: vec![
                     Consequence {
-                        kind: ConsequenceKind::InstantBattle(WEAK_THIEF.to_owned()),
+                        kind: ConsequenceKind::InstantBattle(weak_thief()),
                         ..Default::default()
                     }
                 ],
@@ -336,9 +304,11 @@ make_enemy!(
         name: "Mendigo",
         base_probability: Probability::NEVER,
         brain: BrainKind::Simple,
+        boss: None,
         regions: &[],
         personalities: &[Personality::Courage],
         potential: EnemyPotential::Low,
+        immunities: BodyImmunities::new(),
         strength: 8,
         intelligence: 3,
         resistance: 130,
@@ -609,10 +579,12 @@ pub fn basic_plains_person_in_danger(_: EventBuildState) -> Event {
                 (Probability::new(100), items::consumable::WATER, (1, 2)),
                 (Probability::new(100), items::consumable::APPLE, (1, 2)),
                 (Probability::new(100), items::consumable::FRIED_EGG, (1, 2)),
+                (Probability::new(100), items::consumable::MILK, (1, 2)),
                 (Probability::new(100), items::material::STICK, (1, 2)),
                 (Probability::new(60), items::material::KNIFE, (1, 1)),
-                (Probability::new(20), items::material::TOOL_HANDLE, (1, 1)),
-                (Probability::new(40), items::tool::SHOVEL, (1, 1)),
+                (Probability::new(30), items::material::TOOL_HANDLE, (1, 1)),
+                (Probability::new(20), items::tool::SHOVEL, (1, 1)),
+                (Probability::new(2), items::special::TRAP, (1, 1)),
             ],
             orbs: (10, 30),
             xp: XpReward::default(),
@@ -623,8 +595,8 @@ pub fn basic_plains_person_in_danger(_: EventBuildState) -> Event {
         identifier: "basic_plains_person_in_danger",
         spawn: EventSpawn {
             weighted_regions: vec![
-                (WorldRegion::Greenagis, 3),
-                (WorldRegion::Emerelis, 3),
+                (WorldRegion::Greenagis, 1),
+                (WorldRegion::Emerelis, 1),
                 (WorldRegion::Midgrass, 1),
             ],
             ..Default::default()
@@ -679,9 +651,9 @@ fn basic_plains_person_in_danger_bad(_: EventBuildState) -> Event {
         spawn: EventSpawn::never(),
         emoji: Emoji::from_unicode("😠"),
         message: EventMessage::Conditional(vec![
-            (Condition::SimilarPowerTo(WEAK_THIEF.to_owned()), "você foi emboscado! Um ladrão te ameaçou com uma faca e pediu orbs! A força dele é semelhante à sua. Como você quer reagir?".to_string()),
-            (Condition::StrongerThan(WEAK_THIEF.to_owned()), "era uma emboscada! Um criminoso fraco se revela e fala para você entregar seus orbs. Ele não aparenta ameaça alguma para sua força. Como você quer reagir?".to_string()),
-            (Condition::WeakerThan(WEAK_THIEF.to_owned()), "não era uma pessoa pedindo ajuda... É uma emboscada! Um ladrão poderoso te ameaça com uma faca e pede orbs. Você sentiu uma poderosa pressão de ether vindo dele, é um inimigo perigoso. Como você quer reagir?".to_string()),
+            (Condition::SimilarPowerTo(weak_thief()), "você foi emboscado! Um ladrão te ameaçou com uma faca e pediu orbs! A força dele é semelhante à sua. Como você quer reagir?".to_string()),
+            (Condition::StrongerThan(weak_thief()), "era uma emboscada! Um criminoso fraco se revela e fala para você entregar seus orbs. Ele não aparenta ameaça alguma para sua força. Como você quer reagir?".to_string()),
+            (Condition::WeakerThan(weak_thief()), "não era uma pessoa pedindo ajuda... É uma emboscada! Um ladrão poderoso te ameaça com uma faca e pede orbs. Você sentiu uma poderosa pressão de ether vindo dele, é um inimigo perigoso. Como você quer reagir?".to_string()),
         ]),
         actions: vec![
             Action {
@@ -700,7 +672,7 @@ fn basic_plains_person_in_danger_bad(_: EventBuildState) -> Event {
                 emoji: None,
                 consequences: vec![
                     Consequence {
-                        kind: ConsequenceKind::InstantBattle(WEAK_THIEF.to_owned()),
+                        kind: ConsequenceKind::InstantBattle(weak_thief()),
                         ..Default::default()
                     }
                 ],
@@ -881,7 +853,6 @@ make_event!(
     Event {
         identifier: "basic_plains_fork_in_the_road",
         spawn: EventSpawn {
-            // So common I have to nerf it
             base_probability: Probability::new(40),
             weighted_regions: vec![
                 (WorldRegion::Greenagis, 3),
@@ -929,6 +900,226 @@ make_event!(
                         ..Default::default()
                     }
                 ],
+                ..Default::default()
+            }
+        ]
+    }
+);
+
+make_event!(
+    basic_plains_abandoned_picnic,
+    Event {
+        identifier: "basic_plains_abandoned_picnic",
+        spawn: EventSpawn {
+            weighted_regions: vec![
+                (WorldRegion::Greenagis, 1),
+                (WorldRegion::Emerelis, 3),
+                (WorldRegion::Midgrass, 1)
+            ],
+            ..Default::default()
+        },
+        emoji: Emoji::from_unicode("🧺"),
+        message: EventMessage::Single(
+            "você encontrou um piquenique abandonado às pressas. O que deseja fazer?"
+        ),
+        actions: vec![
+            common::ignore_action(),
+            Action {
+                name: "Investigar".to_string(),
+                emoji: Some(Emoji::from_unicode("🕵️")),
+                consequences: vec![
+                    common::consequence_didnt_find_anything(Probability::new(10)),
+                    Consequence {
+                        probability: Probability::new(80),
+                        kind: ConsequenceKind::Rewards {
+                            message: "você encontrou alguns alimentos e itens deixados para trás!"
+                                .to_string(),
+                            iterations: 2,
+                            items: vec![
+                                (Probability::new(90), items::consumable::APPLE, (1, 3)),
+                                (Probability::new(80), items::consumable::WATER, (1, 2)),
+                                (Probability::new(70), items::consumable::FRIED_EGG, (1, 2)),
+                                (Probability::new(50), items::material::KNIFE, (1, 1)),
+                                (Probability::new(30), items::material::PAPER, (1, 3)),
+                            ],
+                            orbs: (5, 15),
+                            xp: XpReward {
+                                intelligence: (5, 10),
+                                ..Default::default()
+                            }
+                        },
+                        ..Default::default()
+                    },
+                    Consequence {
+                        probability: Probability::new(10),
+                        kind: ConsequenceKind::FindARegionEnemy,
+                        ..Default::default()
+                    }
+                ],
+                ..Default::default()
+            }
+        ]
+    }
+);
+
+make_event!(
+    basic_plains_fallen_tree,
+    Event {
+        identifier: "basic_plains_fallen_tree",
+        spawn: EventSpawn {
+            weighted_regions: vec![
+                (WorldRegion::Greenagis, 1),
+                (WorldRegion::Emerelis, 1),
+                (WorldRegion::Gloomwood, 2)
+            ],
+            ..Default::default()
+        },
+        emoji: Emoji::from_unicode("🌳"),
+        message: EventMessage::Single(
+            "você se depara com uma grande árvore caída bloqueando o caminho. O que deseja fazer?"
+        ),
+        actions: vec![
+            Action {
+                name: "Escalar".to_string(),
+                emoji: Some(Emoji::from_unicode("🧗")),
+                consequences: vec![
+                    Consequence {
+                        kind: ConsequenceKind::Rewards {
+                            message: "você escalou a árvore com sucesso e encontrou alguns itens!"
+                                .to_string(),
+                            iterations: 1,
+                            items: vec![
+                                (Probability::new(80), items::material::STICK, (1, 3)),
+                                (Probability::new(40), items::consumable::APPLE, (1, 2)),
+                            ],
+                            orbs: (5, 15),
+                            xp: XpReward {
+                                strength: (10, 20),
+                                ..Default::default()
+                            }
+                        },
+                        ..Default::default()
+                    },
+                    Consequence {
+                        probability: Probability::new(20),
+                        kind: ConsequenceKind::Prejudice {
+                            message: "você se feriu ao escalar!".to_string(),
+                            items_amount: (0, 0),
+                            max_item_valuability: 0,
+                            fixed_orbs: (0, 0),
+                            orbs_percentage: 0.0,
+                            specific_items: vec![],
+                            damage_percentage: 0.1,
+                            damage_limit: 100
+                        },
+                        ..Default::default()
+                    }
+                ],
+                ..Default::default()
+            },
+            Action {
+                name: "Cortar".to_string(),
+                emoji: Some(items::tool::AXE.emoji),
+                conditions: vec![Condition::HasItem(items::tool::AXE, 1)],
+                consequences: vec![Consequence {
+                    kind: ConsequenceKind::Rewards {
+                        message: "você cortou a árvore e liberou o caminho, coletando materiais!"
+                            .to_string(),
+                        iterations: 2,
+                        items: vec![
+                            (Probability::new(100), items::material::RAW_TRUNK, (1, 1)),
+                            (Probability::new(80), items::material::STICK, (2, 3)),
+                        ],
+                        orbs: (10, 25),
+                        xp: XpReward {
+                            strength: (15, 30),
+                            ..Default::default()
+                        }
+                    },
+                    ..Default::default()
+                }],
+                extra_consequences: vec![Consequence {
+                    kind: ConsequenceKind::RemoveItemDurability(items::tool::AXE, 1),
+                    ..Default::default()
+                }],
+                ..Default::default()
+            }
+        ]
+    }
+);
+
+make_event!(
+    basic_plains_small_stream,
+    Event {
+        identifier: "basic_plains_small_stream",
+        spawn: EventSpawn {
+            weighted_regions: vec![
+                (WorldRegion::Greenagis, 3),
+                (WorldRegion::Emerelis, 3),
+                (WorldRegion::Mudland, 2)
+            ],
+            ..Default::default()
+        },
+        emoji: Emoji::from_unicode("🏞️"),
+        message: EventMessage::Single(
+            "você encontrou um pequeno riacho cortando as planícies. O que deseja fazer?"
+        ),
+        actions: vec![
+            common::ignore_action(),
+            Action {
+                name: "Beber Água".to_string(),
+                emoji: Some(Emoji::from_unicode("🥤")),
+                consequences: vec![Consequence {
+                    kind: ConsequenceKind::Rewards {
+                        message: "você bebeu a água fresca do riacho e se sentiu revigorado!"
+                            .to_string(),
+                        iterations: 1,
+                        items: vec![],
+                        orbs: (0, 0),
+                        xp: XpReward {
+                            health: (5, 15),
+                            ..Default::default()
+                        }
+                    },
+                    ..Default::default()
+                }],
+                ..Default::default()
+            },
+            Action {
+                name: "Coletar Peixes".to_string(),
+                emoji: Some(items::tool::SHOVEL.emoji),
+                conditions: vec![Condition::HasItem(items::tool::SHOVEL, 1)],
+                consequences: vec![
+                    common::consequence_didnt_find_anything(Probability::new(30)),
+                    Consequence {
+                        probability: Probability::new(70),
+                        kind: ConsequenceKind::Rewards {
+                            message: "você conseguiu pegar alguns peixes e outros itens do riacho!"
+                                .to_string(),
+                            iterations: 2,
+                            items: vec![
+                                (Probability::new(100), items::consumable::WATER, (1, 2)),
+                                (
+                                    Probability::new(100),
+                                    items::consumable::COMMON_FISH,
+                                    (1, 1)
+                                ),
+                                (Probability::new(30), items::material::STONE, (1, 3)),
+                            ],
+                            orbs: (5, 20),
+                            xp: XpReward {
+                                intelligence: (5, 15),
+                                strength: (5, 15),
+                                ..Default::default()
+                            }
+                        },
+                        ..Default::default()
+                    }
+                ],
+                extra_consequences: vec![Consequence {
+                    kind: ConsequenceKind::RemoveItemDurability(items::tool::SHOVEL, 1),
+                    ..Default::default()
+                }],
                 ..Default::default()
             }
         ]

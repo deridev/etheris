@@ -20,6 +20,7 @@ pub const COAL_ORE: Item = Item {
     tags: ORE_TAGS,
     purchase_properties: PurchaseProperties {
         base_price: 30,
+        base_sell_price: 8,
         ..PurchaseProperties::default()
     },
     ..Item::default()
@@ -32,6 +33,7 @@ pub const IRON_ORE: Item = Item {
     tags: ORE_TAGS,
     purchase_properties: PurchaseProperties {
         base_price: 90,
+        base_sell_price: 13,
         ..PurchaseProperties::default()
     },
     ..Item::default()
@@ -44,6 +46,7 @@ pub const LEAD_ORE: Item = Item {
     tags: ORE_TAGS,
     purchase_properties: PurchaseProperties {
         base_price: 75,
+        base_sell_price: 22,
         ..PurchaseProperties::default()
     },
     ..Item::default()
@@ -56,6 +59,7 @@ pub const COPPER_ORE: Item = Item {
     tags: ORE_TAGS,
     purchase_properties: PurchaseProperties {
         base_price: 70,
+        base_sell_price: 25,
         ..PurchaseProperties::default()
     },
     ..Item::default()
@@ -68,6 +72,7 @@ pub const TIN_ORE: Item = Item {
     tags: ORE_TAGS,
     purchase_properties: PurchaseProperties {
         base_price: 90,
+        base_sell_price: 32,
         ..PurchaseProperties::default()
     },
     ..Item::default()
@@ -80,6 +85,7 @@ pub const GOLD_ORE: Item = Item {
     tags: ORE_TAGS,
     purchase_properties: PurchaseProperties {
         base_price: 520,
+        base_sell_price: 120,
         ..PurchaseProperties::default()
     },
     ..Item::default()
@@ -92,6 +98,7 @@ pub const DIAMOND_ORE: Item = Item {
     tags: ORE_TAGS,
     purchase_properties: PurchaseProperties {
         base_price: 2300,
+        base_sell_price: 800,
         ..PurchaseProperties::default()
     },
     ..Item::default()

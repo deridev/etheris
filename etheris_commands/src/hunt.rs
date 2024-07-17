@@ -99,7 +99,7 @@ pub async fn hunt(mut ctx: CommandContext) -> anyhow::Result<()> {
         })
         .collect::<Vec<_>>();
 
-    let result = encounter::prompt_encounter(&mut ctx, author.clone(), enemies).await?;
+    let result = encounter::prompt_encounter(&mut ctx, author.clone(), enemies, vec![]).await?;
     let Some(_result) = result else {
         return Ok(());
     };

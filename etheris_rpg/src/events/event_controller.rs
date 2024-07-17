@@ -16,11 +16,7 @@ use etheris_discord::{
     *,
 };
 use etheris_framework::{util::make_multiple_rows, watcher::WatcherOptions, *};
-use rand::{
-    rngs::StdRng,
-    seq::{IteratorRandom, SliceRandom},
-    Rng, SeedableRng,
-};
+use rand::{rngs::StdRng, seq::SliceRandom, Rng, SeedableRng};
 
 use crate::{
     data::enemies::Enemy, encounter, shop::Shop, Battle, BattleController, BattleSettings,
@@ -71,6 +67,7 @@ impl EventController {
         while let Some(event) = self.event_queue.pop_front() {
             self.ticks += 1;
             self.execute_single_event(event).await?;
+            tokio::time::sleep(Duration::from_secs(2)).await;
         }
 
         Ok(())
@@ -160,6 +157,7 @@ impl EventController {
             Condition::HasPersonality(personality) => character.personalities.contains(personality),
             Condition::HasEther(ether) => character.stats.ether.value >= *ether,
             Condition::HasKarma(karma) => character.karma >= *karma,
+            Condition::DefeatedBoss(boss_kind) => character.defeated_bosses.contains(boss_kind),
             Condition::SimilarPowerTo(enemy) => pl_range.contains(&(enemy.power_level() as f64)),
             Condition::StrongerThan(enemy) => character.pl > enemy.power_level(),
             Condition::WeakerThan(enemy) => character.pl < enemy.power_level(),
@@ -325,9 +323,8 @@ impl EventController {
         }
 
         let consequence = valid_consequences
-            .iter()
-            .filter(|c| c.probability.generate_random_bool())
-            .choose(&mut StdRng::from_entropy());
+            .choose_weighted(&mut StdRng::from_entropy(), |c| c.probability.value())
+            .ok();
 
         let consequence = match consequence {
             Some(consequence) => consequence,
@@ -431,11 +428,24 @@ impl EventController {
                     })
                     .collect::<Vec<_>>();
 
+                let allies_fighter_data = battle
+                    .allies
+                    .iter()
+                    .map(|e| {
+                        FighterData::new_from_enemy(
+                            0,
+                            e.drop.to_reward(&mut rng, player_pl, e.power_level()),
+                            e.clone(),
+                        )
+                    })
+                    .collect::<Vec<_>>();
+
                 let result = if battle.prompt {
                     encounter::prompt_encounter(
                         &mut self.ctx,
                         self.user.clone(),
                         enemies_fighter_data,
+                        allies_fighter_data,
                     )
                     .await?
                 } else {
@@ -446,6 +456,7 @@ impl EventController {
                         Default::default(),
                     )];
                     fighters.extend_from_slice(&enemies_fighter_data);
+                    fighters.extend_from_slice(&allies_fighter_data);
 
                     let battle = Battle::new(
                         character.region,
@@ -849,6 +860,11 @@ impl EventController {
                     (character.action_points + amount).min(character.max_action_points);
                 self.ctx.db().characters().save(character).await?;
             }
+            ConsequenceKind::AddEther(ether) => {
+                character.stats.ether.value =
+                    (character.stats.ether.value + ether).min(character.stats.ether.max);
+                self.ctx.db().characters().save(character).await?;
+            }
             ConsequenceKind::RemoveEther(ether) => {
                 character.stats.ether.value = character.stats.ether.value.saturating_sub(ether);
                 self.ctx.db().characters().save(character).await?;
@@ -911,7 +927,7 @@ impl EventController {
             .collect::<Vec<_>>();
 
         if !instant {
-            encounter::prompt_encounter(&mut self.ctx, self.user.clone(), enemies).await?;
+            encounter::prompt_encounter(&mut self.ctx, self.user.clone(), enemies, vec![]).await?;
         } else {
             let Some(character) = self
                 .ctx

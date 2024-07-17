@@ -140,8 +140,8 @@ pub const HAKIKO_LEGEND: Item = Item {
     display_name: "A Lenda de Hakiko",
     emoji: Emoji::from_unicode("📜"),
     purchase_properties: PurchaseProperties {
-        base_price: 5000,
-        base_sell_price: 1000,
+        base_price: 3000,
+        base_sell_price: 300,
         ..PurchaseProperties::default()
     },
     pages: &[
@@ -187,6 +187,29 @@ With renewed vigor, Hakiko led his army in a final, decisive charge. His masterf
             content: r#"Hakiko's victory ushered in an era of peace and prosperity known as the Golden Age of the Sword. His legend became a cornerstone of Etheris' history, inspiring generations to come. He was not only a warrior of unparalleled skill but also a symbol of hope, perseverance, and the belief that true strength lies not in violence but in wisdom and self-control.
 
 Though the Golden Age of the Sword eventually faded, Hakiko's legacy continues to shape the world of Etheris. His innovative techniques are still studied by aspiring warriors, and his philosophy of peace and self-mastery continues to resonate with those who seek true strength."#,
+        },
+    ],
+    ..Item::default()
+};
+
+pub const RAT_LORDS_DIARY: Item = Item {
+    identifier: "rat_lords_diary",
+    display_name: "Diário do Senhor dos Ratos",
+    emoji: Emoji::from_unicode("📙"),
+    purchase_properties: PurchaseProperties {
+        base_price: 5000,
+        base_sell_price: 1000,
+        ..PurchaseProperties::default()
+    },
+    pages: &[
+        // Page 1: The Birth of a Legend
+        Page {
+            translate: true,
+            title: "The Birth of a Legend",
+            content: r#"Hakiko was born into a world engulfed by war. From his earliest days, he witnessed the horrors of conflict firsthand. Yet, even amidst the chaos, Hakiko's spirit remained untainted. He possessed an inherent kindness and a deep yearning for peace.
+
+As he grew older, Hakiko's exceptional talent for manipulating ether became evident. He trained relentlessly, honing his skills and developing innovative techniques. 
+His mastery over ether surpassed that of any warrior before him, and his reputation as a prodigy spread throughout the land."#,
         },
     ],
     ..Item::default()

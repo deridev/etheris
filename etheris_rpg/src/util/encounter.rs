@@ -12,6 +12,7 @@ pub async fn prompt_encounter(
     ctx: &mut CommandContext,
     user: User,
     enemies: Vec<FighterData>,
+    allies: Vec<FighterData>,
 ) -> anyhow::Result<Option<BattleResult>> {
     let Some(character) = ctx
         .db()
@@ -153,6 +154,7 @@ pub async fn prompt_encounter(
         0,
         FighterData::new_from_character(0, &character, user, Default::default()),
     );
+    fighters.extend_from_slice(&allies);
 
     let battle = Battle::new(
         character.region,

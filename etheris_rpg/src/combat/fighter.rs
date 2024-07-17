@@ -1,4 +1,5 @@
 use std::{
+    collections::HashMap,
     fmt::Debug,
     ops::{Add, Sub},
     sync::Arc,
@@ -7,10 +8,7 @@ use std::{
 use bitflags::bitflags;
 use etheris_common::{calculate_power_level, Attribute, Probability};
 use etheris_data::{
-    items::{self, Item},
-    personality::Personality,
-    weapon::WeaponKind,
-    SkillKind,
+    items::{self, Item}, personality::Personality, weapon::WeaponKind, BossKind, SkillKind
 };
 use etheris_database::character_model::BattleAction;
 use etheris_discord::{twilight_model::user::User, ButtonBuilder, Emoji};
@@ -129,6 +127,21 @@ pub enum EffectKind {
     LowProtection,
 }
 
+impl EffectKind {
+    pub fn affected_immunity(&self) -> Option<ImmunityKind> {
+        match self {
+            Self::Flaming => Some(ImmunityKind::Fire),
+            Self::Burning => Some(ImmunityKind::Fire),
+            Self::Shocked => Some(ImmunityKind::Electric),
+            Self::Bleeding => Some(ImmunityKind::Bleeding),
+            Self::Poisoned => Some(ImmunityKind::Poison),
+            Self::Ice => Some(ImmunityKind::Ice),
+            Self::Wet => Some(ImmunityKind::Water),
+            _ => None,
+        }
+    }
+}
+
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct Effect {
     pub kind: EffectKind,
@@ -182,6 +195,105 @@ impl FighterWeapon {
 }
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub enum ImmunityKind {
+    Fire,
+    Ice,
+    Water,
+    Poison,
+    Bleeding,
+    Physical,
+    Cut,
+    Electric,
+    Special,
+}
+
+#[derive(Debug, Clone, PartialEq, Default)]
+pub struct BodyImmunities {
+    /// Resistance is a number from 0.0 to 1.0, where 1.0 is the maximum resistance (immune) and 0.0 is no resistance at all (default)
+    pub resistance_map: HashMap<ImmunityKind, f64>,
+    /// Weakness is a number from 0.0 to 2.0, where 2.0 is the maximum weakness (totally vulnerable) and 0.0 is no weakness at all (default)
+    pub weakness_map: HashMap<ImmunityKind, f64>,
+}
+
+impl BodyImmunities {
+    pub fn new() -> Self {
+        Self {
+            resistance_map: HashMap::new(),
+            weakness_map: HashMap::new(),
+        }
+    }
+
+    /// Resistance is a number from 0.0 to 1.0, where 1.0 is the maximum resistance (immune) and 0.0 is no resistance at all (default)
+    pub fn with_resistance(mut self, immunity: ImmunityKind, resistance: f64) -> Self {
+        self.resistance_map.insert(immunity, resistance);
+        self
+    }
+
+    pub fn with_little_resistance(mut self, immunity: ImmunityKind) -> Self {
+        self.resistance_map.insert(immunity, 0.1);
+        self
+    }
+
+    /// Weakness is a number from 0.0 to 2.0, where 2.0 is the maximum weakness (totally vulnerable) and 0.0 is no weakness at all (default)
+    pub fn with_weakness(mut self, immunity: ImmunityKind, weakness: f64) -> Self {
+        self.weakness_map.insert(immunity, weakness);
+        self
+    }
+
+    pub fn with_little_weakness(mut self, immunity: ImmunityKind) -> Self {
+        self.weakness_map.insert(immunity, 0.1);
+        self
+    }
+
+    pub fn add_resistance(&mut self, immunity: ImmunityKind, amount: f64) {
+        let resistance = self.resistance_map.get(&immunity).copied().unwrap_or(0.0) + amount;
+        self.resistance_map
+            .insert(immunity, resistance.clamp(0.0, 1.0));
+    }
+
+    pub fn remove_resistance(&mut self, immunity: ImmunityKind, amount: f64) {
+        let resistance = self.resistance_map.get(&immunity).copied().unwrap_or(0.0) - amount;
+        self.resistance_map
+            .insert(immunity, resistance.clamp(0.0, 1.0));
+    }
+
+    pub fn add_weakness(&mut self, immunity: ImmunityKind, amount: f64) {
+        let weakness = self.weakness_map.get(&immunity).copied().unwrap_or(0.0) + amount;
+        self.weakness_map.insert(immunity, weakness.clamp(0.0, 2.0));
+    }
+
+    pub fn remove_weakness(&mut self, immunity: ImmunityKind, amount: f64) {
+        let weakness = self.weakness_map.get(&immunity).copied().unwrap_or(0.0) - amount;
+        self.weakness_map.insert(immunity, weakness.clamp(0.0, 2.0));
+    }
+
+    pub fn get_resistance(&self, immunity: ImmunityKind) -> f64 {
+        self.resistance_map.get(&immunity).copied().unwrap_or(0.0)
+    }
+
+    pub fn get_weakness(&self, immunity: ImmunityKind) -> f64 {
+        self.weakness_map.get(&immunity).copied().unwrap_or(0.0)
+    }
+
+    pub fn dmg_multiplier_from_immunity(&self, immunity: ImmunityKind) -> f64 {
+        let resistance = self.get_resistance(immunity);
+        let weakness = self.get_weakness(immunity);
+
+        // Damage multiplier is affected by both resistance and weakness
+        // Start with the base multiplier of 1.0 (no change in damage)
+        let base_multiplier = 1.0;
+
+        // Apply resistance (resistance decreases damage, hence we subtract)
+        let after_resistance = base_multiplier - (base_multiplier * resistance);
+
+        // Apply weakness (weakness increases damage, hence we add)
+        let final_multiplier = after_resistance + (after_resistance * weakness);
+
+        final_multiplier
+    }
+}
+
+#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct AiState {
     pub focused_in: FighterIndex,
 }
@@ -195,6 +307,7 @@ pub struct Fighter {
     pub user: Option<User>,
     pub ai_state: Option<AiState>,
     pub brain: Option<FighterBrain>,
+    pub boss: Option<BossKind>,
 
     pub pl: i64,
     pub finishers: Vec<Finisher>,
@@ -210,6 +323,7 @@ pub struct Fighter {
     pub skills: Vec<FighterSkill>,
     pub effects: Vec<Effect>,
     pub modifiers: Modifiers,
+    pub body_immunities: BodyImmunities,
 
     pub is_defeated: bool,
     pub defeated_by: Option<FighterIndex>,
@@ -258,6 +372,7 @@ impl Fighter {
                 None
             },
             brain: data.brain.map(|b| FighterBrain::new(make_brain(b))),
+            boss: data.boss,
 
             image: None,
 
@@ -284,6 +399,7 @@ impl Fighter {
                 .collect(),
             effects: Vec::new(),
             modifiers: Modifiers::new(),
+            body_immunities: data.immunities,
 
             strength_level: data.strength_level,
             intelligence_level: data.intelligence_level,

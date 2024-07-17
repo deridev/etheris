@@ -1,5 +1,6 @@
-use etheris_data::{items, personality::Personality, BrainKind, ShopItem, SkillKind};
+use etheris_data::{items, personality::Personality, ShopItem};
 use rand::{rngs::StdRng, seq::SliceRandom, SeedableRng};
+use weaklings::dangerous_bear;
 
 use super::prelude::*;
 
@@ -152,7 +153,8 @@ make_event!(
                 (WorldRegion::Gloomwood, 1),
                 (WorldRegion::Murkswamp, 3),
                 (WorldRegion::Ethergrove, 1),
-                (WorldRegion::Starbreeze, 1)
+                (WorldRegion::Starbreeze, 1),
+                (WorldRegion::Sunreach, 1)
             ],
             conditions: vec![]
         },
@@ -253,38 +255,6 @@ pub fn basic_forest_knowledge_books_pedestal(_: EventBuildState) -> Event {
     }
 }
 
-make_enemy!(
-    dangerous_bear,
-    Enemy {
-        identifier: "dangerous_bear",
-        name: "Urso Perigoso",
-        base_probability: Probability::NEVER,
-        brain: BrainKind::Simple,
-        regions: &[(WorldRegion::Murkswamp, 1), (WorldRegion::Mudland, 1)],
-        personalities: &[Personality::Aggressiveness],
-        potential: EnemyPotential::Low,
-        strength: 40,
-        intelligence: 5,
-        resistance: 600,
-        vitality: 200,
-        ether: 50,
-        weapon: None,
-        allies: None,
-        skills: vec![
-            SkillKind::ImbuedPunch,
-            SkillKind::Charge,
-            SkillKind::ElectricSlap,
-            SkillKind::Refresh,
-            SkillKind::ResplendentPunch
-        ],
-        drop: EnemyReward {
-            orbs: (40, 90),
-            xp: (80, 120),
-            items: vec![],
-        }
-    }
-);
-
 make_event!(basic_forest_dangerous_button, Event {
     identifier: "basic_forest_dangerous_button",
     spawn: EventSpawn {
@@ -377,7 +347,7 @@ make_event!(
         identifier: "basic_forest_strange_shrine",
         spawn: EventSpawn {
             base_probability: Probability::new(3),
-            weighted_regions: vec![(WorldRegion::Mudland, 1), (WorldRegion::Murkswamp, 1), (WorldRegion::Starbreeze, 2)],
+            weighted_regions: vec![(WorldRegion::Mudland, 1), (WorldRegion::Murkswamp, 1), (WorldRegion::Starbreeze, 2), (WorldRegion::Gloomwood, 1)],
             conditions: vec![]
         },
         emoji: Emoji::from_unicode("⛩️"),
@@ -476,7 +446,7 @@ make_event!(
         },
         emoji: Emoji::from_unicode("🐾"),
         message: EventMessage::Single(
-            "Você encontrou pegadas de um animal na floresta. O que deseja fazer?"
+            "você encontrou pegadas de um animal na floresta. O que deseja fazer?"
         ),
         actions: vec![
             common::ignore_action(),
@@ -493,7 +463,7 @@ make_event!(
                     Consequence {
                         probability: Probability::new(20),
                         kind: ConsequenceKind::Rewards {
-                            message: "Você encontrou o animal e conseguiu alguns recursos!"
+                            message: "você encontrou o animal e conseguiu alguns recursos!"
                                 .to_string(),
                             iterations: 2,
                             items: vec![
@@ -504,7 +474,7 @@ make_event!(
                             xp: XpReward {
                                 strength: (10, 20),
                                 ..Default::default()
-                            }
+                            }   
                         },
                         ..Default::default()
                     }
@@ -516,9 +486,9 @@ make_event!(
 );
 
 make_event!(
-    swamp_murky_waters,
+    basic_swamp_murky_waters,
     Event {
-        identifier: "swamp_murky_waters",
+        identifier: "basic_swamp_murky_waters",
         spawn: EventSpawn {
             weighted_regions: vec![(WorldRegion::Murkswamp, 3)],
             ..Default::default()
@@ -575,16 +545,16 @@ make_event!(
 );
 
 make_event!(
-    swamp_quicksand,
+    basic_swamp_quicksand,
     Event {
-        identifier: "swamp_quicksand",
+        identifier: "basic_swamp_quicksand",
         spawn: EventSpawn {
             base_probability: Probability::new(30),
             weighted_regions: vec![(WorldRegion::Murkswamp, 1)],
             conditions: vec![]
         },
         emoji: Emoji::from_unicode("🕳️"),
-        message: EventMessage::Single("Você se depara com uma área de areia movediça no pântano. O terreno parece instável e perigoso. O que você faz?"),
+        message: EventMessage::Single("você se depara com uma área de areia movediça no pântano. O terreno parece instável e perigoso. O que você faz?"),
         actions: vec![
             Action {
                 name: "Tentar Atravessar Cuidadosamente".to_string(),
@@ -593,7 +563,7 @@ make_event!(
                     Consequence {
                         probability: Probability::new(60),
                         kind: ConsequenceKind::Message {
-                            message: "Com passos cautelosos, você consegue atravessar a área de areia movediça sem incidentes.".to_string(),
+                            message: "com passos cautelosos, você consegue atravessar a área de areia movediça sem incidentes.".to_string(),
                             emoji: Some(Emoji::from_unicode("😌"))
                         },
                         ..Default::default()
@@ -601,7 +571,7 @@ make_event!(
                     Consequence {
                         probability: Probability::new(40),
                         kind: ConsequenceKind::Prejudice {
-                            message: "Você escorrega e fica preso na areia movediça! Consegue se libertar, mas perde alguns itens no processo.".to_string(),
+                            message: "você escorrega e fica preso na areia movediça! Consegue se libertar, mas perde alguns itens no processo.".to_string(),
                             items_amount: (1, 3),
                             max_item_valuability: 100,
                             fixed_orbs: (10, 30),
@@ -618,11 +588,11 @@ make_event!(
             Action {
                 name: "Usar Ether para Flutuar".to_string(),
                 emoji: Some(Emoji::from_unicode("🌀")),
-                conditions: vec![Condition::HasEther(30)],
+                conditions: vec![Condition::HasEther(15)],
                 consequences: vec![
                     Consequence {
                         kind: ConsequenceKind::Rewards {
-                            message: "Você usa seu ether para flutuar sobre a areia movediça, descobrindo um tesouro escondido no processo!".to_string(),
+                            message: "você usa seu ether para flutuar sobre a areia movediça, descobrindo um tesouro escondido no processo!".to_string(),
                             iterations: 1,
                             items: vec![
                                 (Probability::new(80), items::special::GIFT, (1, 1)),
@@ -636,7 +606,7 @@ make_event!(
                         },
                         extra_consequences: vec![
                             Consequence {
-                                kind: ConsequenceKind::RemoveEther(30),
+                                kind: ConsequenceKind::RemoveEther(15),
                                 ..Default::default()
                             }
                         ],
@@ -646,6 +616,317 @@ make_event!(
                 ..Default::default()
             },
             common::ignore_action()
+        ]
+    }
+);
+
+make_event!(
+    basic_forest_ancient_tree_library,
+    Event {
+        identifier: "basic_forest_ancient_tree_library",
+        spawn: EventSpawn {
+            base_probability: Probability::new(10),
+            weighted_regions: vec![
+                (WorldRegion::Ethergrove, 3),
+                (WorldRegion::Starbreeze, 2),
+                (WorldRegion::Gloomwood, 1),
+                (WorldRegion::Sunreach, 1),
+            ],
+            conditions: vec![]
+        },
+        emoji: Emoji::from_unicode("📚"),
+        message: EventMessage::Single(
+            "você encontra uma árvore antiga com prateleiras naturais cheias de livros e pergaminhos. Parece ser uma biblioteca secreta da floresta. O que você faz?"
+        ),
+        actions: vec![
+            common::ignore_action(),
+            Action {
+                name: "Ler um Livro Aleatório".to_string(),
+                emoji: Some(Emoji::from_unicode("📖")),
+                consequences: vec![
+                    Consequence {
+                        probability: Probability::new(70),
+                        kind: ConsequenceKind::Rewards {
+                            message: "você lê um livro fascinante e ganha conhecimento!".to_string(),
+                            iterations: 1,
+                            items: vec![],
+                            orbs: (0, 0),
+                            xp: XpReward {
+                                intelligence: (20, 40),
+                                knowledge: (40, 80),
+                                ..Default::default()
+                            }
+                        },
+                        ..Default::default()
+                    },
+                    Consequence {
+                        probability: Probability::new(30),
+                        kind: ConsequenceKind::Message {
+                            message: "o livro que você escolheu está em uma língua que você não entende.".to_string(),
+                            emoji: Some(Emoji::from_unicode("❓"))
+                        },
+                        ..Default::default()
+                    }
+                ],
+                ..Default::default()
+            },
+            Action {
+                name: "Procurar por Itens Escondidos".to_string(),
+                emoji: Some(Emoji::from_unicode("🔍")),
+                consequences: vec![
+                    Consequence {
+                        probability: Probability::new(50),
+                        kind: ConsequenceKind::Rewards {
+                            message: "você encontra alguns itens interessantes escondidos entre os livros!".to_string(),
+                            iterations: 2,
+                            items: vec![
+                                (Probability::new(80), items::material::PAPER, (3, 7)),
+                                (Probability::new(50), items::consumable::SALT, (1, 3)),
+                                (Probability::new(30), items::consumable::SUGAR, (1, 3)),
+                                (Probability::new(20), items::special::GIFT, (1, 1)),
+                            ],
+                            orbs: (10, 30),
+                            xp: XpReward::default()
+                        },
+                        ..Default::default()
+                    },
+                    Consequence {
+                        probability: Probability::new(30),
+                        kind: ConsequenceKind::Message {
+                            message: "você não encontra nada de especial, mas a busca foi uma boa experiência.".to_string(),
+                            emoji: Some(Emoji::from_unicode("🤷"))
+                        },
+                        ..Default::default()
+                    },
+                    Consequence {
+                        probability: Probability::new(20),
+                        kind: ConsequenceKind::Prejudice {
+                            message: "você acidentalmente derruba uma pilha de livros, causando uma pequena avalanche!".to_string(),
+                            items_amount: (0, 0),
+                            max_item_valuability: 0,
+                            fixed_orbs: (0, 0),
+                            orbs_percentage: 0.0,
+                            specific_items: vec![],
+                            damage_percentage: 0.05,
+                            damage_limit: 20
+                        },
+                        ..Default::default()
+                    }
+                ],
+                ..Default::default()
+            }
+        ]
+    }
+);
+
+make_event!(
+    basic_forest_apple_tree,
+    Event {
+        identifier: "basic_forest_apple_tree",
+        spawn: EventSpawn {
+            base_probability: Probability::new(40),
+            weighted_regions: vec![
+                (WorldRegion::Gloomwood, 2),
+                (WorldRegion::Mudland, 2),
+                (WorldRegion::Ethergrove, 1)
+            ],
+            conditions: vec![]
+        },
+        emoji: items::consumable::APPLE.emoji,
+        message: EventMessage::Single(
+            "você encontra uma árvore carregada de frutas. Elas parecem suculentas."
+        ),
+        actions: vec![
+            common::ignore_action(),
+            Action {
+                name: "Coletar Frutas".to_string(),
+                emoji: Some(Emoji::from_unicode("🧺")),
+                consequences: vec![
+                    Consequence {
+                        probability: Probability::new(90),
+                        kind: ConsequenceKind::Rewards {
+                            message: "você coleta um punhado de frutas frescas.".to_string(),
+                            iterations: 1,
+                            items: vec![
+                                (Probability::new(100), items::consumable::APPLE, (2, 5)),
+                            ],
+                            orbs: (5, 10),
+                            xp: XpReward::default()
+                        },
+                        ..Default::default()
+                    },
+                    Consequence {
+                        probability: Probability::new(10),
+                        kind: ConsequenceKind::Message {
+                            message: "ao se aproximar do arbusto, você espanta um pequeno animal que estava se alimentando das frutas. As frutas já estão mordidas!".to_string(),
+                            emoji: Some(Emoji::from_unicode("🐿️"))
+                        },
+                        ..Default::default()
+                    }
+                ],
+                ..Default::default()
+            }
+        ]
+    }
+);
+
+make_event!(
+    basic_forest_fallen_tree,
+    Event {
+        identifier: "basic_forest_fallen_tree",
+        spawn: EventSpawn {
+            base_probability: Probability::new(35),
+            weighted_regions: vec![
+                (WorldRegion::Gloomwood, 2),
+                (WorldRegion::Mudland, 2),
+                (WorldRegion::Murkswamp, 1)
+            ],
+            conditions: vec![]
+        },
+        emoji: Emoji::from_unicode("🌳"),
+        message: EventMessage::Single(
+            "você se depara com uma grande árvore caída, bloqueando parcialmente o caminho."
+        ),
+        actions: vec![
+            Action {
+                name: "Pular Por Cima".to_string(),
+                emoji: Some(Emoji::from_unicode("🦘")),
+                consequences: vec![
+                    Consequence {
+                        probability: Probability::new(80),
+                        kind: ConsequenceKind::Message {
+                            message:
+                                "você pula habilmente sobre o tronco caído e continua seu caminho."
+                                    .to_string(),
+                            emoji: Some(Emoji::from_unicode("👍"))
+                        },
+                        ..Default::default()
+                    },
+                    Consequence {
+                        probability: Probability::new(20),
+                        kind: ConsequenceKind::Prejudice {
+                            message: "você tropeça ao pular e se arranha levemente.".to_string(),
+                            items_amount: (0, 0),
+                            max_item_valuability: 0,
+                            fixed_orbs: (0, 0),
+                            orbs_percentage: 0.0,
+                            specific_items: vec![],
+                            damage_percentage: 0.05,
+                            damage_limit: 30
+                        },
+                        ..Default::default()
+                    }
+                ],
+                ..Default::default()
+            },
+            Action {
+                name: "Procurar Algo Útil".to_string(),
+                emoji: Some(Emoji::from_unicode("🔍")),
+                consequences: vec![
+                    Consequence {
+                        probability: Probability::new(70),
+                        kind: ConsequenceKind::Rewards {
+                            message: "você encontra alguns gravetos úteis perto da árvore caída."
+                                .to_string(),
+                            iterations: 1,
+                            items: vec![(Probability::new(100), items::material::STICK, (2, 5)),],
+                            orbs: (0, 2),
+                            xp: XpReward::default()
+                        },
+                        ..Default::default()
+                    },
+                    Consequence {
+                        probability: Probability::new(30),
+                        kind: ConsequenceKind::Message {
+                            message: "você não encontra nada de útil.".to_string(),
+                            emoji: Some(Emoji::from_unicode("🤷"))
+                        },
+                        ..Default::default()
+                    }
+                ],
+                ..Default::default()
+            }
+        ]
+    }
+);
+
+make_event!(
+    basic_forest_unusual_rock,
+    Event {
+        identifier: "basic_forest_unusual_rock",
+        spawn: EventSpawn {
+            base_probability: Probability::new(25),
+            weighted_regions: vec![
+                (WorldRegion::Mudland, 2),
+                (WorldRegion::Gloomwood, 1),
+                (WorldRegion::Ethergrove, 1)
+            ],
+            conditions: vec![]
+        },
+        emoji: Emoji::from_unicode("🪨"),
+        message: EventMessage::Single(
+            "você nota uma rocha com uma forma incomum. Parece um pouco fora de lugar."
+        ),
+        actions: vec![
+            common::ignore_action(),
+            Action {
+                name: "Examinar a Rocha".to_string(),
+                emoji: Some(Emoji::from_unicode("🔍")),
+                consequences: vec![
+                    Consequence {
+                        probability: Probability::new(60),
+                        kind: ConsequenceKind::Rewards {
+                            message: "ao examinar de perto, você encontra rochas menores por perto".to_string(),
+                            iterations: 1,
+                            items: vec![
+                                (Probability::new(70), items::material::STONE, (1, 4)),
+                            ],
+                            orbs: (1, 15),
+                            xp: XpReward::default()
+                        },
+                        ..Default::default()
+                    },
+                    Consequence {
+                        probability: Probability::new(40),
+                        kind: ConsequenceKind::Message {
+                            message: "após um exame cuidadoso, você conclui que é apenas uma rocha comum, mas interessante.".to_string(),
+                            emoji: Some(Emoji::from_unicode("🤔"))
+                        },
+                        ..Default::default()
+                    }
+                ],
+                ..Default::default()
+            },
+            Action {
+                name: "Quebrar".to_string(),
+                emoji: Some(items::tool::PICKAXE.emoji),
+                consequences: vec![
+                    Consequence {
+                        probability: Probability::new(60),
+                        kind: ConsequenceKind::Rewards {
+                            message: "você quebra a rocha e encontra alguns minerais!".to_string(),
+                            iterations: 3,
+                            items: vec![
+                                (Probability::new(100), items::material::STONE, (1, 3)),
+                                (Probability::new(100), items::ore::COAL_ORE, (1, 3)),
+                                (Probability::new(70), items::ore::COPPER_ORE, (1, 3)),
+                                (Probability::new(50), items::ore::IRON_ORE, (1, 3)),
+                                (Probability::new(50), items::ore::TIN_ORE, (1, 3)),
+                                (Probability::new(50), items::ore::LEAD_ORE, (1, 3)),
+                            ],
+                            orbs: (0, 0),
+                            xp: XpReward {
+                                health: (0, 0),
+                                intelligence: (0, 0),
+                                strength: (10, 20),
+                                knowledge: (0, 0)
+                            }
+                        },
+                        ..Default::default()
+                    },
+                ],
+                ..Default::default()
+            }
         ]
     }
 );

@@ -48,6 +48,7 @@ use_skill!(overcoming);
 use_skill!(hakikotenchou);
 use_skill!(skill_mirror);
 use_skill!(ether_flow);
+use_skill!(pyrotransmutation);
 
 pub static ALL_SKILLS: Lazy<Vec<Box<dyn super::Skill + Send + Sync>>> = Lazy::new(|| {
     SkillKind::list()
@@ -97,5 +98,6 @@ pub fn get_boxed_skill_from_kind(kind: SkillKind) -> Box<dyn super::Skill + Send
         SkillKind::Hakikotenchou => Box::<Hakikotenchou>::default(),
         SkillKind::SkillMirror => Box::<SkillMirror>::default(),
         SkillKind::EtherFlow => Box::<EtherFlow>::default(),
+        SkillKind::Pyrotransmutation => Box::<Pyrotransmutation>::default(),
     }
 }
