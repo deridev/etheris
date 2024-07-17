@@ -231,7 +231,7 @@ pub fn basic_general_traveller_riddle(_: EventBuildState) -> Event {
                 kind: if answer == correct_answer {
                     ConsequenceKind::Rewards {
                         message: format!(
-                            "'Correto!', exclama o viajante. Ele lhe entrega uma recompensa."
+                            "\"Correto!\", exclama o viajante. Ele lhe entrega uma recompensa."
                         ),
                         iterations: 1,
                         items: vec![(Probability::new(100), items::special::GIFT, (1, 1))],
@@ -245,7 +245,7 @@ pub fn basic_general_traveller_riddle(_: EventBuildState) -> Event {
                 } else {
                     ConsequenceKind::Message {
                         message:
-                            "'Incorreto', diz o viajante, desaparecendo em uma nuvem de fumaça."
+                            "\"Incorreto\", diz o viajante, desaparecendo em uma nuvem de fumaça."
                                 .to_string(),
                         emoji: Some(Emoji::from_unicode("💨")),
                     }
@@ -278,8 +278,8 @@ pub fn basic_general_traveller_riddle(_: EventBuildState) -> Event {
         },
         emoji: Emoji::from_unicode("🧙"),
         message: EventMessage::MultipleString(vec![
-            format!("você encontra um viajante misterioso que lhe propõe um enigma. 'Responda corretamente e será recompensado', diz ele. '{}'", riddle),
-            format!("uma figura estranha te para e solta uma frase misteriosa. 'Responda corretamente o enigma e será recompensado', diz ele. '{}'", riddle),
+            format!("você encontra um viajante misterioso que lhe propõe um enigma. \"Responda corretamente e será recompensado\", diz ele. \"{}\"", riddle),
+            format!("uma figura estranha te para e solta uma frase misteriosa. \"Responda corretamente o enigma e será recompensado\", diz ele. \"{}\"", riddle),
         ]),
         actions,
     }
