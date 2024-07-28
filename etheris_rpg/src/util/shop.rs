@@ -224,6 +224,19 @@ impl Shop {
                 ctx = CommandContext::from_with_interaction(&ctx, Box::new(interaction.clone()));
             }
 
+            if !buying && !character.has_item(&item, 1) {
+                let error_message = EmbedBuilder::new_common()
+                    .set_color(Color::RED)
+                    .set_author_to_user(&user)
+                    .set_description(format!(
+                        "você não possui **{}** no inventário para poder vender!",
+                        item.display_name
+                    ));
+                ctx.update_message(Response::from(error_message).remove_all_components())
+                    .await?;
+                continue;
+            }
+
             let mut buy_embed = EmbedBuilder::new_common()
                 .set_color(Color::YELLOW)
                 .set_author_to_user(&user)

@@ -106,7 +106,8 @@ impl Display for WorldRegion {
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
 pub struct RegionData {
     pub kind: RegionKind,
-    pub travel_price: i64,
+    pub first_travel_price: i64,
+    pub after_travel_price: i64,
 }
 
 #[derive(Debug, Clone, PartialEq, PartialOrd)]
@@ -125,63 +126,78 @@ impl WorldRegion {
         match self {
             Self::Greenagis => RegionData {
                 kind: RegionKind::Plains,
-                travel_price: 0,
+                first_travel_price: 100,
+                after_travel_price: 0,
             },
             Self::Emerelis => RegionData {
                 kind: RegionKind::Plains,
-                travel_price: 150,
+                first_travel_price: 300,
+                after_travel_price: 150,
             },
             Self::Gloomwood => RegionData {
                 kind: RegionKind::Forest,
-                travel_price: 200,
+                first_travel_price: 500,
+                after_travel_price: 200,
             },
             Self::Metrolis => RegionData {
                 kind: RegionKind::City,
-                travel_price: 300,
+                first_travel_price: 800,
+                after_travel_price: 100,
             },
             Self::Mudland => RegionData {
                 kind: RegionKind::Forest,
-                travel_price: 400,
+                first_travel_price: 800,
+                after_travel_price: 300,
             },
             Self::Murkswamp => RegionData {
                 kind: RegionKind::Swamp,
-                travel_price: 550,
+                first_travel_price: 1100,
+                after_travel_price: 450,
             },
             Self::Sunreach => RegionData {
                 kind: RegionKind::Savannah,
-                travel_price: 700,
+                first_travel_price: 1300,
+                after_travel_price: 550,
             },
             Self::Tenypt => RegionData {
                 kind: RegionKind::Desert,
-                travel_price: 900,
+                first_travel_price: 1200,
+                after_travel_price: 600,
             },
             Self::Ethergrove => RegionData {
                 kind: RegionKind::EtherealForest,
-                travel_price: 1000,
+                first_travel_price: 1500,
+                after_travel_price: 800,
             },
             Self::Starbreeze => RegionData {
                 kind: RegionKind::EtherealForest,
-                travel_price: 1300,
+                first_travel_price: 1800,
+                after_travel_price: 800,
             },
             Self::SwordTown => RegionData {
                 kind: RegionKind::City,
-                travel_price: 1500,
+                first_travel_price: 2000,
+                after_travel_price: 500,
             },
             Self::Sandywater => RegionData {
                 kind: RegionKind::Desert,
-                travel_price: 2000,
+                first_travel_price: 2000,
+                after_travel_price: 500,
             },
             Self::Midgrass => RegionData {
                 kind: RegionKind::Plains,
-                travel_price: 1250,
+                first_travel_price: 2500,
+                after_travel_price: 750,
             },
             Self::Wornpeaks => RegionData {
                 kind: RegionKind::Mountains,
-                travel_price: 3000,
+                first_travel_price: 3500,
+                after_travel_price: 1000,
             },
             Self::Icefields => RegionData {
                 kind: RegionKind::Tundra,
-                travel_price: 2500,
+                first_travel_price: 3000,
+                after_travel_price: 600,
             },
         }
     }

@@ -182,8 +182,8 @@ make_event!(
                     Consequence {
                         kind: ConsequenceKind::Prejudice {
                             message: "Você paga a taxa de proteção aos retalhadores.".to_string(),
-                            items_amount: (0, 0),
-                            max_item_valuability: 0,
+                            items_amount: (1, 3),
+                            max_item_valuability: 200,
                             fixed_orbs: (100, 200),
                             orbs_percentage: 0.1,
                             specific_items: vec![],
@@ -235,7 +235,7 @@ make_event!(
 make_event!(shredder_training, Event {
     identifier: "shredder_training",
     spawn: EventSpawn {
-        base_probability: Probability::new(10),
+        base_probability: Probability::new(25),
         weighted_regions: vec![(WorldRegion::Gloomwood, 2), (WorldRegion::Mudland, 3)],
         conditions: vec![
             Condition::HasTag(TAG),
@@ -259,14 +259,15 @@ make_event!(shredder_training, Event {
                         items: vec![],
                         orbs: (0, 0),
                         xp: XpReward {
-                            knowledge: (20, 50),
+                            knowledge: (10, 40),
+                            intelligence: (10, 40),
                             ..Default::default()
                         }
                     },
                     extra_consequences: vec![
                         Consequence {
                             probability: Probability::new(50),
-                            kind: ConsequenceKind::AddActionPoint(1),
+                            kind: ConsequenceKind::AddActionPoint(3),
                             ..Default::default()
                         }
                     ],

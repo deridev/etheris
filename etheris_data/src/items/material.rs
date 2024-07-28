@@ -15,6 +15,11 @@ pub const ALL_ITEMS: &[Item] = &[
     TOOL_HANDLE,
     BONE,
     SCORPION_FANG,
+    COAL,
+    IRON_BAR,
+    COPPER_BAR,
+    SILVER_BAR,
+    GOLD_BAR,
 ];
 
 pub const STONE: Item = Item {
@@ -141,5 +146,70 @@ pub const SCORPION_FANG: Item = Item {
         ..PurchaseProperties::default()
     },
     weapon: Some(WeaponKind::ScorpionFang),
+    ..Item::default()
+};
+
+pub const COAL: Item = Item {
+    identifier: "coal",
+    display_name: "Carvão",
+    emoji: Emoji::from_emote(Some("coal"), 1177300387598966856),
+    tags: MATERIAL_TAGS,
+    purchase_properties: PurchaseProperties {
+        base_price: 50,
+        base_sell_price: 12,
+        ..PurchaseProperties::default()
+    },
+    ..Item::default()
+};
+
+pub const IRON_BAR: Item = Item {
+    identifier: "iron_bar",
+    display_name: "Barra de Ferro",
+    emoji: Emoji::from_emote(Some("iron_bar"), 1177299694997745735),
+    tags: MATERIAL_TAGS,
+    purchase_properties: PurchaseProperties {
+        base_price: 120,
+        base_sell_price: 20,
+        ..PurchaseProperties::default()
+    },
+    ..Item::default()
+};
+
+pub const COPPER_BAR: Item = Item {
+    identifier: "copper_bar",
+    display_name: "Barra de Cobre",
+    emoji: Emoji::from_emote(Some("copper_bar"), 1177299656250769408),
+    tags: MATERIAL_TAGS,
+    purchase_properties: PurchaseProperties {
+        base_price: 80,
+        base_sell_price: 15,
+        ..PurchaseProperties::default()
+    },
+    ..Item::default()
+};
+
+pub const SILVER_BAR: Item = Item {
+    identifier: "silver_bar",
+    display_name: "Barra de Prata",
+    emoji: Emoji::from_emote(Some("silver_bar"), 1177299735745400962),
+    tags: MATERIAL_TAGS,
+    purchase_properties: PurchaseProperties {
+        base_price: 100,
+        base_sell_price: 30,
+        ..PurchaseProperties::default()
+    },
+    ..Item::default()
+};
+
+pub const GOLD_BAR: Item = Item {
+    identifier: "gold_bar",
+    display_name: "Barra de Ouro",
+    emoji: Emoji::from_emote(Some("gold_bar"), 1177299633437949992),
+    tags: MATERIAL_TAGS,
+    purchase_properties: PurchaseProperties {
+        base_price: 800,
+        base_sell_price: 125,
+        ..PurchaseProperties::default()
+    },
     ..Item::default()
 };

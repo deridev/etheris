@@ -42,6 +42,7 @@ make_enemy!(
             SkillKind::Overcoming,
             SkillKind::Suplex,
             SkillKind::Refresh,
+            SkillKind::GarhyanRatSummon,
         ],
         drop: EnemyReward {
             orbs: (300, 500),
@@ -51,6 +52,173 @@ make_enemy!(
                     amount: (1, 1),
                     item: items::special::INVIGORATING_CRYSTAL,
                     probability: Probability::new(100),
+                },
+                EnemyRewardItem {
+                    amount: (1, 1),
+                    item: items::special::INTELLIGENCE_CRYSTAL,
+                    probability: Probability::new(50),
+                },
+                EnemyRewardItem {
+                    amount: (1, 1),
+                    item: items::special::GIFT,
+                    probability: Probability::new(100),
+                }
+            ],
+        },
+    }
+);
+
+make_enemy!(
+    agorath,
+    Enemy {
+        identifier: "agorath",
+        name: BossKind::Agorath.name(),
+        base_probability: Probability::NEVER,
+        brain: BrainKind::Boss,
+        boss: Some(BossKind::Agorath),
+        regions: &[],
+        personalities: &[Personality::Aggressiveness, Personality::Courage,],
+        potential: EnemyPotential::High,
+        immunities: BodyImmunities::new()
+            .with_resistance(ImmunityKind::Physical, 0.5)
+            .with_resistance(ImmunityKind::Cut, 0.3)
+            .with_little_weakness(ImmunityKind::Electric),
+        strength: 70,
+        intelligence: 39,
+        resistance: 980,
+        vitality: 280,
+        ether: 50,
+        weapon: None,
+        allies: None,
+        skills: vec![
+            SkillKind::AgorathForcedDuel,
+            SkillKind::Intimidation,
+            SkillKind::Overcoming,
+            SkillKind::Charge,
+            SkillKind::TornadoKick,
+        ],
+        drop: EnemyReward {
+            orbs: (500, 800),
+            xp: (250, 400),
+            items: vec![
+                EnemyRewardItem {
+                    amount: (1, 1),
+                    item: items::special::INVIGORATING_CRYSTAL,
+                    probability: Probability::new(100),
+                },
+                EnemyRewardItem {
+                    amount: (1, 1),
+                    item: items::special::INTELLIGENCE_CRYSTAL,
+                    probability: Probability::new(50),
+                },
+                EnemyRewardItem {
+                    amount: (1, 1),
+                    item: items::special::GIFT,
+                    probability: Probability::new(100),
+                }
+            ],
+        },
+    }
+);
+
+make_enemy!(
+    orsinium,
+    Enemy {
+        identifier: "orsinium",
+        name: BossKind::Orsinium.name(),
+        base_probability: Probability::NEVER,
+        brain: BrainKind::Boss,
+        boss: Some(BossKind::Orsinium),
+        regions: &[],
+        personalities: &[Personality::Courage, Personality::Calm],
+        potential: EnemyPotential::High,
+        immunities: BodyImmunities::new()
+            .with_resistance(ImmunityKind::Physical, 0.8)
+            .with_resistance(ImmunityKind::Electric, 0.6)
+            .with_resistance(ImmunityKind::Bleeding, 0.8)
+            .with_little_weakness(ImmunityKind::Water),
+        strength: 112,
+        intelligence: 25,
+        resistance: 1428,
+        vitality: 515,
+        ether: 60,
+        weapon: None,
+        allies: None,
+        skills: vec![
+            SkillKind::Refresh,
+            SkillKind::InstinctiveReaction,
+            SkillKind::FirePunch,
+            SkillKind::CursedBlood,
+            SkillKind::IcyShot,
+        ],
+        drop: EnemyReward {
+            orbs: (500, 800),
+            xp: (250, 400),
+            items: vec![
+                EnemyRewardItem {
+                    amount: (1, 1),
+                    item: items::special::INVIGORATING_CRYSTAL,
+                    probability: Probability::new(100),
+                },
+                EnemyRewardItem {
+                    amount: (1, 1),
+                    item: items::special::INTELLIGENCE_CRYSTAL,
+                    probability: Probability::new(50),
+                },
+                EnemyRewardItem {
+                    amount: (1, 1),
+                    item: items::special::GIFT,
+                    probability: Probability::new(100),
+                }
+            ],
+        },
+    }
+);
+
+make_enemy!(
+    ethria,
+    Enemy {
+        identifier: "ethria",
+        name: BossKind::Ethria.name(),
+        base_probability: Probability::NEVER,
+        brain: BrainKind::Boss,
+        boss: Some(BossKind::Ethria),
+        regions: &[],
+        personalities: &[Personality::Arrogance, Personality::Intelligence],
+        potential: EnemyPotential::High,
+        immunities: BodyImmunities::new()
+            .with_resistance(ImmunityKind::Cut, 0.4)
+            .with_resistance(ImmunityKind::Ice, 0.2)
+            .with_little_weakness(ImmunityKind::Electric),
+        strength: 47,
+        intelligence: 139,
+        resistance: 121,
+        vitality: 312,
+        ether: 150,
+        weapon: Some(WeaponKind::EthriaKatana),
+        allies: None,
+        skills: vec![
+            SkillKind::EthriaAdaptation,
+            SkillKind::CursedBlood,
+            SkillKind::AtomicHollow,
+            SkillKind::Hakikotenchou,
+            SkillKind::EtherFlow,
+            SkillKind::FlamingBall,
+            SkillKind::Suplex,
+        ],
+        drop: EnemyReward {
+            orbs: (500, 800),
+            xp: (250, 400),
+            items: vec![
+                EnemyRewardItem {
+                    amount: (1, 1),
+                    item: items::special::INVIGORATING_CRYSTAL,
+                    probability: Probability::new(100),
+                },
+                EnemyRewardItem {
+                    amount: (1, 1),
+                    item: items::special::INTELLIGENCE_CRYSTAL,
+                    probability: Probability::new(50),
                 },
                 EnemyRewardItem {
                     amount: (1, 1),

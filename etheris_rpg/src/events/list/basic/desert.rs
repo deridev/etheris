@@ -400,6 +400,55 @@ make_event!(
 );
 
 make_event!(
+    basic_desert_abandoned_campsite,
+    Event {
+        identifier: "basic_desert_abandoned_campsite",
+        spawn: EventSpawn {
+            weighted_regions: vec![(WorldRegion::Tenypt, 1), (WorldRegion::Sandywater, 2),],
+            ..Default::default()
+        },
+        emoji: Emoji::from_unicode("🏕️"),
+        message: EventMessage::Single(
+            "você encontrou um acampamento abandonado. O que deseja fazer?"
+        ),
+        actions: vec![
+            common::ignore_action(),
+            Action {
+                name: "Vasculhar".to_string(),
+                emoji: Some(Emoji::from_unicode("🔍")),
+                consequences: vec![
+                    common::consequence_didnt_find_anything(Probability::new(20)),
+                    Consequence {
+                        probability: Probability::new(70),
+                        kind: ConsequenceKind::Rewards {
+                            message: "você encontrou algumas coisas úteis no acampamento!"
+                                .to_string(),
+                            iterations: 3,
+                            items: vec![
+                                (Probability::new(80), items::consumable::WATER, (1, 3)),
+                                (Probability::new(60), items::consumable::FRIED_EGG, (1, 2)),
+                                (Probability::new(40), items::consumable::APPLE, (1, 2)),
+                                (Probability::new(20), items::material::STICK, (2, 5)),
+                                (Probability::new(10), items::tool::SHOVEL, (1, 1)),
+                            ],
+                            orbs: (5, 20),
+                            xp: XpReward::default()
+                        },
+                        ..Default::default()
+                    },
+                    Consequence {
+                        probability: Probability::new(10),
+                        kind: ConsequenceKind::FindARegionEnemy,
+                        ..Default::default()
+                    }
+                ],
+                ..Default::default()
+            }
+        ]
+    }
+);
+
+make_event!(
     basic_desert_ancient_ruins,
     Event {
         identifier: "basic_desert_ancient_ruins",
@@ -427,7 +476,7 @@ make_event!(
                                 (Probability::new(60), items::ore::COPPER_ORE, (0, 2)),
                                 (Probability::new(50), items::ore::GOLD_ORE, (1, 3)),
                                 (Probability::new(30), items::special::GIFT, (0, 1)),
-                                (Probability::new(15), items::special::INVIGORATING_CRYSTAL, (1, 1)),
+                                (Probability::new(3), items::special::INVIGORATING_CRYSTAL, (1, 1)),
                             ],
                             orbs: (25, 100),
                             xp: XpReward {

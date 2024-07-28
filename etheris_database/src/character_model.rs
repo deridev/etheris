@@ -258,6 +258,7 @@ pub struct CharacterModel {
     pub learnable_skills: Vec<SkillKind>,
 
     pub defeated_bosses: HashSet<BossKind>,
+    pub visited_regions: HashSet<WorldRegion>,
 
     pub region: WorldRegion,
     pub weapon: Option<WeaponKind>,
@@ -337,6 +338,7 @@ impl CharacterModel {
             skills,
             personalities,
 
+            visited_regions: HashSet::new(),
             region: WorldRegion::Greenagis,
             weapon: None,
             defeated_bosses: HashSet::new(),

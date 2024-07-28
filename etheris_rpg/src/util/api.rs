@@ -107,19 +107,19 @@ impl<'a> BattleApi<'a> {
         }
 
         let mut finish_threshold = if self.target().balance < 50 {
-            0.3
+            0.35
         } else {
-            0.15
+            0.2
         };
-        if self.target().health().max > 1000 {
-            finish_threshold *= 0.5;
+
+        if self.target().health().max > 600 {
+            finish_threshold *= 0.4;
         }
 
         let can_finish = (self.target().vitality.value as f32)
             <= ((self.target().vitality.max as f32) * finish_threshold);
 
         can_finish
-            && self.target().composure != Composure::OnGround
             && self.target().defense < 1
             && self.fighter().composure != Composure::OnGround
             && !self.fighter().finishers.is_empty()
@@ -394,6 +394,8 @@ impl<'a> BattleApi<'a> {
             falling_prob *= 1.1;
         }
 
+        // turn_end_queues are used for passives like on_damage or on_damage_miss
+        // This is a hack to make the passives work, but it's not the best solution
         self.battle_mut()
             .turn_end_queues
             .damages
@@ -407,9 +409,10 @@ impl<'a> BattleApi<'a> {
         }
 
         let has_fallen = self.battle_mut().rng.gen_bool(falling_prob);
-
         let target = self.battle_mut().get_fighter(target_index).clone();
 
+        // The fall-on-damage feature.
+        // Note that the turn message should be deferred so that it can be shown after the turn
         if !missed
             && target.composure != Composure::OnGround
             && has_fallen
@@ -431,12 +434,14 @@ impl<'a> BattleApi<'a> {
             .cloned()
             .unwrap_or_default();
 
-            self.battle_mut().deferred_turn_messages.push(message);
+            self.defer_message(message);
         }
 
+        // This is pretty rare BUT is a possibility.
         if missed
             && target.composure == Composure::OnGround
             && Probability::new(40).generate_random_bool()
+            && target.balance > 60
         {
             self.battle_mut().get_fighter_mut(target_index).composure = Composure::OnGround;
 

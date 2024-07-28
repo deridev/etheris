@@ -181,6 +181,7 @@ impl FighterWeapon {
             WeaponKind::Bat => "Bater",
             WeaponKind::Spear => "Perfurar",
             WeaponKind::Katana => "Cortar",
+            WeaponKind::EthriaKatana => "Cortar",
             WeaponKind::Umbrella => "Bater",
             WeaponKind::ScorpionFang => "Atacar",
         }
@@ -268,6 +269,16 @@ impl BodyImmunities {
     pub fn remove_weakness(&mut self, immunity: ImmunityKind, amount: f64) {
         let weakness = self.weakness_map.get(&immunity).copied().unwrap_or(0.0) - amount;
         self.weakness_map.insert(immunity, weakness.clamp(0.0, 2.0));
+    }
+
+    pub fn increase_resistance(&mut self, immunity: ImmunityKind, amount: f64) {
+        let weakness = self.weakness_map.get(&immunity).copied().unwrap_or(0.0);
+        if weakness - amount < 0.0 {
+            self.weakness_map.remove(&immunity);
+            self.add_resistance(immunity, amount);
+        } else {
+            self.remove_weakness(immunity, amount);
+        }
     }
 
     pub fn get_resistance(&self, immunity: ImmunityKind) -> f64 {

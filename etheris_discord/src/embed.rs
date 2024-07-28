@@ -180,6 +180,7 @@ impl EmbedBuilder {
     pub fn add_description_text(mut self, description: impl ToString) -> Self {
         if let Some(embed_description) = &mut self.embed.description {
             embed_description.push_str(&description.to_string());
+            *embed_description = embed_description.trim().to_string();
         } else {
             self = self.set_description(description);
         }

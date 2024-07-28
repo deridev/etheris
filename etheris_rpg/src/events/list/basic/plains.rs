@@ -15,7 +15,7 @@ use super::prelude::*;
 make_event!(basic_plains_exploration, Event {
     identifier: "basic_plains_exploration",
     spawn: EventSpawn {
-        weighted_regions: vec![(WorldRegion::Greenagis, 10), (WorldRegion::Emerelis, 10)],
+        weighted_regions: vec![(WorldRegion::Greenagis, 10), (WorldRegion::Emerelis, 10), (WorldRegion::Midgrass, 10)],
         ..Default::default()
     },
     emoji: Emoji::from_unicode("🗺️"),
@@ -68,7 +68,7 @@ make_event!(
         identifier: "basic_plains_old_man_help",
         spawn: EventSpawn {
             base_probability: Probability::new(15),
-            weighted_regions: vec![(WorldRegion::Greenagis, 2), (WorldRegion::Emerelis, 2), (WorldRegion::Midgrass, 1), (WorldRegion::Gloomwood, 1)],
+            weighted_regions: vec![(WorldRegion::Greenagis, 2), (WorldRegion::Emerelis, 2), (WorldRegion::Midgrass, 1),(WorldRegion::Starbreeze, 1), (WorldRegion::Gloomwood, 1), (WorldRegion::Mudland, 1), (WorldRegion::Sunreach, 1)],
             conditions: vec![]
         },
         emoji: Emoji::from_unicode("👴"),
@@ -154,6 +154,84 @@ make_event!(
                 ..Default::default()
             },
         ],
+    }
+);
+
+make_event!(
+    basic_plains_lost_traveler,
+    Event {
+        identifier: "basic_plains_lost_traveler",
+        spawn: EventSpawn {
+            base_probability: Probability::new(30),
+            weighted_regions: vec![(WorldRegion::Greenagis, 1), (WorldRegion::Emerelis, 1), (WorldRegion::Midgrass, 2)],
+            conditions: vec![]
+        },
+        emoji: Emoji::from_unicode("🧭"),
+        message: EventMessage::Single("você encontrou um viajante perdido. Ele parece confuso e pede sua ajuda. O que você quer fazer?"),
+        actions: vec![
+            common::ignore_action(),
+            Action {
+                name: "Ajudar".to_string(),
+                emoji: None,
+                consequences: vec![
+                    Consequence {
+                        kind: ConsequenceKind::Rewards {
+                            message: "o viajante ficou muito agradecido pela sua ajuda e ofereceu alguns itens como recompensa!".to_string(),
+                            iterations: 2,
+                            items: vec![
+                                (Probability::new(70), items::consumable::WATER, (1, 2)),
+                                (Probability::new(50), items::consumable::BREAD, (1, 1)),
+                                (Probability::new(30), items::material::PAPER, (1, 1)),
+                            ],
+                            orbs: (10, 30),
+                            xp: XpReward {
+                                health: (0, 5),
+                                intelligence: (0, 10),
+                                strength: (0, 5),
+                                knowledge: (0, 10)
+                            }
+                        },
+                        extra_consequences: vec![Consequence {
+                            kind: ConsequenceKind::AddKarma(1),
+                            ..Default::default()
+                        }],
+                        ..Default::default()
+                    }
+                ],
+                ..Default::default()
+            },
+            Action {
+                name: "Roubar".to_string(),
+                emoji: None,
+                consequences: vec![
+                    Consequence {
+                        kind: ConsequenceKind::Rewards {
+                            message: "você aproveitou a confusão do viajante e roubou alguns de seus pertences!".to_string(),
+                            iterations: 1,
+                            items: vec![
+                                (Probability::new(80), items::consumable::WATER, (1, 3)),
+                                (Probability::new(60), items::consumable::BREAD, (1, 2)),
+                                (Probability::new(40), items::material::PAPER, (1, 1)),
+                                (Probability::new(20), items::ore::COAL_ORE, (1, 3)),
+                            ],
+                            orbs: (20, 50),
+                            xp: XpReward {
+                                health: (0, 0),
+                                intelligence: (0, 5),
+                                strength: (0, 10),
+                                knowledge: (0, 0)
+                            }
+                        },
+                        extra_consequences: vec![Consequence {
+                            kind: ConsequenceKind::RemoveKarma(2),
+                            ..Default::default()
+                        }],
+                        ..Default::default()
+                    }
+                ],
+                ..Default::default()
+            }
+        ]
     }
 );
 
@@ -410,6 +488,7 @@ make_event!(
             weighted_regions: vec![
                 (WorldRegion::Greenagis, 1),
                 (WorldRegion::Mudland, 1),
+                (WorldRegion::Midgrass, 1),
                 (WorldRegion::Emerelis, 1),
                 (WorldRegion::Gloomwood, 1),
                 (WorldRegion::Sunreach, 1)
@@ -970,7 +1049,8 @@ make_event!(
             weighted_regions: vec![
                 (WorldRegion::Greenagis, 1),
                 (WorldRegion::Emerelis, 1),
-                (WorldRegion::Gloomwood, 2)
+                (WorldRegion::Gloomwood, 2),
+                (WorldRegion::Midgrass, 2),
             ],
             ..Default::default()
         },
@@ -1054,9 +1134,11 @@ make_event!(
         identifier: "basic_plains_small_stream",
         spawn: EventSpawn {
             weighted_regions: vec![
-                (WorldRegion::Greenagis, 3),
-                (WorldRegion::Emerelis, 3),
-                (WorldRegion::Mudland, 2)
+                (WorldRegion::Greenagis, 1),
+                (WorldRegion::Emerelis, 1),
+                (WorldRegion::Mudland, 1),
+                (WorldRegion::Midgrass, 1),
+                (WorldRegion::Sunreach, 1),
             ],
             ..Default::default()
         },
@@ -1096,15 +1178,20 @@ make_event!(
                         kind: ConsequenceKind::Rewards {
                             message: "você conseguiu pegar alguns peixes e outros itens do riacho!"
                                 .to_string(),
-                            iterations: 2,
+                            iterations: 3,
                             items: vec![
-                                (Probability::new(100), items::consumable::WATER, (1, 2)),
+                                (Probability::new(100), items::consumable::WATER, (1, 1)),
                                 (
                                     Probability::new(100),
                                     items::consumable::COMMON_FISH,
                                     (1, 1)
                                 ),
-                                (Probability::new(30), items::material::STONE, (1, 3)),
+                                (
+                                    Probability::new(100),
+                                    items::consumable::TROPICAL_FISH,
+                                    (1, 1)
+                                ),
+                                (Probability::new(30), items::material::STONE, (1, 2)),
                             ],
                             orbs: (5, 20),
                             xp: XpReward {
@@ -1138,6 +1225,7 @@ make_event!(
                 (WorldRegion::Mudland, 1),
                 (WorldRegion::Murkswamp, 2),
                 (WorldRegion::Sunreach, 1),
+                (WorldRegion::Midgrass, 1),
             ],
             conditions: vec![]
         },
@@ -1193,6 +1281,133 @@ make_event!(
                         ..Default::default()
                     }
                 ],
+                ..Default::default()
+            }
+        ]
+    }
+);
+
+make_event!(
+    basic_plains_training_person,
+    Event {
+        identifier: "basic_plains_training_person",
+        spawn: EventSpawn {
+            base_probability: Probability::new(20),
+            weighted_regions: vec![
+                (WorldRegion::Greenagis, 1),
+                (WorldRegion::Emerelis, 1),
+                (WorldRegion::Midgrass, 1),
+                (WorldRegion::Mudland, 1),
+                (WorldRegion::Sunreach, 1),
+            ],
+            conditions: vec![]
+        },
+        emoji: Emoji::from_unicode("🏋️‍♂️"),
+        message: EventMessage::Single("você encontrou alguém treinando em plena luz do dia. Você quer treinar com ela?"),
+        actions: vec![
+            common::ignore_action(),
+            Action {
+                name: "Treinar".to_string(),
+                emoji: Some(Emoji::from_unicode("💪")),
+                conditions: vec![],
+                consequences: vec![
+                    Consequence {
+                        kind: ConsequenceKind::Rewards {
+                            message: "você treinou junto com a pessoa e sentiu uma melhora na sua força e saúde!".to_string(),
+                            iterations: 1,
+                            items: vec![],
+                            orbs: (0, 0),
+                            xp: XpReward {
+                                health: (5, 10),
+                                intelligence: (0, 0),
+                                strength: (10, 20),
+                                knowledge: (0, 0)
+                            }
+                        },
+                        ..Default::default()
+                    },
+                ],
+                ..Default::default()
+            }
+        ]
+    }
+);
+
+make_event!(
+    basic_plains_fruit_tree,
+    Event {
+        identifier: "basic_plains_fruit_tree",
+        spawn: EventSpawn {
+            base_probability: Probability::new(30),
+            weighted_regions: vec![
+                (WorldRegion::Greenagis, 1),
+                (WorldRegion::Emerelis, 2),
+                (WorldRegion::Midgrass, 2)
+            ],
+            conditions: vec![]
+        },
+        emoji: Emoji::from_unicode("🌳"),
+        message: EventMessage::Multiple(&[
+            "você encontrou uma árvore frutífera. O que deseja fazer?",
+            "você avistou uma árvore carregada de frutas. Deseja colhê-las?",
+        ]),
+        actions: vec![
+            common::ignore_action(),
+            Action {
+                name: "Colher Frutas".to_string(),
+                emoji: None,
+                consequences: vec![
+                    common::consequence_didnt_find_anything(Probability::new(10)),
+                    Consequence {
+                        kind: ConsequenceKind::Rewards {
+                            message: "você colheu algumas frutas frescas!".to_string(),
+                            iterations: 2,
+                            items: vec![
+                                (Probability::new(80), items::consumable::APPLE, (1, 2)),
+                                (Probability::new(80), items::consumable::ORANGE, (1, 2)),
+                                (Probability::new(80), items::consumable::LEMON, (1, 2)),
+                                (Probability::new(50), items::consumable::GREEN_APPLE, (1, 2)),
+                            ],
+                            orbs: (0, 5),
+                            xp: XpReward {
+                                health: (5, 15),
+                                intelligence: (0, 5),
+                                strength: (0, 10),
+                                knowledge: (0, 5)
+                            }
+                        },
+                        ..Default::default()
+                    }
+                ],
+                ..Default::default()
+            },
+            Action {
+                name: "Cortar Galhos".to_string(),
+                emoji: Some(items::tool::AXE.emoji),
+                conditions: vec![Condition::HasItem(items::tool::AXE, 1)],
+                consequences: vec![Consequence {
+                    kind: ConsequenceKind::Rewards {
+                        message: "você cortou alguns galhos da árvore e obteve materiais!"
+                            .to_string(),
+                        iterations: 2,
+                        items: vec![
+                            (Probability::new(100), items::material::STICK, (2, 4)),
+                            (Probability::new(70), items::material::RAW_TRUNK, (1, 2)),
+                        ],
+                        orbs: (5, 15),
+                        xp: XpReward {
+                            health: (0, 5),
+                            intelligence: (0, 5),
+                            strength: (5, 15),
+                            knowledge: (0, 10)
+                        }
+                    },
+                    ..Default::default()
+                }],
+                extra_consequences: vec![Consequence {
+                    kind: ConsequenceKind::RemoveItemDurability(items::tool::AXE, 1),
+                    ..Default::default()
+                }],
                 ..Default::default()
             }
         ]

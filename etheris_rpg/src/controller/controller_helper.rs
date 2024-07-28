@@ -47,6 +47,28 @@ pub async fn on_start(controller: &mut BattleController) -> anyhow::Result<()> {
     Ok(())
 }
 
+pub async fn tick_every_modifier(
+    fighters: &[FighterIndex],
+    controller: &mut BattleController,
+) -> anyhow::Result<()> {
+    for fighter_index in fighters {
+        let fighter = controller.battle.get_fighter_mut(*fighter_index);
+
+        for modifier in fighter.modifiers.list.iter_mut() {
+            if let Some(turns_remaining) = modifier.turns_remaining {
+                modifier.turns_remaining = Some(turns_remaining.saturating_sub(1));
+            }
+        }
+
+        fighter
+            .modifiers
+            .list
+            .retain(|m| m.turns_remaining.is_none() || m.turns_remaining.is_some_and(|t| t > 0));
+    }
+
+    Ok(())
+}
+
 pub async fn tick_every_effect(
     fighters: &[FighterIndex],
     controller: &mut BattleController,

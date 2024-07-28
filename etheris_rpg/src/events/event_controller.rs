@@ -67,7 +67,7 @@ impl EventController {
         while let Some(event) = self.event_queue.pop_front() {
             self.ticks += 1;
             self.execute_single_event(event).await?;
-            tokio::time::sleep(Duration::from_secs(2)).await;
+            tokio::time::sleep(Duration::from_secs(1)).await;
         }
 
         Ok(())
@@ -98,6 +98,7 @@ impl EventController {
     }
 
     pub fn pick_event(&self, character: CharacterModel) -> Option<Event> {
+        let mut rng = StdRng::from_entropy();
         let mut events = vec![];
         for event in ALL_EVENTS.iter() {
             let event = event(EventBuildState::new(character.clone()));
@@ -118,6 +119,8 @@ impl EventController {
             events.push(event.clone());
         }
 
+        events.shuffle(&mut rng);
+
         let events: Vec<(Event, i32)> = events
             .into_iter()
             .filter_map(|e| {
@@ -132,11 +135,19 @@ impl EventController {
             })
             .collect();
 
+        println!(
+            "\n======================================\n{}\n",
+            events
+                .iter()
+                .map(|(e, w)| format!("- {w} | {}", e.identifier))
+                .collect::<Vec<_>>()
+                .join("\n")
+        );
+
         if events.is_empty() {
             return None;
         }
 
-        let mut rng = StdRng::from_entropy();
         let events = events.choose_weighted(&mut rng, |(_, prob)| *prob).unwrap();
 
         Some(events.0.clone())
@@ -422,7 +433,12 @@ impl EventController {
                     .map(|e| {
                         FighterData::new_from_enemy(
                             1,
-                            e.drop.to_reward(&mut rng, player_pl, e.power_level()),
+                            e.drop.to_reward(
+                                &mut rng,
+                                player_pl,
+                                e.power_level(),
+                                e.boss.is_some(),
+                            ),
                             e.clone(),
                         )
                     })
@@ -434,7 +450,12 @@ impl EventController {
                     .map(|e| {
                         FighterData::new_from_enemy(
                             0,
-                            e.drop.to_reward(&mut rng, player_pl, e.power_level()),
+                            e.drop.to_reward(
+                                &mut rng,
+                                player_pl,
+                                e.power_level(),
+                                e.boss.is_some(),
+                            ),
                             e.clone(),
                         )
                     })
@@ -472,6 +493,10 @@ impl EventController {
                     let mut controller = BattleController::new(battle, self.ctx.clone());
                     Some(controller.run().await?)
                 };
+
+                if result.is_none() {
+                    return Ok(());
+                }
 
                 let result = result.unwrap_or_default();
 
@@ -919,9 +944,12 @@ impl EventController {
         let enemies = enemies
             .into_iter()
             .map(|e| {
-                let reward =
-                    e.drop
-                        .to_reward(&mut StdRng::from_entropy(), character.pl, e.power_level());
+                let reward = e.drop.to_reward(
+                    &mut StdRng::from_entropy(),
+                    character.pl,
+                    e.power_level(),
+                    e.boss.is_some(),
+                );
                 FighterData::new_from_enemy(1, reward, e)
             })
             .collect::<Vec<_>>();

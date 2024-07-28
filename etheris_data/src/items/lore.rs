@@ -5,8 +5,11 @@ pub const ALL_ITEMS: &[Item] = &[
     GOLDEN_ROBOT_POEM,
     OLD_ABANDONED_BASEMENT_DIARY,
     ENTITY_039_REPORT,
+    ENTITY_104_REPORT,
     HAKIKO_LEGEND,
     RAT_LORDS_DIARY,
+    THE_MAN_WHO_SEES_SOUNDS,
+    METROLIS_LAW_338,
 ];
 
 pub const GOLDEN_ROBOT_POEM: Item = Item {
@@ -139,7 +142,7 @@ pub const ENTITY_039_REPORT: Item = Item {
 
 pub const ENTITY_104_REPORT: Item = Item {
     identifier: "entity_104_report",
-    display_name: "ENTITY-104 Report",
+    display_name: "Relatório da ENTIDADE-104",
     emoji: Emoji::from_unicode("📋"),
     purchase_properties: PurchaseProperties {
         base_price: 1400,
@@ -310,5 +313,85 @@ pub const RAT_LORDS_DIARY: Item = Item {
             content: r#"<illegible scribbles fill the entire page>"#,
         },
     ],
+    ..Item::default()
+};
+
+pub const THE_MAN_WHO_SEES_SOUNDS: Item = Item {
+    identifier: "the_man_who_sees_sounds",
+    display_name: "O Homem que Vê Sons",
+    emoji: Emoji::from_unicode("📋"),
+    purchase_properties: PurchaseProperties {
+        base_price: 480,
+        base_sell_price: 38,
+        ..PurchaseProperties::default()
+    },
+    pages: &[
+        Page {
+            translate: true,
+            title: "Page 1",
+            content: r#""There's an eccentric man who lives in an isolated cabin atop a mountain" - that's what the rumors say. 
+            But where does rumor end and fact begin? I, Ron B. Mackeyzanel, professional investigator, went to several villages in Wornpeaks to study the case of Lesper, the man who sees sounds."#,
+        },
+        Page {
+            translate: true,
+            title: "Page 2",
+            content: r#"With pale skin and frighteningly jovial for someone 2 meters and 13 centimeters tall, possessing a slender and tall figure, Lesper V. Kennington is known as the echo-seer. 
+            His skin whiter than snow contrasts with the lack of ears on the sides of his face, and dark, completely black eyes. 
+            That is, according to popular tales, since Lesper's existence is entirely mysterious. His title of echo-seer comes from the fact that Lesper is blind. 
+            Unable to differentiate colors, but capable of seeing sounds, Lesper has excellent hearing despite having no ears. They say he can only see sounds.
+            "#,
+        },
+        Page {
+            translate: true,
+            title: "Page 3",
+            content: r#"Lesper's nature is an enigma. There are rumors that villagers from a nearby settlement spotted him devouring raw human flesh on top of a wooden table, in the middle of nowhere, during a snowstorm. 
+            Others say that Lesper is simply a retired doctor, and there are more conspiracy-minded individuals who say he is an alchemist. 
+            The consensus is that Lesper is someone not to be trusted.
+            "#,
+        },
+        Page {
+            translate: true,
+            title: "Page 4",
+            content: r#"But does such a man exist or not? I, Ron B. Mackeyzanel, climbed several points and mountains that the rumors pointed to in search of Lesper V. Kennington, but I only found snow and wild animals. 
+            There was one mountain where I even found a cabin, but it was completely abandoned, with nothing interesting or worth investigating. 
+            My conclusion is that Lesper V. Kennington is just another urban legend, just like the ENTITIES! Perhaps wild creatures in the midst of snowstorms were mistaken for a slender man. 
+            That's it, folks, Ron B. Mackeyzanel signs off here, with another investigation concluded!
+            "#,
+        },
+    ],
+    ..Item::default()
+};
+
+pub const METROLIS_LAW_338: Item = Item {
+    identifier: "metrolis_law_338",
+    display_name: "Lei No. 338 de Metrolis",
+    emoji: Emoji::from_unicode("📋"),
+    purchase_properties: PurchaseProperties {
+        base_price: 200,
+        base_sell_price: 30,
+        ..PurchaseProperties::default()
+    },
+    pages: &[Page {
+        translate: true,
+        title: "Law No. 338",
+        content: r#"## CONCERNING THE PROHIBITION OF THE PRACTICE OF ALCHEMY AND THE CRIMINALIZATION OF ALCHEMISTS IN THE MUNICIPALITY OF METROPOLIS
+        The City Council of Metropolis decrees and I, the Mayor, sanction the following Law:
+        **Article 1** - The practice of alchemy is strictly prohibited throughout the entire territorial extension of the Municipality of Metropolis.
+        **Article 2** - For the purposes of this Law, alchemy is defined as:
+        a) Any attempt to transform common matter into gold, elixirs of life, philosopher's stones, or any other substances or objects considered mythical or supernatural;
+        b) Any act aimed at changing the laws of the ether;
+        c) Any attempt to alter the properties of the ether;
+        d) Any manipulation of states of matter beyond conventional scientific understanding using altered ether;
+        e) Any effort to modify or manipulate the fundamental laws of the ether.
+        
+        **Article 3** - All individuals who practice alchemy or identify themselves as alchemists shall be considered terrorists of the universe and will be subject to the penalties provided for in this Law.
+        **Article 4** - The penalty for the crimes provided for in this Law shall be the maximum direct sentence, as established in the current Penal Code, without the right to appeal or mitigating factors.
+        **Article 5** - The police and judicial authorities of the Municipality of Metropolis are authorized to proceed with the immediate arrest and application of the sentence to offenders of this Law, as soon as the practice of alchemy or the identification of the individual as an alchemist is confirmed.
+        **Article 6** - This Law comes into effect on the date of its publication, revoking all provisions to the contrary.
+
+        Metropolis, 02nd day of the 5th month, Year 712.
+        *Kob Din Graycon*
+        Municipal Mayor of Metropolis"#,
+    }],
     ..Item::default()
 };

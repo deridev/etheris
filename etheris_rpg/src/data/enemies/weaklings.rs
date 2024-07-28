@@ -293,6 +293,48 @@ make_enemy!(
 );
 
 make_enemy!(
+    conscious_beast,
+    Enemy {
+        identifier: "conscious_beast",
+        name: "Besta Consciente",
+        base_probability: Probability::ALWAYS,
+        brain: BrainKind::Simple,
+        boss: None,
+        regions: &[
+            (WorldRegion::Emerelis, 3),
+            (WorldRegion::Gloomwood, 4),
+            (WorldRegion::Murkswamp, 5),
+        ],
+        personalities: &[Personality::Aggressiveness, Personality::Insanity],
+        potential: EnemyPotential::Medium,
+        immunities: BodyImmunities::new()
+            .with_little_resistance(ImmunityKind::Cut)
+            .with_little_resistance(ImmunityKind::Bleeding),
+        strength: 11,
+        intelligence: 6,
+        resistance: 315,
+        vitality: 80,
+        ether: 20,
+        weapon: None,
+        allies: None,
+        skills: vec![
+            SkillKind::ImbuedPunch,
+            SkillKind::Charge,
+            SkillKind::TornadoKick,
+        ],
+        drop: EnemyReward {
+            orbs: (20, 60),
+            xp: (30, 50),
+            items: vec![EnemyRewardItem {
+                amount: (1, 7),
+                item: items::material::STICK,
+                probability: Probability::new(80),
+            },],
+        },
+    }
+);
+
+make_enemy!(
     forest_guardian,
     Enemy {
         identifier: "forest_guardian",
@@ -509,6 +551,116 @@ make_enemy!(
     }
 );
 
+make_enemy!(
+    stone_golem,
+    Enemy {
+        identifier: "stone_golem",
+        name: "Golem de Pedregulho",
+        base_probability: Probability::ALWAYS,
+        brain: BrainKind::Simple,
+        boss: None,
+        regions: &[(WorldRegion::Tenypt, 1), (WorldRegion::Murkswamp, 6)],
+        personalities: &[Personality::Intelligence, Personality::Insanity],
+        potential: EnemyPotential::High,
+        immunities: BodyImmunities::new()
+            .with_resistance(ImmunityKind::Physical, 0.8)
+            .with_resistance(ImmunityKind::Cut, 0.6)
+            .with_resistance(ImmunityKind::Poison, 1.0)
+            .with_resistance(ImmunityKind::Water, 0.5)
+            .with_resistance(ImmunityKind::Bleeding, 1.0)
+            .with_weakness(ImmunityKind::Ice, 1.0),
+        strength: 6,
+        intelligence: 5,
+        resistance: 280,
+        vitality: 112,
+        ether: 45,
+        weapon: None,
+        allies: None,
+        skills: vec![
+            SkillKind::WaterJet,
+            SkillKind::WaterBlessing,
+            SkillKind::ElectricSlap,
+        ],
+        drop: EnemyReward {
+            orbs: (55, 80),
+            xp: (40, 70),
+            items: vec![
+                EnemyRewardItem {
+                    amount: (1, 3),
+                    item: items::material::RAW_TRUNK,
+                    probability: Probability::new(20),
+                },
+                EnemyRewardItem {
+                    amount: (1, 1),
+                    item: items::cosmetic::STRAWHAT,
+                    probability: Probability::new(5),
+                },
+            ],
+        },
+    }
+);
+
+make_enemy!(
+    wood_golem,
+    Enemy {
+        identifier: "wood_golem",
+        name: "Golem de Madeira",
+        base_probability: Probability::ALWAYS,
+        brain: BrainKind::Simple,
+        boss: None,
+        regions: &[
+            (WorldRegion::Gloomwood, 1),
+            (WorldRegion::Ethergrove, 5),
+            (WorldRegion::Murkswamp, 1),
+        ],
+        personalities: &[
+            Personality::Calm,
+            Personality::Courage,
+            Personality::Intelligence,
+        ],
+        potential: EnemyPotential::High,
+        immunities: BodyImmunities::new()
+            .with_resistance(ImmunityKind::Physical, 0.6)
+            .with_resistance(ImmunityKind::Poison, 1.0)
+            .with_resistance(ImmunityKind::Water, 0.8)
+            .with_resistance(ImmunityKind::Bleeding, 1.0)
+            .with_weakness(ImmunityKind::Fire, 1.0),
+        strength: 12,
+        intelligence: 6,
+        resistance: 320,
+        vitality: 120,
+        ether: 50,
+        weapon: Some(WeaponKind::Stick),
+        allies: None,
+        skills: vec![
+            SkillKind::FirePunch,
+            SkillKind::IcyShot,
+            SkillKind::WaterBlessing,
+        ],
+        drop: EnemyReward {
+            orbs: (50, 80),
+            xp: (40, 70),
+            items: vec![
+                EnemyRewardItem {
+                    amount: (1, 5),
+                    item: items::material::RAW_TRUNK,
+                    probability: Probability::new(90),
+                },
+                EnemyRewardItem {
+                    amount: (1, 1),
+                    item: items::material::TOOL_HANDLE,
+                    probability: Probability::new(60),
+                },
+                EnemyRewardItem {
+                    amount: (1, 1),
+                    item: items::cosmetic::EYE_BANDANA,
+                    probability: Probability::new(5),
+                },
+            ],
+        },
+    }
+);
+
 // MERCENARY DUO
 make_enemy!(
     weak_mercenary_leader,
@@ -631,6 +783,38 @@ make_enemy!(
             xp: (20, 50),
             items: vec![EnemyRewardItem {
                 item: items::tool::SHOVEL,
+                amount: (1, 1),
+                probability: Probability::new(30),
+            }],
+        },
+    }
+);
+
+make_enemy!(
+    desert_coward,
+    Enemy {
+        identifier: "desert_coward",
+        name: "Covarde do Deserto",
+        brain: BrainKind::Simple,
+        boss: None,
+        regions: &[(WorldRegion::Sandywater, 2), (WorldRegion::Tenypt, 4)],
+        base_probability: Probability::ALWAYS,
+        personalities: &[Personality::Cowardice],
+        potential: EnemyPotential::Low,
+        immunities: BodyImmunities::new(),
+        strength: 15,
+        intelligence: 4,
+        resistance: 214,
+        vitality: 58,
+        ether: 30,
+        allies: None,
+        weapon: None,
+        skills: vec![SkillKind::ResplendentPunch,],
+        drop: EnemyReward {
+            orbs: (10, 42),
+            xp: (20, 50),
+            items: vec![EnemyRewardItem {
+                item: items::material::KNIFE,
                 amount: (1, 1),
                 probability: Probability::new(30),
             }],

@@ -26,26 +26,11 @@ impl Skill for Debug {
 
     async fn on_use(&mut self, mut api: BattleApi<'_>) -> SkillResult<()> {
         let fighter = api.fighter().clone();
-        let target = api.target().clone();
+        let _target = api.target().clone();
 
-        let damage = api.rng().gen_range(15..=30);
+        api.fighter_mut().modifiers.add(Modifier::new(ModKind::DefenseMultiplier(0.0), Some(15)).with_tag("debug_immunity"));
 
-        let multiplier = fighter.strength_multiplier();
-        let damage = ((damage as f32) * multiplier) as i32;
-
-        let damage = api.apply_damage(
-            target.index,
-            DamageSpecifier {
-                kind: DamageKind::Physical,
-                amount: damage,
-                balance_effectiveness: 20,
-                accuracy: 100,
-                effect: Some(Effect::new(EffectKind::Poisoned, 40, fighter.index)), 
-                ..Default::default()
-            },
-        ).await;
-
-        api.emit_message(format!("**{}** lançou o ataque debug que causou **{damage}**! +veneno", fighter.name));
+        api.emit_message(format!("**{}** ganhou 15 rounds de imunidade a tudo.", fighter.name));
 
         Ok(())
     }   

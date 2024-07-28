@@ -131,7 +131,7 @@ pub async fn learn(mut ctx: CommandContext) -> anyhow::Result<()> {
 
     character.learn_skill(skill.kind());
 
-    let auto_equipped = character.learned_skills.len() < 7;
+    let auto_equipped = character.learned_skills.len() <= 7;
     if auto_equipped {
         character.equip_skill(skill.kind());
     }

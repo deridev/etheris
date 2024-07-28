@@ -39,18 +39,26 @@ pub async fn prompt_encounter(
         _ => Color::GREEN,
     };
 
+    let mut embed = EmbedBuilder::new_common()
+        .set_author_to_user(&user)
+        .set_color(color);
+
+    if let Some(boss) = enemies.iter().find_map(|e| e.boss) {
+        embed = embed.add_description_text(format!(
+            "# {}\n*{}*\n",
+            boss.name(),
+            boss.short_description()
+        ));
+    }
+
     let warning = if character.stats.resistance.value < character.stats.resistance.max {
         "## ⚠️ **__Você não está com a vida cheia!__**\nTome cuidado ou descanse antes de batalhar.\n"
     } else {
         ""
     };
 
-    let mut embed = EmbedBuilder::new_common()
-        .set_author_to_user(&user)
-        .set_color(color);
-
     if !warning.is_empty() {
-        embed = embed.set_description(warning);
+        embed = embed.add_description_text(warning);
     }
 
     for enemy in enemies.iter() {
@@ -93,24 +101,37 @@ pub async fn prompt_encounter(
 
         let dummy_enemy_fighter = Fighter::dummy(enemy.clone());
 
-        embed = embed.add_inlined_field(
-            &enemy.name,
+        let skills_string = if enemy.boss.is_some() {
+            String::new()
+        } else {
             format!(
-                "{}\n{weapon_text}{} **{}**\n{} {}\n{} {}\n**Força**: {strength_message}\n**Inteligência**: {intelligence_message}\n\n**Habilidades**: `{}`",
-                enemy.personalities.iter().map(|p| bold(&p.to_string())).collect::<Vec<_>>().join(", "),
-                emojis::RESISTANCE, (enemy.resistance.value as f64 * enemy.potential) as i64,
-                emojis::VITALITY, (enemy.vitality.value as f64 * enemy.potential) as i64,
-                emojis::ETHER, (enemy.ether.value as f64 * enemy.potential) as i64,
+                "\n\n**Habilidades**: `{}`",
                 if enemy.skills.is_empty() {
                     String::from("Nenhuma")
                 } else {
                     enemy
                         .skills
                         .iter()
-                        .map(|s| get_boxed_skill_from_kind(s.clone()).data(&dummy_enemy_fighter).name.to_string())
+                        .map(|s| {
+                            get_boxed_skill_from_kind(s.clone())
+                                .data(&dummy_enemy_fighter)
+                                .name
+                                .to_string()
+                        })
                         .collect::<Vec<_>>()
                         .join("`, `")
                 }
+            )
+        };
+
+        embed = embed.add_inlined_field(
+            &enemy.name,
+            format!(
+                "{}\n{weapon_text}{} **{}**\n{} {}\n{} {}\n**Força**: {strength_message}\n**Inteligência**: {intelligence_message}{skills_string}",
+                enemy.personalities.iter().map(|p| bold(&p.to_string())).collect::<Vec<_>>().join(", "),
+                emojis::RESISTANCE, (enemy.resistance.value as f64) as i64,
+                emojis::VITALITY, (enemy.vitality.value as f64) as i64,
+                emojis::ETHER, (enemy.ether.value as f64) as i64,
             ),
         );
     }

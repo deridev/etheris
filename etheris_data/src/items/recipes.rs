@@ -68,6 +68,16 @@ pub fn get_item_by_recipe(ingredients: &[Ingredient]) -> Option<(Item, usize, Ve
 
 pub const ALL_RECIPES: &[Recipe] = &[
     Recipe {
+        output: "bread",
+        output_quantity: 1,
+        ingredients: &[Ingredient::new("wheat", 9), Ingredient::new("milk", 1)],
+    },
+    Recipe {
+        output: "slice_of_bread",
+        output_quantity: 6,
+        ingredients: &[Ingredient::new("knife", 1), Ingredient::new("bread", 1)],
+    },
+    Recipe {
         output: "fried_egg",
         output_quantity: 1,
         ingredients: &[Ingredient::new("egg", 1), Ingredient::new("salt", 1)],
@@ -92,13 +102,93 @@ pub const ALL_RECIPES: &[Recipe] = &[
         ],
     },
     Recipe {
-        output: "slice_of_bread",
-        output_quantity: 6,
-        ingredients: &[Ingredient::new("knife", 1), Ingredient::new("bread", 1)],
-    },
-    Recipe {
         output: "plank",
         output_quantity: 3,
         ingredients: &[Ingredient::new("knife", 1), Ingredient::new("raw_trunk", 1)],
+    },
+    Recipe {
+        output: "tool_handle",
+        output_quantity: 1,
+        ingredients: &[
+            Ingredient::new("knife", 1),
+            Ingredient::new("stick", 1),
+            Ingredient::new("plank", 1),
+        ],
+    },
+    Recipe {
+        output: "coal",
+        output_quantity: 1,
+        ingredients: &[Ingredient::new("knife", 1), Ingredient::new("coal_ore", 2)],
+    },
+    Recipe {
+        output: "iron_bar",
+        output_quantity: 1,
+        ingredients: &[
+            Ingredient::new("knife", 1),
+            Ingredient::new("iron_ore", 2),
+            Ingredient::new("coal", 1),
+        ],
+    },
+    Recipe {
+        output: "copper_bar",
+        output_quantity: 1,
+        ingredients: &[
+            Ingredient::new("knife", 1),
+            Ingredient::new("copper_ore", 2),
+            Ingredient::new("coal", 1),
+        ],
+    },
+    Recipe {
+        output: "silver_bar",
+        output_quantity: 1,
+        ingredients: &[
+            Ingredient::new("knife", 1),
+            Ingredient::new("tin_ore", 1),
+            Ingredient::new("lead_ore", 1),
+            Ingredient::new("coal", 1),
+        ],
+    },
+    Recipe {
+        output: "gold_bar",
+        output_quantity: 1,
+        ingredients: &[
+            Ingredient::new("knife", 1),
+            Ingredient::new("gold_ore", 2),
+            Ingredient::new("coal", 1),
+        ],
+    },
+    Recipe {
+        output: "pickaxe",
+        output_quantity: 1,
+        ingredients: &[
+            Ingredient::new("tool_handle", 1),
+            Ingredient::new("iron_bar", 1),
+        ],
+    },
+    Recipe {
+        output: "shovel",
+        output_quantity: 1,
+        ingredients: &[
+            Ingredient::new("tool_handle", 1),
+            Ingredient::new("iron_bar", 1),
+            Ingredient::new("stone", 1),
+        ],
+    },
+    Recipe {
+        output: "axe",
+        output_quantity: 1,
+        ingredients: &[
+            Ingredient::new("tool_handle", 1),
+            Ingredient::new("silver_bar", 1),
+        ],
+    },
+    Recipe {
+        output: "hammer",
+        output_quantity: 1,
+        ingredients: &[
+            Ingredient::new("tool_handle", 1),
+            Ingredient::new("iron_bar", 1),
+            Ingredient::new("copper_bar", 1),
+        ],
     },
 ];

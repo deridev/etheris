@@ -49,6 +49,10 @@ use_skill!(hakikotenchou);
 use_skill!(skill_mirror);
 use_skill!(ether_flow);
 use_skill!(pyrotransmutation);
+use_skill!(poisonous_gas);
+
+mod specific;
+pub use specific::*;
 
 pub static ALL_SKILLS: Lazy<Vec<Box<dyn super::Skill + Send + Sync>>> = Lazy::new(|| {
     SkillKind::list()
@@ -62,6 +66,9 @@ pub fn get_boxed_skill_from_kind(kind: SkillKind) -> Box<dyn super::Skill + Send
 
     match kind {
         SkillKind::Debug => Box::<Debug>::default(),
+        SkillKind::AgorathForcedDuel => Box::<AgorathForcedDuel>::default(),
+        SkillKind::GarhyanRatSummon => Box::<GarhyanRatSummon>::default(),
+        SkillKind::EthriaAdaptation => Box::<EthriaAdaptation>::default(),
         SkillKind::ImbuedPunch => Box::<ImbuedPunch>::default(),
         SkillKind::SimpleCut => Box::<SimpleCut>::default(),
         SkillKind::TornadoKick => Box::<TornadoKick>::default(),
@@ -99,5 +106,6 @@ pub fn get_boxed_skill_from_kind(kind: SkillKind) -> Box<dyn super::Skill + Send
         SkillKind::SkillMirror => Box::<SkillMirror>::default(),
         SkillKind::EtherFlow => Box::<EtherFlow>::default(),
         SkillKind::Pyrotransmutation => Box::<Pyrotransmutation>::default(),
+        SkillKind::PoisonousGas => Box::<PoisonousGas>::default(),
     }
 }

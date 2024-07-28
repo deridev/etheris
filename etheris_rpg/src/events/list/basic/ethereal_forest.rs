@@ -63,9 +63,9 @@ make_event!(
 );
 
 make_event!(
-    ethereal_forest_whispering_trees,
+    basic_ethereal_forest_whispering_trees,
     Event {
-        identifier: "ethereal_forest_whispering_trees",
+        identifier: "basic_ethereal_forest_whispering_trees",
         spawn: EventSpawn {
             base_probability: Probability::new(30),
             weighted_regions: vec![(WorldRegion::Ethergrove, 2), (WorldRegion::Starbreeze, 2)],
@@ -140,9 +140,9 @@ make_event!(
 );
 
 make_event!(
-    ethereal_forest_glowing_pond,
+    basic_ethereal_forest_glowing_pond,
     Event {
-        identifier: "ethereal_forest_glowing_pond",
+        identifier: "basic_ethereal_forest_glowing_pond",
         spawn: EventSpawn {
             base_probability: Probability::new(25),
             weighted_regions: vec![(WorldRegion::Ethergrove, 2), (WorldRegion::Starbreeze, 2)],
@@ -216,9 +216,9 @@ make_event!(
 );
 
 make_event!(
-    basic_forest_wishing_tree,
+    basic_ethereal_forest_wishing_tree,
     Event {
-        identifier: "basic_forest_wishing_tree",
+        identifier: "basic_ethereal_forest_wishing_tree",
         spawn: EventSpawn {
             base_probability: Probability::new(10),
             weighted_regions: vec![(WorldRegion::Starbreeze, 1), (WorldRegion::Ethergrove, 1)],
@@ -243,7 +243,7 @@ make_event!(
                         },
                         extra_consequences: vec![
                             Consequence {
-                                kind: ConsequenceKind::RemoveKarma(2),
+                                kind: ConsequenceKind::RemoveKarma(1),
                                 ..Default::default()
                             },
                         ],
@@ -260,7 +260,7 @@ make_event!(
                         kind: ConsequenceKind::Rewards {
                             message: "você sente sua mente se expandir com conhecimentos antigos!".to_string(),
                             iterations: 1,
-                            items: vec![(Probability::new(15), items::special::INTELLIGENCE_CRYSTAL, (1, 1))],
+                            items: vec![(Probability::new(5), items::special::INTELLIGENCE_CRYSTAL, (1, 1))],
                             orbs: (0, 0),
                             xp: XpReward {
                                 health: (0, 0),
@@ -284,7 +284,7 @@ make_event!(
                             consequence: Box::new(ConsequenceKind::Rewards {
                                 message: "a árvore brilha intensamente. Você se sente revigorado e abençoado!".to_string(),
                                 iterations: 1,
-                                items: vec![(Probability::new(100), items::special::INVIGORATING_CRYSTAL, (1, 1))],
+                                items: vec![(Probability::new(5), items::special::INVIGORATING_CRYSTAL, (1, 1))],
                                 orbs: (100, 200),
                                 xp: XpReward {
                                     health: (30, 60),
@@ -304,6 +304,75 @@ make_event!(
                                 ..Default::default()
                             }
                         ],
+                        ..Default::default()
+                    }
+                ],
+                ..Default::default()
+            }
+        ]
+    }
+);
+
+make_event!(
+    basic_ethereal_forest_strange_tree,
+    Event {
+        identifier: "basic_ethereal_forest_strange_tree",
+        spawn: EventSpawn {
+            base_probability: Probability::new(35),
+            weighted_regions: vec![(WorldRegion::Ethergrove, 1), (WorldRegion::Starbreeze, 1)],
+            conditions: vec![]
+        },
+        emoji: Emoji::from_unicode("🌳"),
+        message: EventMessage::Single("você encontra uma árvore de aparência estranha. O que você faz?"),
+        actions: vec![
+            common::ignore_action(),
+            Action {
+                name: "Coletar galhos".to_string(),
+                emoji: Some(items::tool::AXE.emoji),
+                conditions: vec![Condition::HasItem(items::tool::AXE, 1)],
+                consequences: vec![
+                    Consequence {
+                        kind: ConsequenceKind::Rewards {
+                            message: "você coletou alguns galhos da árvore estranha!".to_string(),
+                            iterations: 2,
+                            items: vec![
+                                (Probability::new(100), items::material::STICK, (2, 4)),
+                                (Probability::new(70), items::material::RAW_TRUNK, (1, 2)),
+                            ],
+                            orbs: (10, 30),
+                            xp: XpReward {
+                                health: (0, 10),
+                                intelligence: (10, 20),
+                                strength: (5, 15),
+                                knowledge: (10, 20)
+                            }
+                        },
+                        ..Default::default()
+                    }
+                ],
+                extra_consequences: vec![Consequence {
+                    kind: ConsequenceKind::RemoveItemDurability(items::tool::AXE, 1),
+                    ..Default::default()
+                }],
+                ..Default::default()
+            },
+            Action {
+                name: "Examinar a árvore".to_string(),
+                emoji: None,
+                consequences: vec![
+                    Consequence {
+                        kind: ConsequenceKind::Rewards {
+                            message: "ao examinar a árvore, você ganha conhecimentos valiosos sobre sua natureza bizarra!".to_string(),
+                            iterations: 1,
+                            items: vec![],
+                            orbs: (5, 15),
+                            xp: XpReward {
+                                health: (0, 5),
+                                intelligence: (15, 25),
+                                strength: (0, 5),
+                                knowledge: (15, 25)
+                            }
+                        },
                         ..Default::default()
                     }
                 ],

@@ -25,13 +25,27 @@ pub struct EnemyReward {
 }
 
 impl EnemyReward {
-    pub fn to_reward<RNG: Rng>(&self, rng: &mut RNG, player_pl: i64, enemy_pl: i64) -> Reward {
+    pub fn to_reward<RNG: Rng>(
+        &self,
+        rng: &mut RNG,
+        player_pl: i64,
+        enemy_pl: i64,
+        is_boss: bool,
+    ) -> Reward {
         let base_orbs = rng.gen_range(self.orbs.0..=self.orbs.1) as i64;
         let base_xp = rng.gen_range(self.xp.0..=self.xp.1) as i64;
 
         Reward {
-            orbs: calculate_orbs_gain(player_pl, enemy_pl, base_orbs) as i32,
-            xp: calculate_xp_gain(player_pl, enemy_pl, base_xp) as i32,
+            orbs: if is_boss {
+                base_orbs as i32
+            } else {
+                calculate_orbs_gain(player_pl, enemy_pl, base_orbs) as i32
+            },
+            xp: if is_boss {
+                base_xp as i32
+            } else {
+                calculate_xp_gain(player_pl, enemy_pl, base_xp) as i32
+            },
             items: self
                 .items
                 .iter()
@@ -132,26 +146,36 @@ pub mod bosses;
 pub mod special;
 pub mod weaklings;
 pub mod weaklings_plus;
+pub mod weaks;
 pub static ALL_ENEMIES: Lazy<Vec<Enemy>> = Lazy::new(|| {
     [
         //special::debug(),
         special::miniorbs(),
         //  BOSSES
         bosses::garhyan(),
+        bosses::agorath(),
+        bosses::orsinium(),
+        bosses::ethria(),
         // Weaklings
         weaklings::giant_rat(),
         weaklings::greenagis_mutant(),
+        weaklings::beginner_looter(),
+        weaklings::insane_wanderer(),
         weaklings::weak_shredder(),
         weaklings::newbie_hunter(),
         weaklings::novice_bandit(),
+        weaklings::conscious_beast(),
         weaklings::weak_mercenary(),
         weaklings::mud_golem(),
         weaklings::swamp_master(),
         weaklings::swamp_executioner(),
         weaklings::weak_mercenary_leader(),
+        weaklings::stone_golem(),
+        weaklings::wood_golem(),
         weaklings::forest_guardian(),
         weaklings::dangerous_bear(),
         weaklings::weak_thief(),
+        weaklings::desert_coward(),
         // Weaklings+
         weaklings_plus::average_looter(),
         weaklings_plus::small_scorpion(),
@@ -160,8 +184,26 @@ pub static ALL_ENEMIES: Lazy<Vec<Enemy>> = Lazy::new(|| {
         weaklings_plus::desert_raider(),
         weaklings_plus::abominable_maquiran(),
         weaklings_plus::frost_wolf(),
-        weaklings_plus::rocky_golem(),
         weaklings_plus::trained_thief(),
+        weaklings_plus::hunter(),
+        weaklings_plus::insane_fighter(),
+        weaklings_plus::wandering_mutant(),
+        weaklings_plus::tired_insane_wanderer(),
+        weaklings_plus::mummified_swordsman(),
+        weaklings_plus::mad_scientist(),
+        weaklings_plus::mountain_goat(),
+        weaklings_plus::mountain_hermit(),
+        weaklings_plus::echo_mimic(),
+        // Weaks
+        weaks::conscious_bear(),
+        weaks::serpentoid_weak(),
+        weaks::cactoid(),
+        weaks::desert_nomad(),
+        weaks::midgrass_centaur(),
+        weaks::thornbeast(),
+        weaks::frost_shaman(),
+        weaks::rock_thrower(),
+        weaks::etherking(),
     ]
     .to_vec()
 });

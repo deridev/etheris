@@ -38,6 +38,8 @@ pub static METROLIS: Lazy<Vec<ShopItem>> = Lazy::new(|| {
         ShopItem::new_item(5, items::tool::HAMMER, 1.5),
         // Cosmetics
         ShopItem::new_item(135, items::cosmetic::GLASSES, 0.8),
+        // Lore
+        ShopItem::new_item(338, items::lore::METROLIS_LAW_338, 1.0),
     ]
 });
 
@@ -81,5 +83,7 @@ pub static SWORD_TOWN: Lazy<Vec<ShopItem>> = Lazy::new(|| {
         ShopItem::new_item(500, items::tool::KATANA, 0.9),
         // Cosmetics
         ShopItem::new_item(100, items::cosmetic::GLASSES, 1.2),
+        // Lore
+        ShopItem::new_item(11, items::lore::THE_MAN_WHO_SEES_SOUNDS, 1.2),
     ]
 });

@@ -93,8 +93,8 @@ pub const SLICE_OF_BREAD: Item = Item {
     emoji: Emoji::from_emote(Some("slice_of_bread"), 1074706585022115940),
     tags: CONSUMABLE_TAGS,
     consumption_properties: Some(ConsumptionProperties {
-        health_regenation: 25,
-        ether_regeneration: 25,
+        health_regenation: 10,
+        ether_regeneration: 0,
         ..ConsumptionProperties::default()
     }),
     purchase_properties: PurchaseProperties {
@@ -111,7 +111,7 @@ pub const BREAD: Item = Item {
     emoji: Emoji::from_emote(Some("bread"), 1074706636767240202),
     tags: CONSUMABLE_TAGS,
     consumption_properties: Some(ConsumptionProperties {
-        health_regenation: 80,
+        health_regenation: 60,
         ether_regeneration: 0,
         ..ConsumptionProperties::default()
     }),
@@ -130,7 +130,7 @@ pub const WATER: Item = Item {
     tags: CONSUMABLE_TAGS,
     consumption_properties: Some(ConsumptionProperties {
         health_regenation: 0,
-        ether_regeneration: 20,
+        ether_regeneration: 3,
         ..ConsumptionProperties::default()
     }),
     purchase_properties: PurchaseProperties {
@@ -147,8 +147,8 @@ pub const MILK: Item = Item {
     emoji: Emoji::from_emote(Some("milk"), 1076492468645797989),
     tags: CONSUMABLE_TAGS,
     consumption_properties: Some(ConsumptionProperties {
-        health_regenation: 30,
-        ether_regeneration: 20,
+        health_regenation: 5,
+        ether_regeneration: 2,
         ..ConsumptionProperties::default()
     }),
     purchase_properties: PurchaseProperties {
@@ -165,8 +165,8 @@ pub const EGG: Item = Item {
     emoji: Emoji::from_emote(Some("egg"), 1075468833697050664),
     tags: CONSUMABLE_TAGS,
     consumption_properties: Some(ConsumptionProperties {
-        health_regenation: 15,
-        ether_regeneration: 5,
+        health_regenation: 8,
+        ether_regeneration: 4,
         ..ConsumptionProperties::default()
     }),
     purchase_properties: PurchaseProperties {
@@ -183,8 +183,8 @@ pub const FRIED_EGG: Item = Item {
     emoji: Emoji::from_emote(Some("fried_egg"), 1075468874121740429),
     tags: CONSUMABLE_TAGS,
     consumption_properties: Some(ConsumptionProperties {
-        health_regenation: 25,
-        ether_regeneration: 5,
+        health_regenation: 20,
+        ether_regeneration: 6,
         ..ConsumptionProperties::default()
     }),
     purchase_properties: PurchaseProperties {
@@ -201,7 +201,7 @@ pub const CHEESE: Item = Item {
     emoji: Emoji::from_emote(Some("cheese"), 1173970030619283489),
     tags: CONSUMABLE_TAGS,
     consumption_properties: Some(ConsumptionProperties {
-        health_regenation: 50,
+        health_regenation: 30,
         ether_regeneration: 5,
         ..ConsumptionProperties::default()
     }),
@@ -219,7 +219,7 @@ pub const APPLE: Item = Item {
     emoji: Emoji::from_emote(Some("apple"), 1074675013619290132),
     tags: CONSUMABLE_TAGS,
     consumption_properties: Some(ConsumptionProperties {
-        health_regenation: 25,
+        health_regenation: 15,
         ether_regeneration: 0,
         ..ConsumptionProperties::default()
     }),
@@ -237,7 +237,7 @@ pub const GREEN_APPLE: Item = Item {
     emoji: Emoji::from_emote(Some("green_apple"), 1075464813288894677),
     tags: CONSUMABLE_TAGS,
     consumption_properties: Some(ConsumptionProperties {
-        health_regenation: 20,
+        health_regenation: 10,
         ether_regeneration: 5,
         ..ConsumptionProperties::default()
     }),
@@ -255,7 +255,7 @@ pub const CORN: Item = Item {
     emoji: Emoji::from_emote(Some("corn"), 1075474488352837692),
     tags: CONSUMABLE_TAGS,
     consumption_properties: Some(ConsumptionProperties {
-        health_regenation: 30,
+        health_regenation: 20,
         ether_regeneration: 0,
         ..ConsumptionProperties::default()
     }),
@@ -273,7 +273,7 @@ pub const ORANGE: Item = Item {
     emoji: Emoji::from_emote(Some("orange"), 1074675044426469377),
     tags: CONSUMABLE_TAGS,
     consumption_properties: Some(ConsumptionProperties {
-        health_regenation: 35,
+        health_regenation: 25,
         ether_regeneration: 0,
         ..ConsumptionProperties::default()
     }),
@@ -291,8 +291,8 @@ pub const LEMON: Item = Item {
     emoji: Emoji::from_emote(Some("lemon"), 1074677203750633482),
     tags: CONSUMABLE_TAGS,
     consumption_properties: Some(ConsumptionProperties {
-        health_regenation: 35,
-        ether_regeneration: 5,
+        health_regenation: 15,
+        ether_regeneration: 10,
         ..ConsumptionProperties::default()
     }),
     purchase_properties: PurchaseProperties {
@@ -309,8 +309,8 @@ pub const WATERMELON: Item = Item {
     emoji: Emoji::from_emote(Some("watermelon"), 1076499133420023818),
     tags: CONSUMABLE_TAGS,
     consumption_properties: Some(ConsumptionProperties {
-        health_regenation: 50,
-        ether_regeneration: 15,
+        health_regenation: 40,
+        ether_regeneration: 10,
         ..ConsumptionProperties::default()
     }),
     purchase_properties: PurchaseProperties {
@@ -327,7 +327,7 @@ pub const TOMATO: Item = Item {
     emoji: Emoji::from_emote(Some("tomato"), 1074687074587902042),
     tags: CONSUMABLE_TAGS,
     consumption_properties: Some(ConsumptionProperties {
-        health_regenation: 35,
+        health_regenation: 30,
         ether_regeneration: 0,
         ..ConsumptionProperties::default()
     }),
@@ -345,8 +345,8 @@ pub const CHOCOLATE: Item = Item {
     emoji: Emoji::from_emote(Some("chocolate"), 1075483317891235900),
     tags: CONSUMABLE_TAGS,
     consumption_properties: Some(ConsumptionProperties {
-        health_regenation: 120,
-        ether_regeneration: 25,
+        health_regenation: 80,
+        ether_regeneration: 10,
         ..ConsumptionProperties::default()
     }),
     purchase_properties: PurchaseProperties {
@@ -363,8 +363,8 @@ pub const CHOCOLATE_MILK: Item = Item {
     emoji: Emoji::from_emote(Some("chocolate_milk"), 1076492726071218227),
     tags: CONSUMABLE_TAGS,
     consumption_properties: Some(ConsumptionProperties {
-        health_regenation: 80,
-        ether_regeneration: 60,
+        health_regenation: 50,
+        ether_regeneration: 30,
         ..ConsumptionProperties::default()
     }),
     purchase_properties: PurchaseProperties {
@@ -381,8 +381,8 @@ pub const ORANGE_JUICE: Item = Item {
     emoji: Emoji::from_emote(Some("orange_juice"), 1076492513097023589),
     tags: CONSUMABLE_TAGS,
     consumption_properties: Some(ConsumptionProperties {
-        health_regenation: 50,
-        ether_regeneration: 25,
+        health_regenation: 30,
+        ether_regeneration: 10,
         ..ConsumptionProperties::default()
     }),
     purchase_properties: PurchaseProperties {
@@ -399,8 +399,8 @@ pub const LEMONADE: Item = Item {
     emoji: Emoji::from_emote(Some("lemonade"), 1076495924433539173),
     tags: CONSUMABLE_TAGS,
     consumption_properties: Some(ConsumptionProperties {
-        health_regenation: 45,
-        ether_regeneration: 30,
+        health_regenation: 20,
+        ether_regeneration: 20,
         ..ConsumptionProperties::default()
     }),
     purchase_properties: PurchaseProperties {
@@ -417,8 +417,8 @@ pub const BEEF: Item = Item {
     emoji: Emoji::from_emote(Some("beef"), 1076502264753168545),
     tags: CONSUMABLE_TAGS,
     consumption_properties: Some(ConsumptionProperties {
-        health_regenation: 350,
-        ether_regeneration: 15,
+        health_regenation: 95,
+        ether_regeneration: 0,
         ..ConsumptionProperties::default()
     }),
     purchase_properties: PurchaseProperties {
@@ -435,8 +435,8 @@ pub const CHICKEN_MEAT: Item = Item {
     emoji: Emoji::from_unicode("🍗"),
     tags: CONSUMABLE_TAGS,
     consumption_properties: Some(ConsumptionProperties {
-        health_regenation: 300,
-        ether_regeneration: 40,
+        health_regenation: 60,
+        ether_regeneration: 10,
         ..ConsumptionProperties::default()
     }),
     purchase_properties: PurchaseProperties {
@@ -453,8 +453,8 @@ pub const BACON: Item = Item {
     emoji: Emoji::from_emote(Some("bacon"), 1076974186762862673),
     tags: CONSUMABLE_TAGS,
     consumption_properties: Some(ConsumptionProperties {
-        health_regenation: 300,
-        ether_regeneration: 60,
+        health_regenation: 100,
+        ether_regeneration: 0,
         ..ConsumptionProperties::default()
     }),
     purchase_properties: PurchaseProperties {
@@ -471,8 +471,8 @@ pub const COMMON_FISH: Item = Item {
     emoji: Emoji::from_emote(Some("common_fish"), 1076978186413408348),
     tags: CONSUMABLE_TAGS,
     consumption_properties: Some(ConsumptionProperties {
-        health_regenation: 125,
-        ether_regeneration: 30,
+        health_regenation: 40,
+        ether_regeneration: 15,
         ..ConsumptionProperties::default()
     }),
     purchase_properties: PurchaseProperties {
@@ -489,8 +489,8 @@ pub const TROPICAL_FISH: Item = Item {
     emoji: Emoji::from_emote(Some("tropical_fish"), 1076980239160332329),
     tags: CONSUMABLE_TAGS,
     consumption_properties: Some(ConsumptionProperties {
-        health_regenation: 175,
-        ether_regeneration: 50,
+        health_regenation: 60,
+        ether_regeneration: 15,
         ..ConsumptionProperties::default()
     }),
     purchase_properties: PurchaseProperties {
@@ -507,8 +507,8 @@ pub const GREEN_FISH: Item = Item {
     emoji: Emoji::from_emote(Some("green_fish"), 1076979486073028720),
     tags: CONSUMABLE_TAGS,
     consumption_properties: Some(ConsumptionProperties {
-        health_regenation: 135,
-        ether_regeneration: 80,
+        health_regenation: 80,
+        ether_regeneration: 15,
         ..ConsumptionProperties::default()
     }),
     purchase_properties: PurchaseProperties {

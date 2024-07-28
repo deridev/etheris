@@ -67,7 +67,7 @@ impl BossBrain {
         };
     }
 
-    fn adjust_weights(
+    async fn adjust_weights(
         &mut self,
         battle_state: &BattleState,
         fighter: &Fighter,
@@ -75,12 +75,12 @@ impl BossBrain {
     ) {
         let phase_weights = self.action_weights.get_mut(&self.phase).unwrap();
 
+        *phase_weights.get_mut(&BattleInputKind::Finish).unwrap() = 10.0;
+
         // Reset weights for actions that can't be used in current composure
         for (input_kind, weight) in phase_weights.iter_mut() {
             if !input_kind.can_use(BattleApi::new(api.controller)) {
                 *weight = 0.0;
-            } else {
-                *weight = 1.0; // Reset to base weight if usable
             }
         }
 
@@ -91,6 +91,21 @@ impl BossBrain {
             *phase_weights.get_mut(&BattleInputKind::Actions).unwrap() = 0.8;
         } else {
             *phase_weights.get_mut(&BattleInputKind::Actions).unwrap() = 0.0;
+        }
+
+        // Check if there's a high probability of a skill being used
+        for skill in fighter.skills.iter().cloned() {
+            let prob = skill
+                .dynamic_skill
+                .lock()
+                .await
+                .ai_chance_to_pick(BattleApi::new(api.controller));
+
+            if prob.value() >= 99 {
+                *phase_weights.get_mut(&BattleInputKind::UseSkill).unwrap() = 10.0;
+            } else if prob.value() > 75 {
+                *phase_weights.get_mut(&BattleInputKind::UseSkill).unwrap() += 0.7;
+            }
         }
 
         // Adjust weights based on battle state and composure
@@ -228,7 +243,8 @@ impl Brain for BossBrain {
             composure: fighter.composure,
         };
 
-        self.adjust_weights(&battle_state, &fighter, BattleApi::new(api.controller));
+        self.adjust_weights(&battle_state, &fighter, BattleApi::new(api.controller))
+            .await;
 
         let selected_action = self.select_action(BattleApi::new(api.controller));
 
@@ -328,7 +344,7 @@ impl BossBrain {
         let finisher = fighter
             .finishers
             .choose_weighted(rng, |f| {
-                let base_weight = if f.is_fatal() { 1 } else { 2 };
+                let base_weight = if f.is_fatal() { 1 } else { 3 };
                 let personality_modifier =
                     if fighter.personalities.contains(&Personality::Aggressiveness) {
                         2

@@ -230,6 +230,7 @@ pub fn special_ether_fountain(state: EventBuildState) -> Event {
             "você encontra uma fonte brilhante de ether. A energia pura emana dela, prometendo restaurar seu poder, mas também apresentando riscos."
         ),
         actions: vec![
+            common::ignore_action(),
             Action {
                 name: "Recuperação Pequena".to_string(),
                 emoji: Some(Emoji::from_unicode("🍵")),
@@ -321,20 +322,6 @@ pub fn special_ether_fountain(state: EventBuildState) -> Event {
                 ],
                 ..Default::default()
             },
-            Action {
-                name: "Ignorar".to_string(),
-                emoji: Some(Emoji::from_unicode("🚶")),
-                consequences: vec![
-                    Consequence {
-                        kind: ConsequenceKind::Message {
-                            message: "você decide que os riscos são muito altos e passa pela fonte de ether sem interagir com ela.".to_string(),
-                            emoji: None
-                        },
-                        ..Default::default()
-                    }
-                ],
-                ..Default::default()
-            }
         ]
     }
 }
@@ -419,3 +406,84 @@ make_event!(
         ]
     }
 );
+
+pub fn special_general_mysterious_merchant(_: EventBuildState) -> Event {
+    Event {
+        identifier: "special_general_mysterious_merchant",
+        spawn: EventSpawn {
+            base_probability: Probability::new(5),
+            weighted_regions: all_regions(1),
+            conditions: vec![]
+        },
+        emoji: Emoji::from_unicode("🧙‍♂️"),
+        message: EventMessage::Single("um mercador misterioso aparece oferecendo uma troca incomum. Ele quer trocar um item aleatório seu por uma caixa misteriosa. O que você quer fazer?"),
+        actions: vec![
+            common::ignore_action(),
+            Action {
+                name: "Aceitar a troca".to_string(),
+                emoji: Some(Emoji::from_unicode("🎁")),
+                consequences: vec![
+                    Consequence {
+                        probability: Probability::new(50),
+                        kind: ConsequenceKind::Rewards {
+                            message: "você abre a caixa misteriosa e encontra algo valioso!".to_string(),
+                            iterations: 1,
+                            items: vec![
+                                (Probability::new(70), items::special::GIFT, (1, 1)),
+                                (Probability::new(50), items::special::TRAP, (1, 1)),
+                                (Probability::new(15), items::special::INVIGORATING_CRYSTAL, (1, 1)),
+                                (Probability::new(5), items::special::INTELLIGENCE_CRYSTAL, (1, 1)),
+                            ],
+                            orbs: (50, 150),
+                            xp: XpReward {
+                                intelligence: (10, 30),
+                                knowledge: (10, 30),
+                                ..Default::default()
+                            }
+                        },
+                        extra_consequences: vec![
+                            Consequence {
+                                kind: ConsequenceKind::Prejudice {
+                                    message: "o mercador pega um item aleatório do seu inventário.".to_string(),
+                                    items_amount: (1, 1),
+                                    max_item_valuability: 500,
+                                    fixed_orbs: (0, 0),
+                                    orbs_percentage: 0.0,
+                                    specific_items: vec![],
+                                    damage_percentage: 0.0,
+                                    damage_limit: 0
+                                },
+                                ..Default::default()
+                            }
+                        ],
+                        ..Default::default()
+                    },
+                    Consequence {
+                        probability: Probability::new(50),
+                        kind: ConsequenceKind::Message {
+                            message: "você abre a caixa misteriosa e encontra... nada! O mercador desaparece rindo.".to_string(),
+                            emoji: Some(Emoji::from_unicode("💨"))
+                        },
+                        extra_consequences: vec![
+                            Consequence {
+                                kind: ConsequenceKind::Prejudice {
+                                    message: "o mercador pega um item aleatório do seu inventário.".to_string(),
+                                    items_amount: (1, 1),
+                                    max_item_valuability: 700,
+                                    fixed_orbs: (0, 0),
+                                    orbs_percentage: 0.0,
+                                    specific_items: vec![],
+                                    damage_percentage: 0.0,
+                                    damage_limit: 0
+                                },
+                                ..Default::default()
+                            }
+                        ],
+                        ..Default::default()
+                    }
+                ],
+                ..Default::default()
+            }
+        ],
+    }
+}

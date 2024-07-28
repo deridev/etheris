@@ -608,6 +608,7 @@ impl BattleController {
     pub async fn next_turn(&mut self) -> anyhow::Result<()> {
         let alive_fighters = self.battle.alive_fighters.clone();
 
+        controller_helper::tick_every_modifier(&alive_fighters, self).await?;
         controller_helper::tick_every_effect(&alive_fighters, self).await?;
         controller_helper::passives(self).await?;
 

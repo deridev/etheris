@@ -92,7 +92,7 @@ pub const BAT: Item = Item {
     weapon: Some(WeaponKind::Bat),
     purchase_properties: PurchaseProperties {
         base_price: 700,
-        base_sell_price: 50,
+        base_sell_price: 125,
 
         ..PurchaseProperties::default()
     },
@@ -106,8 +106,8 @@ pub const SPEAR: Item = Item {
     tags: TOOL_TAGS,
     weapon: Some(WeaponKind::Spear),
     purchase_properties: PurchaseProperties {
-        base_price: 1150,
-        base_sell_price: 80,
+        base_price: 560,
+        base_sell_price: 145,
 
         ..PurchaseProperties::default()
     },
@@ -119,11 +119,25 @@ pub const KATANA: Item = Item {
     display_name: "Katana",
     emoji: Emoji::from_emote(Some("katana"), 1207539850098770011),
     tags: TOOL_TAGS,
+    weapon: Some(WeaponKind::EthriaKatana),
+    purchase_properties: PurchaseProperties {
+        base_price: 800,
+        base_sell_price: 200,
+
+        ..PurchaseProperties::default()
+    },
+    ..Item::default()
+};
+
+pub const ETHRIA_KATANA: Item = Item {
+    identifier: "ethria_katana",
+    display_name: "Katana de Ethria",
+    emoji: Emoji::from_emote(Some("ethria_katana"), 1267206629162750075),
+    tags: TOOL_TAGS,
     weapon: Some(WeaponKind::Katana),
     purchase_properties: PurchaseProperties {
-        base_price: 3000,
-        base_sell_price: 125,
-
+        base_price: 4000,
+        base_sell_price: 1000,
         ..PurchaseProperties::default()
     },
     ..Item::default()

@@ -11,14 +11,14 @@ make_event!(
         identifier: "basic_general_rock_mining",
         spawn: EventSpawn {
             weighted_regions: vec![
-                (WorldRegion::Greenagis, 4),
-                (WorldRegion::Emerelis, 4),
+                (WorldRegion::Greenagis, 2),
+                (WorldRegion::Emerelis, 3),
                 (WorldRegion::Gloomwood, 3),
                 (WorldRegion::Mudland, 3),
                 (WorldRegion::Murkswamp, 2),
                 (WorldRegion::Midgrass, 1),
-                (WorldRegion::Sunreach, 4),
-                (WorldRegion::Wornpeaks, 5),
+                (WorldRegion::Sunreach, 3),
+                (WorldRegion::Wornpeaks, 3),
             ],
             ..Default::default()
         },
@@ -394,3 +394,172 @@ pub fn gambler_coin_toss(_: EventBuildState) -> Event {
         ],
     }
 }
+
+make_event!(
+    basic_general_lost_pet,
+    Event {
+        identifier: "basic_general_lost_pet",
+        spawn: EventSpawn {
+            base_probability: Probability::new(20),
+            weighted_regions: all_regions(1),
+            conditions: vec![]
+        },
+        emoji: Emoji::from_unicode("🐾"),
+        message: EventMessage::Single("você encontra um animal de estimação perdido com uma coleira. O que você quer fazer?"),
+        actions: vec![
+            common::ignore_action(),
+            Action {
+                name: "Ajudar o animal".to_string(),
+                emoji: Some(Emoji::from_unicode("🤲")),
+                consequences: vec![
+                    Consequence {
+                        probability: Probability::new(70),
+                        kind: ConsequenceKind::Rewards {
+                            message: "você conseguiu encontrar o dono do animal! Eles ficaram muito gratos e te recompensaram.".to_string(),
+                            iterations: 2,
+                            items: vec![
+                                (Probability::new(50), items::consumable::APPLE, (1, 2)),
+                                (Probability::new(30), items::special::GIFT, (1, 1)),
+                            ],
+                            orbs: (50, 100),
+                            xp: XpReward {
+                                intelligence: (10, 20),
+                                knowledge: (5, 15),
+                                ..Default::default()
+                            }
+                        },
+                        ..Default::default()
+                    },
+                    Consequence {
+                        probability: Probability::new(30),
+                        kind: ConsequenceKind::Message {
+                            message: "você não conseguiu encontrar o dono, mas sentiu que o animal ficou grato pela sua ajuda.".to_string(),
+                            emoji: Some(Emoji::from_unicode("😺"))
+                        },
+                        extra_consequences: vec![
+                            Consequence {
+                                kind: ConsequenceKind::AddKarma(1),
+                                ..Default::default()
+                            }
+                        ],
+                        ..Default::default()
+                    }
+                ],
+                ..Default::default()
+            }
+        ]
+    }
+);
+
+make_event!(
+    basic_general_broken_cart,
+    Event {
+        identifier: "basic_general_broken_cart",
+        spawn: EventSpawn {
+            base_probability: Probability::new(15),
+            weighted_regions: all_regions(1),
+            conditions: vec![]
+        },
+        emoji: Emoji::from_unicode("🛒"),
+        message: EventMessage::Single("você encontra uma carroça quebrada. O que você faz?"),
+        actions: vec![
+            common::ignore_action(),
+            Action {
+                name: "Tentar consertar".to_string(),
+                emoji: Some(items::tool::HAMMER.emoji),
+                conditions: vec![Condition::HasItem(items::tool::HAMMER, 1)],
+                consequences: vec![Consequence {
+                    kind: ConsequenceKind::Rewards {
+                        message: "você consertou a carroça e o dono te recompensou!".to_string(),
+                        iterations: 2,
+                        items: vec![
+                            (Probability::new(80), items::material::STICK, (1, 3)),
+                            (Probability::new(60), items::material::RAW_TRUNK, (1, 2)),
+                            (Probability::new(20), items::consumable::WATERMELON, (1, 2)),
+                        ],
+                        orbs: (10, 30),
+                        xp: XpReward {
+                            health: (0, 5),
+                            intelligence: (5, 10),
+                            strength: (5, 15),
+                            knowledge: (5, 10)
+                        }
+                    },
+                    ..Default::default()
+                }],
+                extra_consequences: vec![Consequence {
+                    kind: ConsequenceKind::RemoveItemDurability(items::tool::HAMMER, 1),
+                    ..Default::default()
+                }],
+                ..Default::default()
+            },
+        ]
+    }
+);
+
+make_event!(
+    basic_general_old_well,
+    Event {
+        identifier: "basic_general_old_well",
+        spawn: EventSpawn {
+            base_probability: Probability::new(20),
+            weighted_regions: all_regions(1),
+            conditions: vec![]
+        },
+        emoji: Emoji::from_unicode("⛲"),
+        message: EventMessage::Single("você encontra um velho poço abandonado. O que você faz?"),
+        actions: vec![
+            common::ignore_action(),
+            Action {
+                name: "Coletar água".to_string(),
+                emoji: None,
+                consequences: vec![Consequence {
+                    kind: ConsequenceKind::Rewards {
+                        message: "você coletou água fresca do poço!".to_string(),
+                        iterations: 1,
+                        items: vec![(Probability::new(100), items::consumable::WATER, (2, 4)),],
+                        orbs: (0, 5),
+                        xp: XpReward {
+                            health: (5, 10),
+                            intelligence: (0, 5),
+                            strength: (5, 10),
+                            knowledge: (0, 5)
+                        }
+                    },
+                    ..Default::default()
+                }],
+                ..Default::default()
+            },
+            Action {
+                name: "Cavar no fundo".to_string(),
+                emoji: Some(items::tool::SHOVEL.emoji),
+                conditions: vec![Condition::HasItem(items::tool::SHOVEL, 1)],
+                consequences: vec![Consequence {
+                    kind: ConsequenceKind::Rewards {
+                        message: "você encontrou alguns itens no fundo do poço!".to_string(),
+                        iterations: 2,
+                        items: vec![
+                            (Probability::new(70), items::material::STONE, (1, 3)),
+                            (Probability::new(50), items::consumable::WATER, (1, 2)),
+                            (Probability::new(30), items::material::TOOL_HANDLE, (1, 1)),
+                            (Probability::new(5), items::ore::TIN_ORE, (1, 1)),
+                        ],
+                        orbs: (5, 20),
+                        xp: XpReward {
+                            health: (0, 5),
+                            intelligence: (5, 10),
+                            strength: (5, 15),
+                            knowledge: (5, 10)
+                        }
+                    },
+                    ..Default::default()
+                }],
+                extra_consequences: vec![Consequence {
+                    kind: ConsequenceKind::RemoveItemDurability(items::tool::SHOVEL, 1),
+                    ..Default::default()
+                }],
+                ..Default::default()
+            },
+        ]
+    }
+);

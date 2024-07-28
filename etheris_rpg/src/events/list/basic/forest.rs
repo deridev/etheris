@@ -87,9 +87,9 @@ make_event!(
         identifier: "basic_forest_digging",
         spawn: EventSpawn {
             weighted_regions: vec![
-                (WorldRegion::Murkswamp, 5),
-                (WorldRegion::Gloomwood, 3),
-                (WorldRegion::Mudland, 3)
+                (WorldRegion::Murkswamp, 2),
+                (WorldRegion::Gloomwood, 2),
+                (WorldRegion::Mudland, 2)
             ],
             ..Default::default()
         },
@@ -154,6 +154,7 @@ make_event!(
                 (WorldRegion::Murkswamp, 3),
                 (WorldRegion::Ethergrove, 1),
                 (WorldRegion::Starbreeze, 1),
+                (WorldRegion::Mudland, 1),
                 (WorldRegion::Sunreach, 1)
             ],
             conditions: vec![]
@@ -399,7 +400,7 @@ make_event!(
         },
         emoji: Emoji::from_unicode("🌳"),
         message: EventMessage::Single(
-            "Você encontrou uma árvore de aparência suspeita na floresta. O que deseja fazer?"
+            "você encontrou uma árvore de aparência suspeita na floresta. O que deseja fazer?"
         ),
         actions: vec![
             common::ignore_action(),
@@ -411,7 +412,7 @@ make_event!(
                     Consequence {
                         probability: Probability::new(20),
                         kind: ConsequenceKind::Rewards {
-                            message: "Você encontrou um buraco na árvore contendo alguns itens!"
+                            message: "você encontrou um buraco na árvore contendo alguns itens!"
                                 .to_string(),
                             iterations: 2,
                             items: vec![
@@ -631,6 +632,7 @@ make_event!(
                 (WorldRegion::Starbreeze, 2),
                 (WorldRegion::Gloomwood, 1),
                 (WorldRegion::Sunreach, 1),
+                (WorldRegion::Mudland, 1),
             ],
             conditions: vec![]
         },
@@ -728,7 +730,8 @@ make_event!(
             weighted_regions: vec![
                 (WorldRegion::Gloomwood, 2),
                 (WorldRegion::Mudland, 2),
-                (WorldRegion::Ethergrove, 1)
+                (WorldRegion::Ethergrove, 1),
+                (WorldRegion::Starbreeze, 1),
             ],
             conditions: vec![]
         },
@@ -749,6 +752,8 @@ make_event!(
                             iterations: 1,
                             items: vec![
                                 (Probability::new(100), items::consumable::APPLE, (2, 5)),
+                                (Probability::new(100), items::consumable::GREEN_APPLE, (1, 3)),
+                                (Probability::new(100), items::consumable::ORANGE, (1, 3)),
                             ],
                             orbs: (5, 10),
                             xp: XpReward::default()
@@ -779,7 +784,8 @@ make_event!(
             weighted_regions: vec![
                 (WorldRegion::Gloomwood, 2),
                 (WorldRegion::Mudland, 2),
-                (WorldRegion::Murkswamp, 1)
+                (WorldRegion::Murkswamp, 1),
+                (WorldRegion::Midgrass, 1),
             ],
             conditions: vec![]
         },
@@ -859,7 +865,10 @@ make_event!(
             weighted_regions: vec![
                 (WorldRegion::Mudland, 2),
                 (WorldRegion::Gloomwood, 1),
-                (WorldRegion::Ethergrove, 1)
+                (WorldRegion::Ethergrove, 1),
+                (WorldRegion::Starbreeze, 1),
+                (WorldRegion::Sunreach, 1),
+                (WorldRegion::Mudland, 1),
             ],
             conditions: vec![]
         },
@@ -900,6 +909,7 @@ make_event!(
             Action {
                 name: "Quebrar".to_string(),
                 emoji: Some(items::tool::PICKAXE.emoji),
+                conditions: vec![Condition::HasItem(items::tool::PICKAXE, 1)],
                 consequences: vec![
                     Consequence {
                         probability: Probability::new(60),
@@ -925,6 +935,10 @@ make_event!(
                         ..Default::default()
                     },
                 ],
+                extra_consequences: vec![Consequence {
+                    kind: ConsequenceKind::RemoveItemDurability(items::tool::PICKAXE, 1),
+                    ..Default::default()
+                }],
                 ..Default::default()
             }
         ]
@@ -940,8 +954,9 @@ make_event!(
             weighted_regions: vec![
                 (WorldRegion::Gloomwood, 1),
                 (WorldRegion::Mudland, 1),
+                (WorldRegion::Sunreach, 1),
                 (WorldRegion::Ethergrove, 1),
-                (WorldRegion::Starbreeze, 1)
+                (WorldRegion::Starbreeze, 1),
             ],
             ..Default::default()
         },
@@ -1039,6 +1054,7 @@ make_event!(
                                 (Probability::new(30), items::special::GIFT, (1, 1)),
                                 (Probability::new(30), items::special::TRAP, (1, 1)),
                                 (Probability::new(20), items::lore::GOLDEN_ROBOT_POEM, (1, 1)),
+                                (Probability::new(40), items::lore::METROLIS_LAW_338, (1, 1)),
                             ],
                             orbs: (5, 15),
                             xp: XpReward {
@@ -1070,9 +1086,9 @@ make_event!(
                             iterations: 1,
                             items: vec![
                                 (Probability::new(80), items::special::RECIPE_BOOK, (1, 1)),
-                                (Probability::new(1), items::lore::ENTITY_039_REPORT, (1, 1)),
-                                (Probability::new(1), items::lore::ENTITY_104_REPORT, (1, 1)),
-                                (Probability::new(1), items::lore::HAKIKO_LEGEND, (1, 1)),
+                                (Probability::new(3), items::lore::ENTITY_039_REPORT, (1, 1)),
+                                (Probability::new(3), items::lore::ENTITY_104_REPORT, (1, 1)),
+                                (Probability::new(3), items::lore::HAKIKO_LEGEND, (1, 1)),
                                 (Probability::new(1), items::special::INTELLIGENCE_CRYSTAL, (1, 1)),
                             ],
                             orbs: (10, 20),
@@ -1126,5 +1142,77 @@ make_event!(
                 ..Default::default()
             },
         ],
+    }
+);
+
+make_event!(
+    basic_gloomwood_mysterious_fog,
+    Event {
+        identifier: "basic_gloomwood_mysterious_fog",
+        spawn: EventSpawn {
+            base_probability: Probability::new(30),
+            weighted_regions: vec![(WorldRegion::Gloomwood, 1)],
+            conditions: vec![]
+        },
+        emoji: Emoji::from_unicode("🌫️"),
+        message: EventMessage::Single(
+            "uma densa névoa misteriosa surge ao seu redor. O que você faz?"
+        ),
+        actions: vec![
+            Action {
+                name: "Recuar".to_string(),
+                emoji: None,
+                consequences: vec![Consequence {
+                    kind: ConsequenceKind::Message {
+                        message: "você decide não arriscar e recua para uma área mais segura."
+                            .to_string(),
+                        emoji: None
+                    },
+                    ..Default::default()
+                }],
+                ..Default::default()
+            },
+            Action {
+                name: "Explorar a névoa".to_string(),
+                emoji: None,
+                consequences: vec![
+                    Consequence {
+                        kind: ConsequenceKind::Rewards {
+                            message: "ao explorar a névoa, você encontra itens misteriosos!"
+                                .to_string(),
+                            iterations: 2,
+                            items: vec![
+                                (Probability::new(70), items::consumable::SALT, (1, 3)),
+                                (Probability::new(50), items::consumable::SUGAR, (1, 2)),
+                                (Probability::new(30), items::material::PAPER, (1, 2)),
+                            ],
+                            orbs: (15, 40),
+                            xp: XpReward {
+                                health: (0, 10),
+                                intelligence: (10, 20),
+                                strength: (0, 10),
+                                knowledge: (10, 20)
+                            }
+                        },
+                        ..Default::default()
+                    },
+                    Consequence {
+                        probability: Probability::new(40),
+                        kind: ConsequenceKind::Prejudice {
+                            message: "você não vê seu caminho na névoa e tropeça!".to_string(),
+                            fixed_orbs: (0, 0),
+                            items_amount: (0, 0),
+                            max_item_valuability: 0,
+                            orbs_percentage: 0.0,
+                            specific_items: vec![],
+                            damage_percentage: 0.05,
+                            damage_limit: 45,
+                        },
+                        ..Default::default()
+                    }
+                ],
+                ..Default::default()
+            }
+        ]
     }
 );

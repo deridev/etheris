@@ -19,6 +19,11 @@ pub struct Soul {
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
 pub enum SkillKind {
     Debug,
+    // Boss Skills
+    AgorathForcedDuel,
+    GarhyanRatSummon,
+    EthriaAdaptation,
+    // Normal Skills
     ImbuedPunch,
     SimpleCut,
     DefensiveJump,
@@ -56,12 +61,16 @@ pub enum SkillKind {
     SkillMirror,
     EtherFlow,
     Pyrotransmutation,
+    PoisonousGas,
 }
 
 impl SkillKind {
     pub fn list() -> Vec<SkillKind> {
         vec![
             Self::Debug,
+            Self::AgorathForcedDuel,
+            Self::GarhyanRatSummon,
+            Self::EthriaAdaptation,
             Self::ImbuedPunch,
             Self::SimpleCut,
             Self::DefensiveJump,
@@ -98,12 +107,16 @@ impl SkillKind {
             Self::SkillMirror,
             Self::EtherFlow,
             Self::Pyrotransmutation,
+            Self::PoisonousGas,
         ]
     }
 
     pub fn personalities_affinity(&self) -> &'static [Personality] {
         match self {
             Self::Debug => &[],
+            Self::AgorathForcedDuel => &[Personality::Courage, Personality::Cowardice],
+            Self::GarhyanRatSummon => &[Personality::Arrogance, Personality::Cowardice],
+            Self::EthriaAdaptation => &[Personality::Courage, Personality::Insanity],
             Self::ImbuedPunch => &Personality::LIST,
             Self::SimpleCut => &[Personality::Cowardice, Personality::Arrogance],
             Self::DefensiveJump => &[Personality::Intelligence, Personality::Cowardice],
@@ -149,6 +162,7 @@ impl SkillKind {
             Self::SkillMirror => &[Personality::Insanity, Personality::Cowardice],
             Self::EtherFlow => &[Personality::Calm],
             Self::Pyrotransmutation => &[Personality::Aggressiveness, Personality::Cowardice],
+            Self::PoisonousGas => &[Personality::Aggressiveness, Personality::Cowardice],
         }
     }
 
@@ -168,6 +182,7 @@ impl SkillKind {
             Self::IcyBreath => 10,
             Self::Intimidation => 11,
             Self::IcyShot => 12,
+            Self::PoisonousGas => 12,
             Self::BloodDonation => 12,
             Self::WaterBlessing => 13,
             Self::EtherFlow => 13,
@@ -191,6 +206,10 @@ impl SkillKind {
             Self::TenkuKikan(_) => 80,
             Self::FinalCrucifix => 130,
             Self::Hakikotenchou => 90,
+
+            Self::GarhyanRatSummon => u32::MAX,
+            Self::AgorathForcedDuel => u32::MAX,
+            Self::EthriaAdaptation => u32::MAX,
             Self::Debug => u32::MAX,
         }
     }
@@ -203,6 +222,7 @@ impl SkillKind {
             | Self::TornadoKick
             | Self::Bite
             | Self::Intimidation
+            | Self::Debug
             | Self::DefensiveJump => 1,
             Self::Charge
             | Self::IcyBreath
@@ -215,7 +235,7 @@ impl SkillKind {
             | Self::ResplendentPunch
             | Self::BloodSpear
             | Self::EtherFlow
-            | Self::Overcoming => 2,
+            | Self::PoisonousGas => 2,
             Self::IcyShot
             | Self::ElectricSlap
             | Self::WaterBlessing
@@ -224,13 +244,14 @@ impl SkillKind {
             | Self::AtomicHollow
             | Self::CursedBlood
             | Self::BloodTheft
-            | Self::Pyrotransmutation => 3,
+            | Self::Pyrotransmutation
+            | Self::Overcoming
+            | Self::GarhyanRatSummon => 3,
             Self::WaterJet | Self::FlamingBall | Self::EtherShadow | Self::SkillMirror => 4,
             Self::YinYang | Self::Hakikotenchou => 5,
             Self::TenkuKikan(..) => 6,
-            Self::ParalyzingBet => 6,
-            Self::FinalCrucifix => 7,
-            Self::Debug => u32::MAX,
+            Self::ParalyzingBet | Self::AgorathForcedDuel => 6,
+            Self::FinalCrucifix | Self::EthriaAdaptation => 7,
         }
     }
 }

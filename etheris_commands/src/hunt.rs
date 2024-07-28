@@ -92,9 +92,12 @@ pub async fn hunt(mut ctx: CommandContext) -> anyhow::Result<()> {
     let enemies = enemies
         .into_iter()
         .map(|e| {
-            let reward =
-                e.drop
-                    .to_reward(&mut StdRng::from_entropy(), character.pl, e.power_level());
+            let reward = e.drop.to_reward(
+                &mut StdRng::from_entropy(),
+                character.pl,
+                e.power_level(),
+                e.boss.is_some(),
+            );
             FighterData::new_from_enemy(1, reward, e)
         })
         .collect::<Vec<_>>();

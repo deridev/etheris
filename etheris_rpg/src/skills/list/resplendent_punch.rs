@@ -13,10 +13,10 @@ impl Skill for ResplendentPunch {
         SkillData {
             identifier: "resplendent_punch",
             name: "Soco Resplandecente",
-            description: "Ataca com um soco imbuído de muito ether, mas com 50% de chance de acertar. Se acertar, o inimigo não poderá regenerar ether por 4 turnos.",
+            description: "Ataca com um soco imbuído de muito ether, mas com 40% de chance de acertar. Se acertar, o inimigo não poderá regenerar ether por 4 turnos e você aumenta o seu próprio dano.",
             explanation: "Utiliza o mesmo princípio do Soco Imbuído, mas é intensificiado pela metaconsciência do ether por ter uma condição de uso (baixa chance de acerto), tornando o ether mais poderoso.",
             complexity: SkillComplexity::Normal,
-            use_cost: SkillCost { ether: 30 },
+            use_cost: SkillCost { ether: 40 },
         }
     }
 
@@ -26,7 +26,7 @@ impl Skill for ResplendentPunch {
 
         let critical = Probability::new(10).generate_random_bool();
 
-        let base_damage = api.rng().gen_range(10..=20); 
+        let base_damage = api.rng().gen_range(5..=15); 
         let damage = base_damage + api.rng().gen_range(if critical { 30..=40 } else { 25..=30 });
 
         let multiplier = (fighter.strength_multiplier() + fighter.intelligence_multiplier()) / 2.0;
@@ -38,20 +38,22 @@ impl Skill for ResplendentPunch {
                 kind: DamageKind::SpecialPhysical,
                 amount: damage,
                 balance_effectiveness: if critical { 20 } else { 10 },
-                accuracy: if critical { 60 } else { 50 },
+                accuracy: if critical { 50 } else { 40 },
                 effect: Some(Effect::new(EffectKind::Exhausted, 3, fighter.index)),
                 ..Default::default()
             },
         ).await;
 
-            if critical {
+        api.fighter_mut().modifiers.add(Modifier::new(ModKind::DmgMultiplier(1.15), Some(4)).with_tag("resplendent_punch_dmg_buff"));
+
+        if critical {
             api.emit_random_message(&[
                 format!(
                     "**{}** deu um soco resplandecente na cara de **{}** que causou **{damage}**!",
                     fighter.name, target.name
                 ),
                 format!(
-                    "**{}** socou o estômago de **{}** com punhos resplandecente e causou **{damage}**!",
+                    "**{}** socou o estômago de **{}** com punhos resplandecentes e causou **{damage}**!",
                     fighter.name, target.name
                 ),
             ]);

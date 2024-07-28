@@ -21,7 +21,7 @@ pub async fn skill_equip(
         FighterData::new_from_character(0, &character, author.clone(), Default::default()),
     );
 
-    if character.skills.len() >= 8 {
+    if character.skills.len() >= 7 {
         ctx.send(Response::new_user_reply(
             &author,
             "você já equipou o máximo de habilidades permitidas por personagem! Use **/habilidade desequipar** para remover uma habilidade equipada."

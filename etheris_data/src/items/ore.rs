@@ -20,7 +20,7 @@ pub const COAL_ORE: Item = Item {
     tags: ORE_TAGS,
     purchase_properties: PurchaseProperties {
         base_price: 30,
-        base_sell_price: 8,
+        base_sell_price: 4,
         ..PurchaseProperties::default()
     },
     ..Item::default()
@@ -33,7 +33,7 @@ pub const IRON_ORE: Item = Item {
     tags: ORE_TAGS,
     purchase_properties: PurchaseProperties {
         base_price: 90,
-        base_sell_price: 13,
+        base_sell_price: 7,
         ..PurchaseProperties::default()
     },
     ..Item::default()
@@ -46,7 +46,7 @@ pub const LEAD_ORE: Item = Item {
     tags: ORE_TAGS,
     purchase_properties: PurchaseProperties {
         base_price: 75,
-        base_sell_price: 22,
+        base_sell_price: 10,
         ..PurchaseProperties::default()
     },
     ..Item::default()
@@ -58,8 +58,8 @@ pub const COPPER_ORE: Item = Item {
     emoji: Emoji::from_emote(Some("copper_ore"), 1098586777511526420),
     tags: ORE_TAGS,
     purchase_properties: PurchaseProperties {
-        base_price: 70,
-        base_sell_price: 25,
+        base_price: 60,
+        base_sell_price: 15,
         ..PurchaseProperties::default()
     },
     ..Item::default()
@@ -71,8 +71,8 @@ pub const TIN_ORE: Item = Item {
     emoji: Emoji::from_emote(Some("tin_ore"), 1104794061191249920),
     tags: ORE_TAGS,
     purchase_properties: PurchaseProperties {
-        base_price: 90,
-        base_sell_price: 32,
+        base_price: 70,
+        base_sell_price: 16,
         ..PurchaseProperties::default()
     },
     ..Item::default()
@@ -85,7 +85,7 @@ pub const GOLD_ORE: Item = Item {
     tags: ORE_TAGS,
     purchase_properties: PurchaseProperties {
         base_price: 520,
-        base_sell_price: 120,
+        base_sell_price: 46,
         ..PurchaseProperties::default()
     },
     ..Item::default()
@@ -98,7 +98,7 @@ pub const DIAMOND_ORE: Item = Item {
     tags: ORE_TAGS,
     purchase_properties: PurchaseProperties {
         base_price: 2300,
-        base_sell_price: 800,
+        base_sell_price: 128,
         ..PurchaseProperties::default()
     },
     ..Item::default()

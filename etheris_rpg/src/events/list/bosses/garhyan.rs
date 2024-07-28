@@ -175,7 +175,7 @@ make_event!(garhyan_first_agression, Event {
 make_event!(garhyan_rematch, Event {
     identifier: "garhyan_rematch",
     spawn: EventSpawn {
-        base_probability: Probability::new(20),
+        base_probability: Probability::new(80),
         weighted_regions: vec![(WorldRegion::Gloomwood, 1), (WorldRegion::Mudland, 3)],
         conditions: vec![
             Condition::HasTag("fighting_garhyan"),
@@ -210,10 +210,6 @@ make_event!(garhyan_boss_battle, Event {
             emoji: None,
             consequences: vec![
                 Consequence {
-                    kind: ConsequenceKind::AddTag("fighting_garhyan".to_string()),
-                    ..Default::default()
-                },
-                Consequence {
                     kind: ConsequenceKind::Battle(BattleConsequence {
                         allies: vec![],
                         enemies: vec![bosses::garhyan()],
@@ -224,6 +220,12 @@ make_event!(garhyan_boss_battle, Event {
                     }),
                     ..Default::default()
                 }
+            ],
+            extra_consequences: vec![
+                Consequence {
+                    kind: ConsequenceKind::AddTag("fighting_garhyan".to_string()),
+                    ..Default::default()
+                },
             ],
             ..Default::default()
         },
@@ -242,14 +244,6 @@ fn garhyan_defeated(_: EventBuildState) -> Event {
                 emoji: None,
                 consequences: vec![
                     Consequence {
-                        kind: ConsequenceKind::RemoveTag("fighting_garhyan".to_string()),
-                        ..Default::default()
-                    },
-                    Consequence {
-                        kind: ConsequenceKind::AddKarma(6),
-                        ..Default::default()
-                    },
-                    Consequence {
                         kind: ConsequenceKind::Message {
                             message: "você sai do bunker, sabendo que derrotou um poderoso inimigo.".to_string(), 
                             emoji: None,
@@ -264,14 +258,6 @@ fn garhyan_defeated(_: EventBuildState) -> Event {
                 emoji: None,
                 consequences: vec![
                     Consequence {
-                        kind: ConsequenceKind::RemoveTag("fighting_garhyan".to_string()),
-                        ..Default::default()
-                    },
-                    Consequence {
-                        kind: ConsequenceKind::AddKarma(4),
-                        ..Default::default()
-                    },
-                    Consequence {
                         kind: ConsequenceKind::Rewards {
                             message: "você achou alguns itens interessantes!".to_string(),
                             iterations: 1,
@@ -283,6 +269,16 @@ fn garhyan_defeated(_: EventBuildState) -> Event {
                         },
                         ..Default::default()
                     }
+                ],
+                extra_consequences: vec![
+                    Consequence {
+                        kind: ConsequenceKind::RemoveTag("fighting_garhyan".to_string()),
+                        ..Default::default()
+                    },
+                    Consequence {
+                        kind: ConsequenceKind::AddKarma(4),
+                        ..Default::default()
+                    },
                 ],
                 ..Default::default()
             },

@@ -11,7 +11,7 @@ use crate::prelude::*;
 pub async fn travel(mut ctx: CommandContext) -> anyhow::Result<()> {
     let author = ctx.author().await?;
     let character = parse_user_character!(ctx, author);
-    let is_travel_free = character.region.city().is_some();
+    let visited_regions = character.visited_regions.clone();
 
     let character_image = character.create_image_bufer().unwrap_or_default();
     let attachment = DiscordAttachment::from_bytes("image.png".to_owned(), character_image, 1);
@@ -38,10 +38,10 @@ pub async fn travel(mut ctx: CommandContext) -> anyhow::Result<()> {
                         "**{}**\n**{} {} ◎**\n{}",
                         region.kind(),
                         emojis::ORB,
-                        if is_travel_free {
-                            0
+                        if visited_regions.contains(&region) {
+                            region.data().after_travel_price
                         } else {
-                            region.data().travel_price
+                            region.data().first_travel_price
                         },
                         $dir_name
                     ),
@@ -61,10 +61,16 @@ pub async fn travel(mut ctx: CommandContext) -> anyhow::Result<()> {
     let buttons = regions
         .iter()
         .map(|region| {
+            let price = if visited_regions.contains(&region) {
+                region.data().after_travel_price
+            } else {
+                region.data().first_travel_price
+            };
+
             ButtonBuilder::new()
                 .set_custom_id(region.to_string())
                 .set_label(region.to_string())
-                .set_disabled(!is_travel_free && region.data().travel_price > character.orbs)
+                .set_disabled(price > character.orbs)
         })
         .collect::<Vec<_>>();
     let row = ActionRowBuilder::new().add_buttons(buttons.clone());
@@ -134,14 +140,20 @@ pub async fn travel(mut ctx: CommandContext) -> anyhow::Result<()> {
         return Ok(());
     }
 
-    if !is_travel_free && character.orbs < region.data().travel_price {
+    let price = if visited_regions.contains(&region) {
+        region.data().after_travel_price
+    } else {
+        region.data().first_travel_price
+    };
+
+    if character.orbs < price {
         ctx.send(
             Response::new_user_reply(
                 &author,
                 format!(
                     "você precisa de **{} {} orbs ** para viajar até **{}**!",
                     emojis::ORB,
-                    region.data().travel_price,
+                    price,
                     region
                 ),
             )
@@ -152,9 +164,9 @@ pub async fn travel(mut ctx: CommandContext) -> anyhow::Result<()> {
     }
 
     character.action_points -= 5;
-    if !is_travel_free {
-        character.remove_orbs(region.data().travel_price);
-    }
+    character.remove_orbs(price);
+
+    character.visited_regions.insert(*region);
     character.travel_to(*region);
 
     ctx.db().characters().save(character).await?;

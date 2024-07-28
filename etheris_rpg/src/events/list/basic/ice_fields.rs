@@ -1,4 +1,10 @@
-use etheris_data::{items, personality::Personality, ShopItem};
+use etheris_data::{
+    emojis,
+    items::{self, Item},
+    personality::Personality,
+    ShopItem,
+};
+use rand::{rngs::StdRng, seq::SliceRandom, Rng, SeedableRng};
 use weaklings_plus::frost_wolf;
 
 use super::prelude::*;
@@ -88,7 +94,7 @@ make_event!(
                 consequences: vec![
                     Consequence {
                         kind: ConsequenceKind::Shop {
-                            name: "Vendedor Nômade do Deserto".to_string(),
+                            name: "Vendedor Nômade de Icefields".to_string(),
                             items: vec![
                                 ShopItem::new_item(4, items::consumable::WATER, 1.1),
                                 ShopItem::new_item(15, items::consumable::WHEAT, 1.2),
@@ -312,8 +318,8 @@ make_event!(basic_icefields_snow_storm, Event {
     ]
 });
 
-make_event!(icefields_frost_wolf_pack, Event {
-    identifier: "icefields_frost_wolf_pack",
+make_event!(basic_icefields_frost_wolf_pack, Event {
+    identifier: "basic_icefields_frost_wolf_pack",
     spawn: EventSpawn {
         base_probability: Probability::new(15),
         weighted_regions: vec![(WorldRegion::Icefields, 1)],
@@ -363,6 +369,327 @@ make_event!(icefields_frost_wolf_pack, Event {
                         prompt: false,
                         ..Default::default()
                     }),
+                    ..Default::default()
+                }
+            ],
+            ..Default::default()
+        }
+    ]
+});
+
+make_event!(basic_icefields_aurora_borealis, Event {
+    identifier: "basic_icefields_aurora_borealis",
+    spawn: EventSpawn {
+        base_probability: Probability::new(25),
+        weighted_regions: vec![(WorldRegion::Icefields, 3)],
+        conditions: vec![]
+    },
+    emoji: Emoji::from_unicode("🌠"),
+    message: EventMessage::Single("uma deslumbrante aurora boreal ilumina o céu noturno. As luzes dançantes parecem conter energia mágica. O que você faz?"),
+    actions: vec![
+        Action {
+            name: "Meditar sob as Luzes".to_string(),
+            emoji: Some(Emoji::from_unicode("🧘")),
+            consequences: vec![
+                Consequence {
+                    probability: Probability::new(80),
+                    kind: ConsequenceKind::Rewards {
+                        message: "você medita sob a aurora e sente uma conexão profunda com a natureza, ganhando sabedoria e energia.".to_string(),
+                        iterations: 1,
+                        items: vec![],
+                        orbs: (30, 60),
+                        xp: XpReward {
+                            intelligence: (40, 80),
+                            knowledge: (30, 60),
+                            health: (20, 40),
+                            ..Default::default()
+                        }
+                    },
+                    ..Default::default()
+                },
+                Consequence {
+                    probability: Probability::new(20),
+                    kind: ConsequenceKind::Message {
+                        message: "você tenta meditar, mas não consegue se concentrar o suficiente para aproveitar a energia da aurora.".to_string(),
+                        emoji: Some(Emoji::from_unicode("😔"))
+                    },
+                    ..Default::default()
+                }
+            ],
+            ..Default::default()
+        },
+        Action {
+            name: "Tentar Canalizar a Energia".to_string(),
+            emoji: Some(Emoji::from_unicode("✨")),
+            conditions: vec![Condition::HasPersonality(Personality::Arrogance)],
+            consequences: vec![
+                Consequence {
+                    probability: Probability::new(70),
+                    kind: ConsequenceKind::Rewards {
+                        message: "você consegue canalizar a energia da aurora, sentindo-se revigorado e mais poderoso!".to_string(),
+                        iterations: 1,
+                        items: vec![
+                            (Probability::new(25), items::consumable::CORN, (1, 1)),
+                            (Probability::new(1), items::special::INVIGORATING_CRYSTAL, (1, 1)),
+                        ],
+                        orbs: (20, 70),
+                        xp: XpReward {
+                            intelligence: (50, 100),
+                            strength: (30, 60),
+                            health: (30, 60),
+                            ..Default::default()
+                        }
+                    },
+                    ..Default::default()
+                },
+                Consequence {
+                    probability: Probability::new(30),
+                    kind: ConsequenceKind::Prejudice {
+                        message: "a energia da aurora é muito intensa e você perde o controle, sofrendo danos!".to_string(),
+                        items_amount: (0, 0),
+                        max_item_valuability: 0,
+                        fixed_orbs: (0, 0),
+                        orbs_percentage: 0.0,
+                        specific_items: vec![],
+                        damage_percentage: 0.25,
+                        damage_limit: 250
+                    },
+                    ..Default::default()
+                }
+            ],
+            ..Default::default()
+        }
+    ]
+});
+
+make_event!(basic_icefields_frozen_waterfall, Event {
+    identifier: "basic_icefields_frozen_waterfall",
+    spawn: EventSpawn {
+        base_probability: Probability::new(40),
+        weighted_regions: vec![(WorldRegion::Icefields, 2)],
+        conditions: vec![]
+    },
+    emoji: Emoji::from_unicode("🧊"),
+    message: EventMessage::Single("você se depara com uma majestosa cachoeira congelada. A água parece ter sido congelada instantaneamente. O que você faz?"),
+    actions: vec![
+        Action {
+            name: "Escalar a Cachoeira".to_string(),
+            emoji: Some(Emoji::from_unicode("🧗")),
+            consequences: vec![
+                Consequence {
+                    probability: Probability::new(70),
+                    kind: ConsequenceKind::Rewards {
+                        message: "você consegue escalar a cachoeira congelada e encontra uma pequena caverna atrás dela!".to_string(),
+                        iterations: 1,
+                        items: vec![
+                            (Probability::new(80), items::ore::COAL_ORE, (2, 4)),
+                            (Probability::new(50), items::ore::IRON_ORE, (1, 3)),
+                            (Probability::new(50), items::ore::LEAD_ORE, (1, 3)),
+                            (Probability::new(30), items::ore::TIN_ORE, (1, 3)),
+                            (Probability::new(1), items::ore::DIAMOND_ORE, (1, 1)),
+                        ],
+                        orbs: (30, 60),
+                        xp: XpReward {
+                            strength: (20, 40),
+                            ..Default::default()
+                        }
+                    },
+                    ..Default::default()
+                },
+                Consequence {
+                    probability: Probability::new(30),
+                    kind: ConsequenceKind::Prejudice {
+                        message: "você escorrega enquanto tenta escalar a cachoeira congelada e cai!".to_string(),
+                        items_amount: (0, 0),
+                        max_item_valuability: 0,
+                        fixed_orbs: (0, 0),
+                        orbs_percentage: 0.0,
+                        specific_items: vec![],
+                        damage_percentage: 0.15,
+                        damage_limit: 150
+                    },
+                    ..Default::default()
+                }
+            ],
+            ..Default::default()
+        },
+        Action {
+            name: "Coletar Gelo".to_string(),
+            emoji: Some(Emoji::from_unicode("🧊")),
+            consequences: vec![
+                Consequence {
+                    kind: ConsequenceKind::Rewards {
+                        message: "você coletou alguns pedaços de gelo puro da cachoeira congelada.".to_string(),
+                        iterations: 1,
+                        items: vec![
+                            (Probability::new(100), items::consumable::WATER, (3, 5)),
+                        ],
+                        orbs: (10, 30),
+                        xp: XpReward {
+                            intelligence: (10, 20),
+                            ..Default::default()
+                        }
+                    },
+                    ..Default::default()
+                }
+            ],
+            ..Default::default()
+        }
+    ]
+});
+
+pub fn basic_icefields_person_wanting_materials(state: EventBuildState) -> Event {
+    const VALID_ITEMS: &[((i32, i32), Item)] = &[
+        ((2, 15), items::material::STONE),
+        ((1, 2), items::material::RAW_TRUNK),
+        ((1, 3), items::material::KNIFE),
+        ((1, 6), items::material::STICK),
+        ((1, 2), items::ore::COAL_ORE),
+        ((1, 2), items::ore::COPPER_ORE),
+    ];
+
+    let mut rng = StdRng::from_entropy();
+
+    let mut items = VALID_ITEMS.iter().collect::<Vec<_>>();
+    items.shuffle(&mut rng);
+
+    let items = items
+        .into_iter()
+        .map(|(amount, item)| (rng.gen_range(amount.0..=amount.1), *item))
+        .take(2)
+        .collect::<Vec<_>>();
+
+    let orbs_reward = rng.gen_range(if state.character.pl > 150 {
+        10..=40
+    } else {
+        80..=120
+    });
+
+    Event {
+        identifier: "basic_icefields_person_wanting_materials",
+        spawn: EventSpawn {
+            base_probability: Probability::new(50),
+            weighted_regions: vec![(WorldRegion::Icefields, 1)],
+            conditions: vec![]
+        },
+        emoji: items::material::PLANK.emoji,
+        message: EventMessage::SingleString(
+            format!(
+                "uma pessoa se aproximou se você e ofereceu **{} {orbs_reward} ◎** para você em troca de alguns itens. Os itens são: {}.", 
+                emojis::ORB, items.iter().map(|(amount, item)| format!("**{}x {}**", amount, item.display_name)).collect::<Vec<_>>().join(", ")
+            )
+        ),
+        actions: vec![
+            Action {
+                name: "\"Eu não tenho esse itens\"".to_string(),
+                emoji: None,
+                consequences: vec![
+                    Consequence {
+                        kind: ConsequenceKind::Message { message: "a pessoa respondeu: \"Ah, entendo. Uma pena! Eu precisava mesmo desses materiais para criar algumas coisas...\"".to_string(), emoji: None },
+                        ..Default::default()
+                    }
+                ],
+                ..Default::default()
+            },
+            Action {
+                name: "Dar Itens".to_string(),
+                conditions: items.iter().map(|(amount, item)| Condition::HasItem(*item, *amount as usize)).collect(),
+                consequences: vec![
+                    Consequence {
+                        kind: ConsequenceKind::Rewards {
+                            message: "a pessoa respondeu: \"Muito obrigado! Aqui estão seus orbs. Ah! Finalmente minha criação vai se concluir!\"".to_string(),
+                            iterations: 0,
+                            items: vec![],
+                            orbs: (orbs_reward, orbs_reward),
+                            xp: XpReward {
+                                health: (0, 0),
+                                intelligence: (0, 0),
+                                strength: (0, 0),
+                                knowledge: (0, 0)
+                            }
+                        },
+                        extra_consequences: items.iter().map(|(amount, item)| Consequence {
+                            kind: ConsequenceKind::RemoveItem(*item, *amount as usize),
+                            ..Default::default()
+                        }).collect(),
+                        ..Default::default()
+                    }
+                ],
+                ..Default::default()
+            }
+        ]
+    }
+}
+
+make_event!(basic_icefields_snow_sculpture, Event {
+    identifier: "basic_icefields_snow_sculpture",
+    spawn: EventSpawn {
+        base_probability: Probability::new(35),
+        weighted_regions: vec![(WorldRegion::Icefields, 2)],
+        conditions: vec![]
+    },
+    emoji: Emoji::from_unicode("⛄"),
+    message: EventMessage::Single("você encontra uma área perfeita para fazer uma escultura de neve. O que você decide fazer?"),
+    actions: vec![
+        Action {
+            name: "Fazer um Boneco de Neve".to_string(),
+            emoji: Some(Emoji::from_unicode("⛄")),
+            consequences: vec![
+                Consequence {
+                    probability: Probability::new(90),
+                    kind: ConsequenceKind::Rewards {
+                        message: "você constrói um boneco de neve adorável e se sente revigorado pela atividade!".to_string(),
+                        iterations: 1,
+                        items: vec![],
+                        orbs: (20, 40),
+                        xp: XpReward {
+                            strength: (10, 20),
+                            intelligence: (10, 20),
+                            health: (10, 20),
+                            ..Default::default()
+                        }
+                    },
+                    ..Default::default()
+                },
+                Consequence {
+                    probability: Probability::new(10),
+                    kind: ConsequenceKind::Message {
+                        message: "enquanto você constrói o boneco de neve, você nota que a neve está líquida demais para isso!".to_string(),
+                        emoji: Some(Emoji::from_unicode("😲"))
+                    },
+                    ..Default::default()
+                }
+            ],
+            ..Default::default()
+        },
+        Action {
+            name: "Esculpir uma Obra de Arte".to_string(),
+            emoji: Some(Emoji::from_unicode("🎨")),
+            conditions: vec![Condition::HasPersonality(Personality::Intelligence)],
+            consequences: vec![
+                Consequence {
+                    probability: Probability::new(80),
+                    kind: ConsequenceKind::Rewards {
+                        message: "sua escultura de neve é uma obra-prima! Viajantes param para admirá-la e te recompensam.".to_string(),
+                        iterations: 1,
+                        items: vec![
+                            (Probability::new(50), items::special::GIFT, (1, 1)),
+                        ],
+                        orbs: (40, 80),
+                        xp: XpReward {
+                            intelligence: (30, 50),
+                            knowledge: (20, 40),
+                            ..Default::default()
+                        }
+                    },
+                    ..Default::default()
+                },
+                Consequence {
+                    probability: Probability::new(20),
+                    kind: ConsequenceKind::Message {
+                        message: "você tenta fazer uma escultura elaborada, mas ela desmorona no final.".to_string(),
+                        emoji: Some(Emoji::from_unicode("😅"))
+                    },
                     ..Default::default()
                 }
             ],

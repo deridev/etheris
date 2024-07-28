@@ -225,6 +225,7 @@ impl Battle {
         for message in self.deferred_turn_messages.clone() {
             this_turn_history.messages.push(message);
         }
+
         self.deferred_turn_messages.clear();
 
         let mut fighters_defeated_in_this_turn = vec![];
@@ -246,6 +247,7 @@ impl Battle {
 
             self.defeated_fighters.push(fighter);
             self.alive_fighters.retain(|f| f.0 != fighter.0);
+            self.fighters_queue.retain(|f| f.0 != fighter.0);
 
             let fighter = self.get_fighter(fighter).clone();
             this_turn_history.messages.push(format!(

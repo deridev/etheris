@@ -225,12 +225,12 @@ fn should_defend(fighter: &Fighter, target: &Fighter) -> bool {
     {
         0.3
     } else {
-        0.2
+        0.1
     };
 
-    let health_factor = (1.0 - health_ratio) * 0.4;
-    let ether_factor = if ether_ratio <= 0.5 { 0.3 } else { 0.1 };
-    let target_factor = target_health_ratio * 0.2;
+    let health_factor = (1.0 - health_ratio) * 0.3;
+    let ether_factor = if ether_ratio <= 0.5 { 0.2 } else { 0.05 };
+    let target_factor = target_health_ratio * 0.15;
 
     let total_chance = base_defend_chance + health_factor + ether_factor - target_factor;
 

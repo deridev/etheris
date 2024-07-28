@@ -111,6 +111,53 @@ async fn weapon_katana(mut api: BattleApi<'_>) -> anyhow::Result<()> {
     Ok(())
 }
 
+async fn weapon_ethria_katana(mut api: BattleApi<'_>) -> anyhow::Result<()> {
+    let base_damage = api.rng().gen_range(4..=7);
+
+    let damage_1 = api.rng().gen_range(6..=9);
+    let damage_2 = api.rng().gen_range(6..=9);
+
+    let damage_1 = base_damage + (damage_1 as f32 * api.fighter().weapon_multiplier()) as i32;
+    let damage_2 = base_damage + (damage_2 as f32 * api.fighter().weapon_multiplier()) as i32;
+
+    let damage_1 = api
+        .apply_damage(
+            api.target_index,
+            DamageSpecifier {
+                culprit: api.fighter_index,
+                amount: damage_1,
+                kind: DamageKind::PhysicalCut,
+                balance_effectiveness: 8,
+                accuracy: 85,
+                effect: Some(Effect::new(EffectKind::Bleeding, 29, api.fighter_index)),
+            },
+        )
+        .await;
+
+    let damage_2 = api
+        .apply_damage(
+            api.target_index,
+            DamageSpecifier {
+                culprit: api.fighter_index,
+                amount: damage_2,
+                kind: DamageKind::PhysicalCut,
+                balance_effectiveness: 7,
+                accuracy: 60,
+                effect: Some(Effect::new(EffectKind::Flaming, 37, api.fighter_index)),
+            },
+        )
+        .await;
+
+    let target_name = api.target().name.to_owned();
+    api.emit_message(format!(
+        "**{}** desferiu dois cortes com a katana flamejante em **{}**, e causou **{damage_1}** no primeiro corte e **{damage_2}** no segundo!",
+        api.fighter().name,
+        target_name
+    ));
+
+    Ok(())
+}
+
 async fn weapon_spear(mut api: BattleApi<'_>) -> anyhow::Result<()> {
     let base_damage = api.rng().gen_range(11..=12);
     let damage = api.rng().gen_range(12..=20);
@@ -305,5 +352,6 @@ pub async fn execute_weapon_attack(
         WeaponKind::Spear => weapon_spear(api).await,
         WeaponKind::Katana => weapon_katana(api).await,
         WeaponKind::ScorpionFang => weapon_scorpion_fang(api).await,
+        WeaponKind::EthriaKatana => weapon_ethria_katana(api).await,
     }
 }
