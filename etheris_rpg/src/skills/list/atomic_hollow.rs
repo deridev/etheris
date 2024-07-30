@@ -4,7 +4,7 @@ use super::prelude::*;
 pub struct AtomicHollow;
 
 fn calculate_cost(fighter: &Fighter) -> i32 {
-    (fighter.ether.max / 2).max(20)
+    (fighter.ether.max / 2).max(40)
 }
 
 #[async_trait::async_trait]
@@ -23,12 +23,6 @@ impl Skill for AtomicHollow {
             complexity: SkillComplexity::Hard,
             use_cost: SkillCost { ether: cost },
         }
-    }
-
-    fn display(&self, fighter: &Fighter) -> SkillDisplay {
-        let mut display = self.default_display(fighter);
-        display.sub_header = format!("{} **?**", emojis::ETHER);
-        display
     }
 
     fn can_use(&self, api: BattleApi<'_>) -> bool {
@@ -64,7 +58,7 @@ impl Skill for AtomicHollow {
 
         if !damage.missed {
             for kind in EFFECT_KINDS {
-                let amount = api.rng().gen_range(40..=60);
+                let amount = api.rng().gen_range(30..=60);
                 api.apply_effect(target.index, Effect::new(*kind, amount, fighter.index)).await;
             }
 
