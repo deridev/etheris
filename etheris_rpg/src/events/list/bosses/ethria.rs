@@ -32,7 +32,7 @@ make_event!(ethria_first_encounter, Event {
 make_event!(ethria_first_meeting, Event {
     identifier: "ethria_first_meeting",
     spawn: EventSpawn::never(),
-    message: EventMessage::Single("no meio do templo há uma mulher de mantos negros e máscara nos olhos. Seus cabelos roxos contrastam com meus lábios brancos. Ela te encara e fala com uma voz fria. `\"Não é muito cortês invadir a casa de uma dama...\"`"), 
+    message: EventMessage::Single("no meio do templo há uma mulher de mantos negros e máscara nos olhos. Seus cabelos roxos contrastam com meus lábios brancos. Ela te encara e fala com uma voz fria. \"Não é muito cortês invadir a casa de uma dama...\""), 
     actions: vec![
         Action {
             name: "Continuar ali".to_string(),
@@ -63,7 +63,7 @@ make_event!(ethria_first_meeting, Event {
 make_event!(ethria_rage, Event {
     identifier: "ethria_rage",
     spawn: EventSpawn::never(),
-    message: EventMessage::Single("a mulher te encara com um olhar decepcionado. `\"Entendo... Então deixe que Ethria te ensine o respeito.\"` - a mulher denominada Ethria pega uma katana do altar."), 
+    message: EventMessage::Single("a mulher te encara com um olhar decepcionado. \"Entendo... Então deixe que Ethria te ensine o respeito.\" - a mulher denominada Ethria pega uma katana do altar."), 
     actions: vec![
         Action {
             name: "Se preparar".to_string(),
@@ -114,7 +114,7 @@ make_event!(
 make_event!(ethria_boss_battle, Event {
     identifier: "ethria_boss_battle",
     spawn: EventSpawn::never(),
-    message: EventMessage::Single("Ethria aponta a katana para você. `\"Te farei entender, ser simplório, o motivo pelo qual leis existem.\"`"),
+    message: EventMessage::Single("Ethria aponta a katana para você. \"Te farei entender, ser simplório, o motivo pelo qual leis existem.\""),
     actions: vec![
         Action {
             name: "Enfrentar".to_string(),

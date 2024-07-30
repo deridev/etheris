@@ -82,7 +82,7 @@ make_event!(orsinium_rematch, Event {
 make_event!(orsinium_boss_battle, Event {
     identifier: "orsinium_boss_battle",
     spawn: EventSpawn::never(),
-    message: EventMessage::Single("Orsinium te encara com os olhos brilhando em fogo. `\"Ameaça prestes a ser neutralizada. Glória à Soberana.\"`"),
+    message: EventMessage::Single("Orsinium te encara com os olhos brilhando em fogo. \"Ameaça prestes a ser neutralizada. Glória à Soberana.\""),
     actions: vec![
         Action {
             name: "Enfrentar".to_string(),
@@ -116,7 +116,7 @@ fn orsinium_defeated(_: EventBuildState) -> Event {
     Event {
         identifier: "orsinium_defeated",
         spawn: EventSpawn::never(),
-        message: EventMessage::Single("o corpo metálico de Orsinium cai no chão, causando um estrondo pela caverna. Sua boca abre e emite um som. `\"Ó, não será hoje nosso crepúsculo. Amelia, me diga, fui um bom colosso?\"` seguido de suspiros, até que seus olhos apagam."),
+        message: EventMessage::Single("o corpo metálico de Orsinium cai no chão, causando um estrondo pela caverna. Sua boca abre e emite um som. \"Ó, não será hoje nosso crepúsculo. Amelia, me diga, fui um bom colosso?\" seguido de suspiros, até que seus olhos apagam."),
         actions: vec![
             Action {
                 name: "Tocar no núcleo".to_string(),

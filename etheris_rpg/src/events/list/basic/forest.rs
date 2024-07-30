@@ -8,7 +8,7 @@ pub fn basic_forest_exploration(_state: EventBuildState) -> Event {
     Event {
         identifier: "basic_forest_exploration",
         spawn: EventSpawn {
-            weighted_regions: vec![(WorldRegion::Mudland, 10), (WorldRegion::Gloomwood, 10), (WorldRegion::Ethergrove, 10), (WorldRegion::Starbreeze, 10), (WorldRegion::Murkswamp, 10)],
+            weighted_regions: vec![(WorldRegion::Mudland, 5), (WorldRegion::Gloomwood, 5), (WorldRegion::Ethergrove, 5), (WorldRegion::Starbreeze, 5), (WorldRegion::Murkswamp, 5)],
             ..Default::default()
         },
         emoji: Emoji::from_unicode("🗺️"),
@@ -260,7 +260,7 @@ make_event!(basic_forest_dangerous_button, Event {
     identifier: "basic_forest_dangerous_button",
     spawn: EventSpawn {
         base_probability: Probability::new(5),
-        weighted_regions: vec![(WorldRegion::Murkswamp, 1), (WorldRegion::Mudland, 1)],
+        weighted_regions: vec![(WorldRegion::Murkswamp, 1), (WorldRegion::Mudland, 1), (WorldRegion::Murkswamp, 1)],
         conditions: vec![]
     },
     emoji: Emoji::from_unicode("🔴"),
@@ -317,7 +317,7 @@ make_event!(
                                 ShopItem::new_item(1, items::tool::SHOVEL, 0.7),
                                 ShopItem::new_item(1, items::tool::PICKAXE, 1.3),
                                 ShopItem::new_item(1, items::tool::HAMMER, 1.1),
-                                ShopItem::new_item(1, items::tool::AXE, 1.1),
+                                ShopItem::new_item(1, items::tool::AXE, 1.1).with_description("Será seu melhor amigo em uma densa floresta"),
                                 ShopItem::new_sellable_item(23, items::material::STONE, 1.2, 0.6),
                                 ShopItem::new_sellable_item(15, items::material::STICK, 1.2, 0.7),
                                 ShopItem::new_sellable_item(15, items::material::PAPER, 1.2, 0.7),
@@ -327,7 +327,7 @@ make_event!(
                                 ShopItem::new_sellable_item(0, items::ore::COPPER_ORE, 1.4, 0.7),
 
                                 if Probability::new(5).generate_random_bool() {
-                                    ShopItem::new_item(1, items::special::GIFT, 0.7)
+                                    ShopItem::new_item(1, items::special::GIFT, 0.7).with_description("Não sei o que tem dentro, mas parece útil!")
                                 } else {
                                     ShopItem::new_item(1, items::cosmetic::GLASSES, 1.2)
                                 }
@@ -766,6 +766,61 @@ make_event!(
                             message: "ao se aproximar do arbusto, você espanta um pequeno animal que estava se alimentando das frutas. As frutas já estão mordidas!".to_string(),
                             emoji: Some(Emoji::from_unicode("🐿️"))
                         },
+                        ..Default::default()
+                    }
+                ],
+                ..Default::default()
+            }
+        ]
+    }
+);
+
+make_event!(
+    basic_forest_abandoned_picnic,
+    Event {
+        identifier: "basic_forest_abandoned_picnic",
+        spawn: EventSpawn {
+            weighted_regions: vec![(WorldRegion::Gloomwood, 2), (WorldRegion::Mudland, 1),],
+            ..Default::default()
+        },
+        emoji: Emoji::from_unicode("🧺"),
+        message: EventMessage::Single(
+            "você encontrou um piquenique abandonado às pressas. O que deseja fazer?"
+        ),
+        actions: vec![
+            common::ignore_action(),
+            Action {
+                name: "Investigar".to_string(),
+                emoji: Some(Emoji::from_unicode("🕵️")),
+                consequences: vec![
+                    common::consequence_didnt_find_anything(Probability::new(10)),
+                    Consequence {
+                        probability: Probability::new(80),
+                        kind: ConsequenceKind::Rewards {
+                            message: "você encontrou alguns alimentos e itens deixados para trás!"
+                                .to_string(),
+                            iterations: 2,
+                            items: vec![
+                                (Probability::new(90), items::consumable::APPLE, (1, 2)),
+                                (Probability::new(90), items::consumable::MILK, (1, 2)),
+                                (Probability::new(90), items::consumable::GREEN_APPLE, (1, 2)),
+                                (Probability::new(80), items::consumable::WATER, (1, 2)),
+                                (Probability::new(70), items::consumable::FRIED_EGG, (1, 2)),
+                                (Probability::new(70), items::consumable::CHOCOLATE, (1, 1)),
+                                (Probability::new(50), items::material::KNIFE, (1, 1)),
+                                (Probability::new(30), items::material::PAPER, (1, 3)),
+                            ],
+                            orbs: (5, 15),
+                            xp: XpReward {
+                                intelligence: (5, 10),
+                                ..Default::default()
+                            }
+                        },
+                        ..Default::default()
+                    },
+                    Consequence {
+                        probability: Probability::new(25),
+                        kind: ConsequenceKind::FindARegionEnemy,
                         ..Default::default()
                     }
                 ],

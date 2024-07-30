@@ -6,7 +6,7 @@ pub fn basic_desert_exploration(_state: EventBuildState) -> Event {
     Event {
         identifier: "basic_desert_exploration",
         spawn: EventSpawn {
-            weighted_regions: vec![(WorldRegion::Tenypt, 10), (WorldRegion::Sandywater, 10)],
+            weighted_regions: vec![(WorldRegion::Tenypt, 5), (WorldRegion::Sandywater, 5)],
             ..Default::default()
         },
         emoji: Emoji::from_unicode("🗺️"),
@@ -59,6 +59,87 @@ pub fn basic_desert_exploration(_state: EventBuildState) -> Event {
         ]
     }
 }
+
+make_event!(
+    basic_desert_lost_traveler,
+    Event {
+        identifier: "basic_desert_lost_traveler",
+        spawn: EventSpawn {
+            base_probability: Probability::new(30),
+            weighted_regions: vec![(WorldRegion::Sandywater, 1), (WorldRegion::Tenypt, 1)],
+            conditions: vec![]
+        },
+        emoji: Emoji::from_unicode("🧭"),
+        message: EventMessage::Single("você encontrou um viajante perdido. Ele parece confuso e pede sua ajuda. O que você quer fazer?"),
+        actions: vec![
+            common::ignore_action(),
+            Action {
+                name: "Ajudar".to_string(),
+                emoji: None,
+                consequences: vec![
+                    Consequence {
+                        kind: ConsequenceKind::Rewards {
+                            message: "o viajante ficou muito agradecido pela sua ajuda e ofereceu alguns itens como recompensa!".to_string(),
+                            iterations: 2,
+                            items: vec![
+                                (Probability::new(70), items::consumable::WATER, (1, 2)),
+                                (Probability::new(70), items::consumable::MILK, (1, 1)),
+                                (Probability::new(50), items::consumable::WHEAT, (1, 5)),
+                                (Probability::new(30), items::material::PAPER, (1, 1)),
+                            ],
+                            orbs: (10, 30),
+                            xp: XpReward {
+                                health: (0, 5),
+                                intelligence: (0, 10),
+                                strength: (0, 5),
+                                knowledge: (0, 10)
+                            }
+                        },
+                        extra_consequences: vec![Consequence {
+                            kind: ConsequenceKind::AddKarma(1),
+                            ..Default::default()
+                        }],
+                        ..Default::default()
+                    }
+                ],
+                ..Default::default()
+            },
+            Action {
+                name: "Roubar".to_string(),
+                emoji: None,
+                consequences: vec![
+                    Consequence {
+                        kind: ConsequenceKind::Rewards {
+                            message: "você aproveitou a confusão do viajante e roubou alguns de seus pertences!".to_string(),
+                            iterations: 3,
+                            items: vec![
+                                (Probability::new(70), items::consumable::WATER, (1, 2)),
+                                (Probability::new(70), items::consumable::MILK, (1, 1)),
+                                (Probability::new(50), items::consumable::WATERMELON, (1, 1)),
+                                (Probability::new(50), items::consumable::WHEAT, (1, 5)),
+                                (Probability::new(30), items::material::PAPER, (1, 1)),
+                                (Probability::new(20), items::ore::COAL_ORE, (1, 3)),
+                            ],
+                            orbs: (20, 50),
+                            xp: XpReward {
+                                health: (0, 0),
+                                intelligence: (0, 5),
+                                strength: (0, 10),
+                                knowledge: (0, 0)
+                            }
+                        },
+                        extra_consequences: vec![Consequence {
+                            kind: ConsequenceKind::RemoveKarma(1),
+                            ..Default::default()
+                        }],
+                        ..Default::default()
+                    }
+                ],
+                ..Default::default()
+            }
+        ]
+    }
+);
 
 make_event!(
     basic_desert_digging,
@@ -713,6 +794,50 @@ make_event!(
                         },
                         ..Default::default()
                     }
+                ],
+                ..Default::default()
+            }
+        ]
+    }
+);
+
+make_event!(
+    basic_desert_training_person,
+    Event {
+        identifier: "basic_desert_training_person",
+        spawn: EventSpawn {
+            base_probability: Probability::new(50),
+            weighted_regions: vec![
+                (WorldRegion::Sandywater, 1),
+                (WorldRegion::Tenypt, 1),
+                (WorldRegion::Sunreach, 1),
+            ],
+            conditions: vec![]
+        },
+        emoji: Emoji::from_unicode("🏋️‍♂️"),
+        message: EventMessage::Single("você encontrou alguém treinando em pleno sol escaldante. Você quer treinar com ela?"),
+        actions: vec![
+            common::ignore_action(),
+            Action {
+                name: "Treinar".to_string(),
+                emoji: Some(Emoji::from_unicode("💪")),
+                conditions: vec![],
+                consequences: vec![
+                    Consequence {
+                        kind: ConsequenceKind::Rewards {
+                            message: "você treinou junto com a pessoa e sentiu uma melhora na sua força e saúde!".to_string(),
+                            iterations: 1,
+                            items: vec![],
+                            orbs: (0, 0),
+                            xp: XpReward {
+                                health: (5, 30),
+                                intelligence: (0, 0),
+                                strength: (10, 40),
+                                knowledge: (0, 0)
+                            }
+                        },
+                        ..Default::default()
+                    },
                 ],
                 ..Default::default()
             }

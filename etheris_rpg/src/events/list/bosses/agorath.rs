@@ -13,7 +13,7 @@ make_event!(agorath_first_encounter, Event {
             Condition::Not(Box::new(Condition::DefeatedBoss(BossKind::Agorath)))
         ]
     },
-    message: EventMessage::Single("um homem com cicatrizes no rosto e corpo musculoso se aproxima de você. `\"Ei... Você... Quer duelar? Você parece forte.\"`"),
+    message: EventMessage::Single("um homem com cicatrizes no rosto e corpo musculoso se aproxima de você. \"Ei... Você... Quer duelar? Você parece forte.\""),
     actions: vec![
         Action {
             name: "Duelar".to_string(),
@@ -31,7 +31,7 @@ make_event!(agorath_first_encounter, Event {
             consequences: vec![
                 Consequence {
                     kind: ConsequenceKind::Message {
-                        message: "o homem olha pra você com um olhar visivelmente decepcionado. `\"Entendo... Você não é um duelista honrado. Adeus.\"`".to_string(),
+                        message: "o homem olha pra você com um olhar visivelmente decepcionado. \"Entendo... Você não é um duelista honrado. Adeus.\"".to_string(),
                         emoji: None
                     },
                     ..Default::default()
@@ -57,7 +57,7 @@ make_event!(
             ]
         },
         message: EventMessage::Single(
-            "Agorath se aproxima de você. `\"Ei... Você... Quer duelar de novo?\"`"
+            "Agorath se aproxima de você. \"Ei... Você... Quer duelar de novo?\""
         ),
         actions: vec![
             common::ignore_action(),
@@ -81,7 +81,7 @@ make_event!(
         spawn: EventSpawn::never(),
         emoji: Emoji::from_unicode("🤜"),
         message: EventMessage::Single(
-            "a figura imponente te encara. `\"Sim! Isso! Finalmente... Um duelo de verdade!\"`"
+            "a figura imponente te encara. \"Sim! Isso! Finalmente... Um duelo de verdade!\""
         ),
         actions: vec![Action {
             name: "Duelar".to_string(),
@@ -111,7 +111,7 @@ fn agorath_battle_win(_: EventBuildState) -> Event {
         identifier: "agorath_battle_win",
         emoji: Emoji::from_unicode("✊"),
         spawn: EventSpawn::never(),
-        message: EventMessage::Single("você ouve sussurros de um duelista invencível que fora derrotado. `\"Você... Você é uma verdadeira força a ser respeitada. O primeiro a vencer um duelo... Contra o Duelista.\"` - as palavras cessam."),
+        message: EventMessage::Single("você ouve sussurros de um duelista invencível que fora derrotado. \"Você... Você é uma verdadeira força a ser respeitada. O primeiro a vencer um duelo... Contra o Duelista.\" - as palavras cessam."),
         actions: vec![
             Action {
                 name: "Continuar".to_string(),

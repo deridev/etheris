@@ -6,7 +6,7 @@ pub fn basic_mountain_exploration(_state: EventBuildState) -> Event {
     Event {
         identifier: "basic_mountain_exploration",
         spawn: EventSpawn {
-            weighted_regions: vec![(WorldRegion::Wornpeaks, 10)],
+            weighted_regions: vec![(WorldRegion::Wornpeaks, 5)],
             ..Default::default()
         },
         emoji: Emoji::from_unicode("🏔️"),

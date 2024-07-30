@@ -353,6 +353,99 @@ make_enemy!(
 );
 
 make_enemy!(
+    ethereal_hunter,
+    Enemy {
+        identifier: "ethereal_hunter",
+        name: "Caçador Etéreo",
+        base_probability: Probability::ALWAYS,
+        regions: &[
+            (WorldRegion::Ethergrove, 1),
+            (WorldRegion::Wornpeaks, 2),
+            (WorldRegion::Starbreeze, 2)
+        ],
+        brain: BrainKind::Simple,
+        boss: None,
+        personalities: &[
+            Personality::Calm,
+            Personality::Insanity,
+            Personality::Intelligence,
+        ],
+        potential: EnemyPotential::High,
+        immunities: BodyImmunities::new()
+            .with_resistance(ImmunityKind::Cut, 0.3)
+            .with_little_weakness(ImmunityKind::Ice),
+        strength: 20,
+        intelligence: 60,
+        resistance: 400,
+        vitality: 150,
+        ether: 100,
+        weapon: Some(WeaponKind::Bat),
+        skills: vec![
+            SkillKind::MirrorDamage,
+            SkillKind::YinYang,
+            SkillKind::IcyBreath,
+            SkillKind::IcyShot,
+            SkillKind::CyclonePush,
+            SkillKind::Bite,
+            SkillKind::ParalyzingBet,
+        ],
+        allies: None,
+        drop: EnemyReward {
+            orbs: (40, 100),
+            xp: (80, 130),
+            items: vec![],
+        },
+    }
+);
+
+make_enemy!(
+    corrupt_monk,
+    Enemy {
+        identifier: "corrupt_monk",
+        name: "Monge Corrupto",
+        base_probability: Probability::ALWAYS,
+        boss: None,
+        brain: BrainKind::Simple,
+        regions: &[
+            (WorldRegion::Ethergrove, 1),
+            (WorldRegion::Starbreeze, 1),
+            (WorldRegion::Wornpeaks, 3)
+        ],
+        personalities: &[
+            Personality::Calm,
+            Personality::Insanity,
+            Personality::Arrogance,
+        ],
+        potential: EnemyPotential::Medium,
+        immunities: BodyImmunities::new().with_little_resistance(ImmunityKind::Poison),
+        strength: 15,
+        intelligence: 50,
+        resistance: 540,
+        vitality: 80,
+        ether: 100,
+        weapon: Some(WeaponKind::Bat),
+        skills: vec![
+            SkillKind::FlamingBall,
+            SkillKind::ThermalFists,
+            SkillKind::IcyBreath,
+            SkillKind::IcyShot,
+            SkillKind::CyclonePush,
+            SkillKind::WoundHealing,
+        ],
+        allies: None,
+        drop: EnemyReward {
+            orbs: (30, 90),
+            xp: (50, 150),
+            items: vec![EnemyRewardItem {
+                amount: (1, 1),
+                item: items::special::INTELLIGENCE_CRYSTAL,
+                probability: Probability::new(1),
+            }],
+        },
+    }
+);
+
+make_enemy!(
     etherking,
     Enemy {
         identifier: "etherking",

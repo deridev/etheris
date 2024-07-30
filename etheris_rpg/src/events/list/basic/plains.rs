@@ -15,7 +15,7 @@ use super::prelude::*;
 make_event!(basic_plains_exploration, Event {
     identifier: "basic_plains_exploration",
     spawn: EventSpawn {
-        weighted_regions: vec![(WorldRegion::Greenagis, 10), (WorldRegion::Emerelis, 10), (WorldRegion::Midgrass, 10)],
+        weighted_regions: vec![(WorldRegion::Greenagis, 5), (WorldRegion::Emerelis, 5), (WorldRegion::Midgrass, 5)],
         ..Default::default()
     },
     emoji: Emoji::from_unicode("🗺️"),
@@ -764,7 +764,7 @@ fn basic_plains_person_in_danger_bad(_: EventBuildState) -> Event {
 make_event!(basic_plains_trapped, Event {
     identifier: "basic_plains_trapped",
     spawn: EventSpawn {
-        base_probability: Probability::new(5),
+        base_probability: Probability::new(25),
         weighted_regions: vec![(WorldRegion::Greenagis, 1), (WorldRegion::Midgrass, 2), (WorldRegion::Emerelis, 1)],
         conditions: vec![]
     },
@@ -1133,6 +1133,7 @@ make_event!(
     Event {
         identifier: "basic_plains_small_stream",
         spawn: EventSpawn {
+            base_probability: Probability::new(60),
             weighted_regions: vec![
                 (WorldRegion::Greenagis, 1),
                 (WorldRegion::Emerelis, 1),
@@ -1338,7 +1339,7 @@ make_event!(
     Event {
         identifier: "basic_plains_fruit_tree",
         spawn: EventSpawn {
-            base_probability: Probability::new(30),
+            base_probability: Probability::new(60),
             weighted_regions: vec![
                 (WorldRegion::Greenagis, 1),
                 (WorldRegion::Emerelis, 2),

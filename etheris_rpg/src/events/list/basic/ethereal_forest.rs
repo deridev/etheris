@@ -7,7 +7,7 @@ make_event!(
     Event {
         identifier: "basic_ethereal_forest_digging",
         spawn: EventSpawn {
-            weighted_regions: vec![(WorldRegion::Ethergrove, 4), (WorldRegion::Starbreeze, 2),],
+            weighted_regions: vec![(WorldRegion::Ethergrove, 4), (WorldRegion::Starbreeze, 2)],
             ..Default::default()
         },
         emoji: Emoji::from_unicode("🌍"),

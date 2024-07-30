@@ -18,9 +18,9 @@ pub fn basic_shredder_first_encounter(_: EventBuildState) -> Event {
         },
         emoji: Emoji::from_unicode("🔪"),
         message: EventMessage::Conditional(vec![
-            (Condition::SimilarPowerTo(weaklings::weak_shredder()), format!("uma pessoa mascarada com poder semelhante ao seu rapidamente colocou uma faca no seu pescoço e disse: `\"{DIALOG_1}\"`")),
-            (Condition::StrongerThan(weaklings::weak_shredder()), format!("uma pessoa fraca mascarada colocou uma faca no seu pescoço e disse: `\"{DIALOG_1}\"`")),
-            (Condition::WeakerThan(weaklings::weak_shredder()), format!("uma pessoa mascarada se aproximou com um poder surreal, colocou uma faca no seu pescoço e disse: `\"{DIALOG_1}\"`")),
+            (Condition::SimilarPowerTo(weaklings::weak_shredder()), format!("uma pessoa mascarada com poder semelhante ao seu rapidamente colocou uma faca no seu pescoço e disse: \"{DIALOG_1}\"")),
+            (Condition::StrongerThan(weaklings::weak_shredder()), format!("uma pessoa fraca mascarada colocou uma faca no seu pescoço e disse: \"{DIALOG_1}\"")),
+            (Condition::WeakerThan(weaklings::weak_shredder()), format!("uma pessoa mascarada se aproximou com um poder surreal, colocou uma faca no seu pescoço e disse: \"{DIALOG_1}\"")),
         ]),
         actions: vec![
             Action {
@@ -45,7 +45,7 @@ pub fn basic_shredder_first_encounter(_: EventBuildState) -> Event {
                 emoji: None,
                 consequences: vec![
                     Consequence {
-                        kind: ConsequenceKind::Message { message: "o Retalhador olhou para você furioso e respondeu: `\"Certo. Saiba que você acabou de decretar o seu fim, os Retalhadores nunca vão te deixar em paz.\"`, e então sumiu entre as árvores.".into(), emoji: None },
+                        kind: ConsequenceKind::Message { message: "o Retalhador olhou para você furioso e respondeu: \"Certo. Saiba que você acabou de decretar o seu fim, os Retalhadores nunca vão te deixar em paz.\", e então sumiu entre as árvores.".into(), emoji: None },
                         extra_consequences: vec![Consequence {
                             kind: ConsequenceKind::AddTag("hated_by_shredders".to_string()),
                             ..Default::default()
@@ -124,7 +124,7 @@ make_event!(
         },
         emoji: Emoji::from_unicode("🔪"),
         message: EventMessage::Single(
-            "Você é emboscado por um grupo de retalhadores! O líder diz: `\"Você escolheu o caminho difícil. Agora vai pagar por isso!\"`"
+            "Você é emboscado por um grupo de retalhadores! O líder diz: \"Você escolheu o caminho difícil. Agora vai pagar por isso!\""
         ),
         actions: vec![
             Action {
@@ -172,7 +172,7 @@ make_event!(
         },
         emoji: Emoji::from_unicode("🔪"),
         message: EventMessage::Single(
-            "Você é emboscado por um grupo de retalhadores. O líder, rindo, diz: `\"Hora de pagar a taxa de proteção dos Retalhadores se quiser continuar vivendo!\"`" 
+            "Você é emboscado por um grupo de retalhadores. O líder, rindo, diz: \"Hora de pagar a taxa de proteção dos Retalhadores se quiser continuar vivendo!\"" 
         ),
         actions: vec![
             Action {
@@ -381,7 +381,7 @@ make_event!(
         },
         emoji: Emoji::from_unicode("🎭"),
         message: EventMessage::Single(
-            "você encontra um grupo de Retalhadores recrutando novos membros. O líder do grupo olha para você com interesse e diz: `\"Ei, você parece forte. Já pensou em se juntar aos Retalhadores? Poderíamos usar alguém como você.\"`"
+            "você encontra um grupo de Retalhadores recrutando novos membros. O líder do grupo olha para você com interesse e diz: \"Ei, você parece forte. Já pensou em se juntar aos Retalhadores? Poderíamos usar alguém como você.\""
         ),
         actions: vec![
             Action {
@@ -390,7 +390,7 @@ make_event!(
                 consequences: vec![
                     Consequence {
                         kind: ConsequenceKind::Rewards {
-                            message: "você concorda em se juntar aos Retalhadores. O líder sorri, satisfeito: `\"Bem-vindo à família. Aqui está seu primeiro pagamento. Não nos desaponte.\"`".to_string(),
+                            message: "você concorda em se juntar aos Retalhadores. O líder sorri, satisfeito: \"Bem-vindo à família. Aqui está seu primeiro pagamento. Não nos desaponte.\"".to_string(),
                             iterations: 0,
                             items: vec![],
                             orbs: (200, 300),
@@ -417,7 +417,7 @@ make_event!(
                 consequences: vec![
                     Consequence {
                         kind: ConsequenceKind::Message {
-                            message: "Você recusa a oferta educadamente. O líder parece desapontado, mas acena com a cabeça: `\"Tudo bem, mas pense nisso. A oferta continua de pé... por enquanto.\"`".to_string(), 
+                            message: "Você recusa a oferta educadamente. O líder parece desapontado, mas acena com a cabeça: \"Tudo bem, mas pense nisso. A oferta continua de pé... por enquanto.\"".to_string(), 
                             emoji: None
                         },
                         ..Default::default()
@@ -431,7 +431,7 @@ make_event!(
                 consequences: vec![
                     Consequence {
                         kind: ConsequenceKind::Message {
-                            message: "Você recusa agressivamente, insultando os Retalhadores. O líder fica furioso: `\"Você vai se arrepender disso. Marquem esse aí, pessoal. Ele é um alvo agora.\"`".to_string(), 
+                            message: "Você recusa agressivamente, insultando os Retalhadores. O líder fica furioso: \"Você vai se arrepender disso. Marquem esse aí, pessoal. Ele é um alvo agora.\"".to_string(), 
                             emoji: None
                         },
                         extra_consequences: vec![
@@ -504,7 +504,7 @@ make_event!(
         },
         emoji: Emoji::from_unicode("💰"),
         message: EventMessage::Single(
-            "um grupo de Retalhadores te chama para participar de um grande assalto a uma caravana que passará pela região. O líder da operação diz: `\"Retalharemos todos e pegaremos o dinheiro! Ha, ha, ha!\"`"
+            "um grupo de Retalhadores te chama para participar de um grande assalto a uma caravana que passará pela região. O líder da operação diz: \"Retalharemos todos e pegaremos o dinheiro! Ha, ha, ha!\""
         ),
         actions: vec![
             Action {
@@ -534,7 +534,7 @@ make_event!(
                 consequences: vec![
                     Consequence {
                         kind: ConsequenceKind::Message {
-                            message: "Você decide não participar do assalto. O líder da operação parece decepcionado: `\"Que pena. Esperava mais de você. Talvez da próxima vez...\"`".to_string(), 
+                            message: "Você decide não participar do assalto. O líder da operação parece decepcionado: \"Que pena. Esperava mais de você. Talvez da próxima vez...\"".to_string(), 
                             emoji: None
                         },
                         extra_consequences: vec![
@@ -632,7 +632,7 @@ fn shredder_heist_failure(_: EventBuildState) -> Event {
                 consequences: vec![
                     Consequence {
                         kind: ConsequenceKind::Message {
-                            message: "O líder da operação repreende vocês duramente: `\"Isso foi patético! Vão ter que trabalhar dobrado para compensar esse prejuízo!\"`".to_string(), 
+                            message: "O líder da operação repreende vocês duramente: \"Isso foi patético! Vão ter que trabalhar dobrado para compensar esse prejuízo!\"".to_string(), 
                             emoji: None
                         },
                         extra_consequences: vec![

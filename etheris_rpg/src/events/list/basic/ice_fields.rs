@@ -12,7 +12,7 @@ use super::prelude::*;
 make_event!(basic_icefields_exploration, Event {
     identifier: "basic_icefields_exploration",
     spawn: EventSpawn {
-        weighted_regions: vec![(WorldRegion::Icefields, 10)],
+        weighted_regions: vec![(WorldRegion::Icefields, 5)],
         ..Default::default()
     },
     emoji: Emoji::from_unicode("❄️"),
@@ -160,16 +160,17 @@ make_event!(
                 conditions: vec![Condition::HasItem(items::tool::PICKAXE, 1)],
                 consequences: vec![
                     Consequence {
-                        probability: Probability::new(70),
+                        probability: Probability::new(60),
                         kind: ConsequenceKind::Rewards {
                             message: "você conseguiu quebrar o gelo e recuperar o objeto brilhante!".to_string(),
                             iterations: 1,
                             items: vec![
-                                (Probability::new(100), items::special::GIFT, (1, 1)),
-                                (Probability::new(30), items::ore::GOLD_ORE, (1, 1)),
+                                (Probability::new(80), items::special::GIFT, (1, 1)),
+                                (Probability::new(30), items::special::TRAP, (1, 1)),
+                                (Probability::new(15), items::ore::GOLD_ORE, (1, 1)),
                                 (Probability::new(5), items::ore::DIAMOND_ORE, (1, 1)),
                             ],
-                            orbs: (50, 100),
+                            orbs: (20, 60),
                             xp: XpReward {
                                 strength: (10, 20),
                                 ..Default::default()
@@ -182,7 +183,7 @@ make_event!(
                         ..Default::default()
                     },
                     Consequence {
-                        probability: Probability::new(30),
+                        probability: Probability::new(40),
                         kind: ConsequenceKind::Prejudice {
                             message: "o gelo se quebrou sob seus pés e você caiu na água gelada!".to_string(),
                             items_amount: (0, 0),

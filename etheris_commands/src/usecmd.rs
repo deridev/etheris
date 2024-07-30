@@ -101,7 +101,7 @@ pub async fn usecmd(
                 ctx.reply(
                     Response::new_user_reply(
                         &author,
-                        "você precisa especificar o usuário que você quer dar prender em uma armadilha de batalha mortal!",
+                        "você precisa especificar o usuário que você quer prender em uma armadilha de batalha mortal!",
                     )
                     .add_emoji_prefix(emojis::ERROR)
                     .set_ephemeral(),
@@ -109,6 +109,20 @@ pub async fn usecmd(
                 .await?;
                 return Ok(());
             };
+
+            let user_character = parse_user_character!(ctx, user);
+            if user_character.region != character.region {
+                ctx.send(
+                    Response::new_user_reply(
+                        &author,
+                        "você precisa estar na mesma região para colocar alguém em uma armadilha de batalha mortal!",
+                    )
+                    .add_emoji_prefix(emojis::ERROR)
+                    .set_ephemeral(),
+                )
+                .await?;
+                return Ok(());
+            }
 
             let confirmation = ctx
                 .helper()

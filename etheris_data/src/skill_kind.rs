@@ -62,6 +62,7 @@ pub enum SkillKind {
     EtherFlow,
     Pyrotransmutation,
     PoisonousGas,
+    ThermalFists
 }
 
 impl SkillKind {
@@ -108,6 +109,7 @@ impl SkillKind {
             Self::EtherFlow,
             Self::Pyrotransmutation,
             Self::PoisonousGas,
+            Self::ThermalFists,
         ]
     }
 
@@ -163,6 +165,7 @@ impl SkillKind {
             Self::EtherFlow => &[Personality::Calm],
             Self::Pyrotransmutation => &[Personality::Aggressiveness, Personality::Cowardice],
             Self::PoisonousGas => &[Personality::Aggressiveness, Personality::Cowardice],
+            Self::ThermalFists => &[Personality::Arrogance, Personality::Intelligence],
         }
     }
 
@@ -197,6 +200,7 @@ impl SkillKind {
             Self::Earthquake => 22,
             Self::WoundHealing => 24,
             Self::BloodSpear => 25,
+            Self::ThermalFists => 30,
             Self::CursedBlood => 35,
             Self::ParalyzingBet => 40,
             Self::EtherShadow => 45,
@@ -246,7 +250,7 @@ impl SkillKind {
             | Self::BloodTheft
             | Self::Pyrotransmutation
             | Self::Overcoming
-            | Self::GarhyanRatSummon => 3,
+            | Self::GarhyanRatSummon | Self::ThermalFists => 3,
             Self::WaterJet | Self::FlamingBall | Self::EtherShadow | Self::SkillMirror => 4,
             Self::YinYang | Self::Hakikotenchou => 5,
             Self::TenkuKikan(..) => 6,

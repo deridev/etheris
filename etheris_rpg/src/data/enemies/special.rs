@@ -12,7 +12,7 @@ make_enemy!(
         base_probability: Probability::new(100),
         brain: BrainKind::Simple,
         boss: None,
-        regions: &[(WorldRegion::Greenagis, 10)],
+        regions: &[(WorldRegion::Greenagis, 5)],
         personalities: &[Personality::Cowardice, Personality::Intelligence],
         potential: EnemyPotential::Medium,
         immunities: BodyImmunities::new()

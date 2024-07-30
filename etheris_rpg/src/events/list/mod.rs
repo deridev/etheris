@@ -24,6 +24,7 @@ pub mod general_special;
 pub mod shredder_basic;
 
 // Lore events
+pub mod corlyn;
 pub mod vinizi;
 pub static ALL_EVENTS: Lazy<Vec<EventBuilder>> = Lazy::new(|| {
     [
@@ -36,12 +37,14 @@ pub static ALL_EVENTS: Lazy<Vec<EventBuilder>> = Lazy::new(|| {
         bosses::orsinium::orsinium_rematch,
         // General
         basic::general::basic_general_rock_mining,
+        basic::general::basic_general_big_rock_mining,
         basic::general::basic_general_place_to_meditate,
         basic::general::basic_general_mysterious_chest,
         basic::general::basic_general_traveller_riddle,
         basic::general::basic_general_gambler_encounter,
         basic::general::basic_general_lost_pet,
         basic::general::basic_general_broken_cart,
+        basic::general::basic_general_item_hole,
         basic::general::basic_general_old_well,
         general_special::special_track_miniorbs,
         general_special::creative_general_mysterious_portal,
@@ -78,6 +81,7 @@ pub static ALL_EVENTS: Lazy<Vec<EventBuilder>> = Lazy::new(|| {
         basic::forest::basic_swamp_murky_waters,
         basic::forest::basic_swamp_quicksand,
         basic::forest::basic_forest_ancient_tree_library,
+        basic::forest::basic_forest_abandoned_picnic,
         basic::forest::basic_forest_apple_tree,
         basic::forest::basic_forest_fallen_tree,
         basic::forest::basic_forest_unusual_rock,
@@ -87,12 +91,14 @@ pub static ALL_EVENTS: Lazy<Vec<EventBuilder>> = Lazy::new(|| {
         basic::desert::basic_desert_exploration,
         basic::desert::basic_desert_digging,
         basic::desert::basic_desert_beginner_nomad_merchant,
+        basic::desert::basic_desert_lost_traveler,
         basic::desert::basic_desert_oasis,
         basic::desert::basic_desert_sandstorm,
         basic::desert::basic_desert_abandoned_campsite,
         basic::desert::basic_desert_ancient_ruins,
         basic::desert::basic_desert_mirage_merchant,
         basic::desert::basic_desert_scorpion_nest,
+        basic::desert::basic_desert_training_person,
         // Ethereal Forest
         basic::ethereal_forest::basic_ethereal_forest_digging,
         basic::ethereal_forest::basic_ethereal_forest_whispering_trees,
@@ -128,6 +134,9 @@ pub static ALL_EVENTS: Lazy<Vec<EventBuilder>> = Lazy::new(|| {
         // Lore - Vinizi
         vinizi::vinizi_first_encounter,
         vinizi::vinizi_first_stage,
+        // Lore - Corlyn
+        corlyn::corlyn_first_encounter,
+        corlyn::corlyn_quest_icefields,
     ]
     .to_vec()
 });

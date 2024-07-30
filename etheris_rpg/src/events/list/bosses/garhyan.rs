@@ -15,7 +15,7 @@ make_event!(garhyan_shredder_first_invitation, Event {
             Condition::Not(Box::new(Condition::DefeatedBoss(BossKind::Garhyan)))
         ]
     },
-    message: EventMessage::Single("um Retalhador se aproxima com desdém. `\"Você... Sempre nos dando problemas! O chefe te chamou pra uma conversinha. Você vai vir comigo, AGORA!\"`"),
+    message: EventMessage::Single("um Retalhador se aproxima com desdém. \"Você... Sempre nos dando problemas! O chefe te chamou pra uma conversinha. Você vai vir comigo, AGORA!\""),
     actions: vec![
         Action {
             name: "Ir".to_string(),
@@ -50,7 +50,7 @@ make_event!(garhyan_shredder_first_invitation, Event {
 make_event!(garhyan_going_to, Event {
     identifier: "garhyan_going_to",
     spawn: EventSpawn::never(),
-    message: EventMessage::Single("o Retalhador começa a te escoltar até uma base subterrânea por alguns minutos. Nenhuma palavra é dita no caminho, até que, dentro de um bunker subterrâneo, você vê uma porta gigante de ferro. `\"Atrás dessa porta está nosso chefe, verme. Respeite-o!` - a porta se abre."),
+    message: EventMessage::Single("o Retalhador começa a te escoltar até uma base subterrânea por alguns minutos. Nenhuma palavra é dita no caminho, até que, dentro de um bunker subterrâneo, você vê uma porta gigante de ferro. \"Atrás dessa porta está nosso chefe, verme. Respeite-o!` - a porta se abre."),
     actions: vec![
         Action {
             name: "Entrar".to_string(),
@@ -85,7 +85,7 @@ make_event!(garhyan_going_to, Event {
 make_event!(garhyan_inside_bunker, Event {
     identifier: "garhyan_inside_bunker",
     spawn: EventSpawn::never(),
-    message: EventMessage::Single("você se depara com um homem em pé, olhando para um quadro na parede, uma pintura de destroços com uma figura humana no meio. O homem começa a falar: `\"Ora... Você sabe quanto tempo eu levei? Os Retalhadores, por mais fracos que sejam, são parte do meu império.\"` - homem se vira. `\"Seus pais nunca te ensinaram a temer Garhyan?`\""),
+    message: EventMessage::Single("você se depara com um homem em pé, olhando para um quadro na parede, uma pintura de destroços com uma figura humana no meio. O homem começa a falar: \"Ora... Você sabe quanto tempo eu levei? Os Retalhadores, por mais fracos que sejam, são parte do meu império.\" - homem se vira. \"Seus pais nunca te ensinaram a temer Garhyan?\""),
     actions: vec![
         Action {
             name: "\"Você não me assusta!\"".to_string(),
@@ -129,7 +129,7 @@ make_event!(garhyan_inside_bunker, Event {
 make_event!(garhyan_first_agression, Event {
     identifier: "garhyan_first_agression",
     spawn: EventSpawn::never(),
-    message: EventMessage::Single("Garhyan lhe oferece uma última chance. `\"Una-se a mim como Retalhador, e eu vou poupar a sua vida miserável.\"`"),
+    message: EventMessage::Single("Garhyan lhe oferece uma última chance. \"Una-se a mim como Retalhador, e eu vou poupar a sua vida miserável.\""),
     actions: vec![
         Action {
             name: "Recusar".to_string(),
@@ -161,7 +161,7 @@ make_event!(garhyan_first_agression, Event {
                 Consequence {
                     kind: ConsequenceKind::Message {
                         emoji: None,
-                        message: "`\"ótimo!\"` - Garhyan exclama. `\"Meu cemitério já tá cheio de corpos. Agora você é um Retalhador! Pode sair daqui com vida.\"`".to_string()
+                        message: "\"ótimo!\" - Garhyan exclama. \"Meu cemitério já tá cheio de corpos. Agora você é um Retalhador! Pode sair daqui com vida.\"".to_string()
                     },
                     ..Default::default()
                 },
@@ -182,7 +182,7 @@ make_event!(garhyan_rematch, Event {
             Condition::Not(Box::new(Condition::DefeatedBoss(BossKind::Garhyan)))
         ]
     },
-    message: EventMessage::Single("um Retalhador te avista de longe. `\"Ei! O Lorde Garhyan tá te caçando. Vou te levar pra ele agora mesmo!\"`"),
+    message: EventMessage::Single("um Retalhador te avista de longe. \"Ei! O Lorde Garhyan tá te caçando. Vou te levar pra ele agora mesmo!\""),
     actions: vec![
         common::ignore_action(),
         Action {
@@ -203,7 +203,7 @@ make_event!(garhyan_rematch, Event {
 make_event!(garhyan_boss_battle, Event {
     identifier: "garhyan_boss_battle",
     spawn: EventSpawn::never(),
-    message: EventMessage::Single("Garhyan te encara com raiva. `\"Pode vir pra cima. Eu vou te retalhar por mexer com Garhyan, o Senhor dos Ratos.\"`"),
+    message: EventMessage::Single("Garhyan te encara com raiva. \"Pode vir pra cima. Eu vou te retalhar por mexer com Garhyan, o Senhor dos Ratos.\""),
     actions: vec![
         Action {
             name: "Enfrentar".to_string(),

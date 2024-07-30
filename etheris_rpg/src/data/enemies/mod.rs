@@ -203,6 +203,8 @@ pub static ALL_ENEMIES: Lazy<Vec<Enemy>> = Lazy::new(|| {
         weaks::thornbeast(),
         weaks::frost_shaman(),
         weaks::rock_thrower(),
+        weaks::ethereal_hunter(),
+        weaks::corrupt_monk(),
         weaks::etherking(),
     ]
     .to_vec()

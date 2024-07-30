@@ -10,6 +10,7 @@ make_event!(
     Event {
         identifier: "basic_general_rock_mining",
         spawn: EventSpawn {
+            base_probability: Probability::new(80),
             weighted_regions: vec![
                 (WorldRegion::Greenagis, 2),
                 (WorldRegion::Emerelis, 3),
@@ -43,7 +44,6 @@ make_event!(
                             (Probability::new(40), items::ore::COAL_ORE, (0, 3)),
                             (Probability::new(30), items::ore::IRON_ORE, (0, 2)),
                             (Probability::new(15), items::ore::COPPER_ORE, (0, 1)),
-                            (Probability::new(2), items::ore::GOLD_ORE, (0, 1)),
                         ],
                         orbs: (0, 30),
                         xp: XpReward {
@@ -57,6 +57,66 @@ make_event!(
                 }],
                 extra_consequences: vec![Consequence {
                     kind: ConsequenceKind::RemoveItemDurability(items::tool::PICKAXE, 1),
+                    ..Default::default()
+                }],
+                ..Default::default()
+            }
+        ]
+    }
+);
+
+make_event!(
+    basic_general_big_rock_mining,
+    Event {
+        identifier: "basic_general_big_rock_mining",
+        spawn: EventSpawn {
+            base_probability: Probability::new(40),
+            weighted_regions: vec![
+                (WorldRegion::Wornpeaks, 4),
+                (WorldRegion::Sunreach, 2),
+                (WorldRegion::Tenypt, 2),
+                (WorldRegion::Sandywater, 3),
+            ],
+            ..Default::default()
+        },
+        emoji: Emoji::from_unicode("🗻"),
+        message: EventMessage::Multiple(&[
+            "você encontrou uma rocha massiva. O que deseja fazer?",
+            "uma rocha gigante chamou sua atenção. O que quer fazer com ela?",
+        ]),
+        actions: vec![
+            common::ignore_action(),
+            Action {
+                name: "Minerar".to_string(),
+                emoji: Some(items::tool::PICKAXE.emoji),
+                conditions: vec![Condition::HasItem(items::tool::PICKAXE, 1)],
+                consequences: vec![Consequence {
+                    probability: Probability::ALWAYS,
+                    kind: ConsequenceKind::Rewards {
+                        message: "a pedra quebrou e você pegou alguns materiais!".to_string(),
+                        iterations: 4,
+                        items: vec![
+                            (Probability::ALWAYS, items::material::STONE, (1, 2)),
+                            (Probability::new(60), items::ore::COAL_ORE, (0, 4)),
+                            (Probability::new(50), items::ore::IRON_ORE, (0, 3)),
+                            (Probability::new(50), items::ore::COPPER_ORE, (0, 3)),
+                            (Probability::new(30), items::ore::LEAD_ORE, (0, 3)),
+                            (Probability::new(30), items::ore::TIN_ORE, (0, 3)),
+                            (Probability::new(5), items::ore::GOLD_ORE, (0, 1)),
+                            (Probability::new(2), items::ore::DIAMOND_ORE, (0, 1)),
+                        ],
+                        orbs: (0, 40),
+                        xp: XpReward {
+                            strength: (15, 20),
+                            health: (15, 20),
+                            intelligence: (0, 7),
+                            knowledge: (0, 2),
+                        }
+                    },
+                    ..Default::default()
+                }],
+                extra_consequences: vec![Consequence {
+                    kind: ConsequenceKind::RemoveItemDurability(items::tool::PICKAXE, 4),
                     ..Default::default()
                 }],
                 ..Default::default()
@@ -82,12 +142,17 @@ make_event!(basic_general_place_to_meditate, Event {
             conditions: vec![],
             consequences: vec![
                 Consequence {
-                    probability: Probability::new(70),
+                    probability: Probability::new(80),
                     kind: ConsequenceKind::Rewards {
                         message: "você passou algumas horas meditando e sente seu corpo leve. Você ganhou pontos de ação!".to_string(), 
-                        iterations: 1, items: vec![], orbs: (0, 0),
+                        iterations: 1,
+                        items: vec![],
+                        orbs: (0, 0),
                         xp: XpReward {
-                            health: (10, 20), intelligence: (10, 15), strength: (0, 5), knowledge: (10, 30)
+                            health: (10, 20),
+                            intelligence: (10, 15),
+                            strength: (0, 5),
+                            knowledge: (10, 30)
                         }
                     },
                     extra_consequences: vec![Consequence {
@@ -97,7 +162,7 @@ make_event!(basic_general_place_to_meditate, Event {
                     ..Default::default()
                 },
                 Consequence {
-                    probability: Probability::new(30),
+                    probability: Probability::new(20),
                     kind: ConsequenceKind::Prejudice {
                         message: "alguém te roubou enquanto você meditava!".to_string(),
                         items_amount: (1, 5),
@@ -145,8 +210,10 @@ make_event!(
                                 (Probability::new(30), items::material::STICK, (2, 4)),
                                 (Probability::new(20), items::ore::COAL_ORE, (1, 3)),
                                 (Probability::new(10), items::ore::IRON_ORE, (1, 2)),
-                                (Probability::new(10), items::special::INVIGORATING_CRYSTAL, (1, 1)),
+                                (Probability::new(10), items::ore::TIN_ORE, (1, 2)),
+                                (Probability::new(10), items::ore::LEAD_ORE, (1, 2)),
                                 (Probability::new(10), items::special::TRAP, (1, 1)),
+                                (Probability::new(2), items::special::INVIGORATING_CRYSTAL, (1, 1)),
                             ],
                             orbs: (20, 50),
                             xp: XpReward {
@@ -491,6 +558,70 @@ make_event!(
                     kind: ConsequenceKind::RemoveItemDurability(items::tool::HAMMER, 1),
                     ..Default::default()
                 }],
+                ..Default::default()
+            },
+        ]
+    }
+);
+
+make_event!(
+    basic_general_item_hole,
+    Event {
+        identifier: "basic_general_item_hole",
+        spawn: EventSpawn {
+            base_probability: Probability::new(40),
+            weighted_regions: all_regions(1),
+            conditions: vec![]
+        },
+        emoji: Emoji::from_unicode("🕳️"),
+        message: EventMessage::Single("você encontrou um buraco suspeito no chão. O que você faz?"),
+        actions: vec![
+            common::ignore_action(),
+            Action {
+                name: "Investigar".to_string(),
+                consequences: vec![
+                    Consequence {
+                        probability: Probability::new(30),
+                        kind: ConsequenceKind::Prejudice {
+                            message: "um animal mordeu sua mão.".to_string(),
+                            items_amount: (0, 0),
+                            max_item_valuability: 0,
+                            fixed_orbs: (0, 0),
+                            orbs_percentage: 0.0,
+                            specific_items: vec![],
+                            damage_percentage: 0.2,
+                            damage_limit: 100,
+                        },
+                        ..Default::default()
+                    },
+                    Consequence {
+                        probability: Probability::new(70),
+                        kind: ConsequenceKind::Rewards {
+                            message: "você encontrou algumas coisas no buraco!".to_string(),
+                            iterations: 3,
+                            items: vec![
+                                (Probability::new(80), items::material::STICK, (1, 3)),
+                                (Probability::new(80), items::material::STONE, (1, 3)),
+                                (Probability::new(70), items::material::BONE, (1, 2)),
+                                (Probability::new(60), items::material::RAW_TRUNK, (1, 1)),
+                                (Probability::new(50), items::material::KNIFE, (1, 1)),
+                                (Probability::new(50), items::consumable::MILK, (1, 1)),
+                                (Probability::new(40), items::consumable::WHEAT, (1, 2)),
+                                (Probability::new(30), items::material::PLANK, (1, 1)),
+                                (Probability::new(20), items::consumable::WATERMELON, (1, 2)),
+                                (Probability::new(5), items::special::TRAP, (1, 1)),
+                            ],
+                            orbs: (10, 30),
+                            xp: XpReward {
+                                health: (0, 5),
+                                intelligence: (5, 10),
+                                strength: (5, 15),
+                                knowledge: (5, 10)
+                            }
+                        },
+                        ..Default::default()
+                    }
+                ],
                 ..Default::default()
             },
         ]
