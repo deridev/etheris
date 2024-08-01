@@ -473,6 +473,7 @@ make_enemy!(
         allies: None,
         weapon: Some(WeaponKind::Bat),
         skills: vec![
+            SkillKind::WaterBlessing,
             SkillKind::TornadoKick,
             SkillKind::ImbuedPunch,
             SkillKind::Suplex,
@@ -601,7 +602,7 @@ fn shredder_heist_success(_: EventBuildState) -> Event {
                                 (Probability::new(100), items::special::GIFT, (1, 1)),
                                 (Probability::new(30), items::special::INTELLIGENCE_CRYSTAL, (1, 1)),
                             ],
-                            orbs: (100, 400),
+                            orbs: (100, 300),
                             xp: XpReward::default()
                         },
                         extra_consequences: vec![

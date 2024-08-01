@@ -8,7 +8,7 @@ pub fn special_track_miniorbs(_: EventBuildState) -> Event {
     Event {
         identifier: "special_track_miniorbs",
         spawn: EventSpawn {
-            base_probability: Probability::new(40),
+            base_probability: Probability::new(20),
             weighted_regions: all_regions(1),
             conditions: vec![]
         },

@@ -68,7 +68,7 @@ make_enemy!(
                 EnemyRewardItem {
                     amount: (1, 1),
                     item: items::special::INVIGORATING_CRYSTAL,
-                    probability: Probability::new(50),
+                    probability: Probability::new(25),
                 },
                 EnemyRewardItem {
                     amount: (1, 1),

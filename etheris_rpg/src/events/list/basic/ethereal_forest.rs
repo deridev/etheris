@@ -201,7 +201,7 @@ make_event!(
                             iterations: 1,
                             items: vec![
                                 (Probability::new(100), items::consumable::WATER, (2, 4)),
-                                (Probability::new(30), items::special::INVIGORATING_CRYSTAL, (1, 1)),
+                                (Probability::new(1), items::special::INVIGORATING_CRYSTAL, (1, 1)),
                             ],
                             orbs: (10, 30),
                             xp: XpReward::default()

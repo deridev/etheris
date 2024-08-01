@@ -143,7 +143,7 @@ make_enemy!(
                 EnemyRewardItem {
                     amount: (1, 1),
                     item: items::material::KNIFE,
-                    probability: Probability::new(100),
+                    probability: Probability::new(80),
                 },
                 EnemyRewardItem {
                     amount: (1, 1),

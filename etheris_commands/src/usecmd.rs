@@ -62,6 +62,16 @@ pub async fn usecmd(
                 return Ok(());
             };
 
+            if user.id == author.id {
+                ctx.send(
+                    Response::new_user_reply(&author, "você não pode dar um presente a si mesmo!")
+                        .add_emoji_prefix(emojis::ERROR)
+                        .set_ephemeral(),
+                )
+                .await?;
+                return Ok(());
+            }
+
             let confirmation = ctx
                 .helper()
                 .create_confirmation(
@@ -109,6 +119,19 @@ pub async fn usecmd(
                 .await?;
                 return Ok(());
             };
+
+            if user.id == author.id {
+                ctx.send(
+                    Response::new_user_reply(
+                        &author,
+                        "você não pode colocar a si mesmo em uma armadilha de batalha mortal!",
+                    )
+                    .add_emoji_prefix(emojis::ERROR)
+                    .set_ephemeral(),
+                )
+                .await?;
+                return Ok(());
+            }
 
             let user_character = parse_user_character!(ctx, user);
             if user_character.region != character.region {

@@ -124,10 +124,10 @@ fn corlyn_first_quest(_: EventBuildState) -> Event {
         identifier: "corlyn_first_quest",
         spawn: EventSpawn::never(),
         emoji: EMOJI,
-        message: EventMessage::Single("Corlyn olha para você e começa a falar. \"ó, avatar nomeado [NAME], perdoe minha falta de explicações, mas eu garanto que você será recompensado na chegada da era da abnegação! Sim, sim... Eu só peço uma coisa, caro avatar. Traga-me uma katana vermelha e profanada, e eu te recompensarei.\""),
+        message: EventMessage::Single("Corlyn olha para você e começa a falar. \"Ó, avatar nomeado [NAME], perdoe minha falta de explicações, mas eu garanto que você será recompensado na chegada da era da abnegação! Sim, sim... Eu só peço uma coisa, caro avatar. Traga-me uma katana vermelha e profanada, e eu te recompensarei.\""),
         actions: vec![
             Action {
-                name: "Recusar".to_string(),
+                name: "Recusar tarefa".to_string(),
                 emoji: None,
                 consequences: vec![
                     Consequence {
@@ -142,7 +142,7 @@ fn corlyn_first_quest(_: EventBuildState) -> Event {
                 ..Default::default()
             },
             Action {
-                name: "Aceitar".to_string(),
+                name: "Aceitar tarefa".to_string(),
                 emoji: None,
                 consequences: vec![
                     Consequence {
@@ -199,9 +199,11 @@ pub fn corlyn_quest_icefields(_: EventBuildState) -> Event {
                     Consequence {
                         kind: ConsequenceKind::Rewards {
                             message: "você recebeu uma bolsa com vários itens!".to_string(),
-                            iterations: 1,
+                            iterations: 3,
                             items: vec![
-                                (Probability::new(100), items::special::INVIGORATING_CRYSTAL, (1, 2)),
+                                (Probability::new(100), items::special::INVIGORATING_CRYSTAL, (1, 1)),
+                                (Probability::new(100), items::special::INVIGORATING_CRYSTAL, (1, 1)),
+                                (Probability::new(100), items::special::GIFT, (1, 1)),
                                 (Probability::new(100), items::special::GIFT, (1, 1)),
                                 (Probability::new(100), items::special::TRAP, (1, 1)),
                                 (Probability::new(100), items::special::INTELLIGENCE_CRYSTAL, (1, 1)),

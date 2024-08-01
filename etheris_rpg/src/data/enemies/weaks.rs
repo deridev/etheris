@@ -493,7 +493,7 @@ make_enemy!(
             SkillKind::AtomicHollow,
         ],
         drop: EnemyReward {
-            orbs: (150, 400),
+            orbs: (150, 300),
             xp: (150, 350),
             items: vec![EnemyRewardItem {
                 amount: (1, 1),

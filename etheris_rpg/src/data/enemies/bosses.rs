@@ -56,7 +56,7 @@ make_enemy!(
                 EnemyRewardItem {
                     amount: (1, 1),
                     item: items::special::INTELLIGENCE_CRYSTAL,
-                    probability: Probability::new(50),
+                    probability: Probability::new(25),
                 },
                 EnemyRewardItem {
                     amount: (1, 1),
@@ -109,7 +109,7 @@ make_enemy!(
                 EnemyRewardItem {
                     amount: (1, 1),
                     item: items::special::INTELLIGENCE_CRYSTAL,
-                    probability: Probability::new(50),
+                    probability: Probability::new(25),
                 },
                 EnemyRewardItem {
                     amount: (1, 1),
@@ -163,7 +163,7 @@ make_enemy!(
                 EnemyRewardItem {
                     amount: (1, 1),
                     item: items::special::INTELLIGENCE_CRYSTAL,
-                    probability: Probability::new(50),
+                    probability: Probability::new(25),
                 },
                 EnemyRewardItem {
                     amount: (1, 1),
@@ -205,6 +205,7 @@ make_enemy!(
             SkillKind::EtherFlow,
             SkillKind::FlamingBall,
             SkillKind::Suplex,
+            SkillKind::BloodDonation,
         ],
         drop: EnemyReward {
             orbs: (500, 800),
@@ -223,6 +224,115 @@ make_enemy!(
                 EnemyRewardItem {
                     amount: (1, 1),
                     item: items::special::GIFT,
+                    probability: Probability::new(100),
+                }
+            ],
+        },
+    }
+);
+
+make_enemy!(
+    microlord_diabolius,
+    Enemy {
+        identifier: "microlord_diabolius",
+        name: BossKind::MicrolordDiabolius.name(),
+        base_probability: Probability::NEVER,
+        brain: BrainKind::Boss,
+        boss: Some(BossKind::MicrolordDiabolius),
+        regions: &[],
+        personalities: &[Personality::Cowardice, Personality::Arrogance],
+        potential: EnemyPotential::Medium,
+        immunities: BodyImmunities::new()
+            .with_resistance(ImmunityKind::Water, 1.0)
+            .with_resistance(ImmunityKind::Electric, 1.0)
+            .with_resistance(ImmunityKind::Ice, 0.8)
+            .with_little_weakness(ImmunityKind::Cut)
+            .with_little_weakness(ImmunityKind::Physical),
+        strength: 28,
+        intelligence: 160,
+        resistance: 2931,
+        vitality: 421,
+        ether: 150,
+        weapon: None,
+        allies: None,
+        skills: vec![
+            SkillKind::CursedBlood,
+            SkillKind::WoundHealing,
+            SkillKind::Refresh,
+            SkillKind::EtherFlow,
+            SkillKind::YinYang,
+            SkillKind::WaterBlessing,
+            SkillKind::WaterJet,
+            SkillKind::ResplendentPunch,
+        ],
+        drop: EnemyReward {
+            orbs: (300, 500),
+            xp: (150, 300),
+            items: vec![
+                EnemyRewardItem {
+                    amount: (1, 1),
+                    item: items::special::INVIGORATING_CRYSTAL,
+                    probability: Probability::new(100),
+                },
+                EnemyRewardItem {
+                    amount: (1, 1),
+                    item: items::special::GIFT,
+                    probability: Probability::new(100),
+                }
+            ],
+        },
+    }
+);
+
+make_enemy!(
+    macrolord_vastorrant,
+    Enemy {
+        identifier: "macrolord_vastorrant",
+        name: BossKind::MacrolordVastorrant.name(),
+        base_probability: Probability::NEVER,
+        brain: BrainKind::Boss,
+        boss: Some(BossKind::MacrolordVastorrant),
+        regions: &[],
+        personalities: &[Personality::Insanity, Personality::Arrogance],
+        potential: EnemyPotential::VeryHigh,
+        immunities: BodyImmunities::new()
+            .with_resistance(ImmunityKind::Electric, 1.0)
+            .with_resistance(ImmunityKind::Fire, 0.6)
+            .with_little_resistance(ImmunityKind::Cut)
+            .with_little_resistance(ImmunityKind::Physical)
+            .with_little_weakness(ImmunityKind::Ice),
+        strength: 190,
+        intelligence: 115,
+        resistance: 1750,
+        vitality: 1199,
+        ether: 80,
+        weapon: None,
+        allies: None,
+        skills: vec![
+            SkillKind::Earthquake,
+            SkillKind::ResplendentPunch,
+            SkillKind::BloodSpear,
+            SkillKind::ElectricSlap,
+            SkillKind::WaterJet,
+            SkillKind::Charge,
+            SkillKind::Intimidation,
+            SkillKind::DefensiveJump,
+            SkillKind::InstinctiveReaction,
+            SkillKind::Suplex,
+            SkillKind::AtomicHollow,
+        ],
+        drop: EnemyReward {
+            orbs: (700, 1000),
+            xp: (40, 500),
+            items: vec![
+                EnemyRewardItem {
+                    amount: (1, 1),
+                    item: items::special::INTELLIGENCE_CRYSTAL,
+                    probability: Probability::new(100),
+                },
+                EnemyRewardItem {
+                    amount: (1, 1),
+                    item: items::special::TRAP,
                     probability: Probability::new(100),
                 }
             ],

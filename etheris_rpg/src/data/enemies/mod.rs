@@ -73,7 +73,7 @@ fn calculate_gain(
         1.0 / (1.0 + multiplier * pl_difference)
     } else {
         // Player is weaker
-        1.0 + ((multiplier * 0.98) / 10.0) * pl_difference.abs()
+        1.0 + ((multiplier * 0.8) / 10.0) * pl_difference.abs()
     };
 
     if reduction_factor > max_factor {
@@ -156,6 +156,8 @@ pub static ALL_ENEMIES: Lazy<Vec<Enemy>> = Lazy::new(|| {
         bosses::agorath(),
         bosses::orsinium(),
         bosses::ethria(),
+        bosses::microlord_diabolius(),
+        bosses::macrolord_vastorrant(),
         // Weaklings
         weaklings::giant_rat(),
         weaklings::greenagis_mutant(),
