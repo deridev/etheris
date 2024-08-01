@@ -223,16 +223,17 @@ fn should_defend(fighter: &Fighter, target: &Fighter) -> bool {
     let base_defend_chance = if fighter.has_personality(Personality::Calm)
         || fighter.has_personality(Personality::Intelligence)
     {
-        0.3
+        0.15
     } else {
-        0.1
+        0.05
     };
 
-    let health_factor = (1.0 - health_ratio) * 0.3;
-    let ether_factor = if ether_ratio <= 0.5 { 0.2 } else { 0.05 };
+    let health_factor = (1.0 - health_ratio) * 0.2;
+    let ether_factor = if ether_ratio <= 0.5 { 0.15 } else { 0.05 };
     let target_factor = target_health_ratio * 0.15;
 
     let total_chance = base_defend_chance + health_factor + ether_factor - target_factor;
+    let total_chance = total_chance.clamp(0.0, 0.5);
 
     rand::thread_rng().gen_bool(total_chance)
 }

@@ -10,8 +10,8 @@ use rand::{rngs::StdRng, seq::SliceRandom, Rng, SeedableRng};
 
 use crate::prelude::*;
 
-const XP_REQUIRED_TO_LEVELUP: u32 = 100;
-const KNOWLEDGE_XP_REQUIRED_TO_LEVELUP: u32 = 200;
+const XP_REQUIRED_TO_LEVELUP: u32 = 150;
+const KNOWLEDGE_XP_REQUIRED_TO_LEVELUP: u32 = 250;
 
 #[command("Evolua seu personagem através do esforço mental")]
 #[name("estudar")]
@@ -60,7 +60,7 @@ pub async fn study(mut ctx: CommandContext) -> anyhow::Result<()> {
     character.knowledge_points += knowledge_levels_upgraded;
     character.knowledge_xp = knowledge_new_xp;
 
-    let ether_upgraded = levels_upgraded * 2;
+    let ether_upgraded = levels_upgraded * 1;
 
     character.stats.ether.max += ether_upgraded as i32;
     character.stats.ether.value += ether_upgraded as i32;
@@ -203,7 +203,7 @@ pub async fn aknowledge_skill(author: &User, ctx: &mut CommandContext) -> anyhow
             SkillComplexity::SuperMaster => 0.1,
         };
 
-        (5.0 + (affinities * 2.5)) * complexity_multiplier
+        (3.0 + (affinities * 2.5)) * complexity_multiplier
     }) else {
         return Ok(());
     };

@@ -104,6 +104,8 @@ make_event!(
                         },
                         ..Default::default()
                     },
+                ],
+                extra_consequences: vec![
                     Consequence {
                         kind: ConsequenceKind::AddKarma(1),
                         ..Default::default()

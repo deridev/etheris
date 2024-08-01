@@ -33,6 +33,8 @@ pub async fn train(mut ctx: CommandContext) -> anyhow::Result<()> {
         .create_cooldown(author.id, "TRAIN", chrono::Duration::try_minutes(1).unwrap())
         .await?;
 
+    tokio::time::sleep(Duration::from_millis(100)).await;
+
     let buttons = vec![
         ButtonBuilder::new().set_custom_id("strength").set_label("Força").set_emoji(Emoji::from_unicode("💪")),
         ButtonBuilder::new().set_custom_id("health").set_label("Vida").set_emoji(emojis::VITALITY),
