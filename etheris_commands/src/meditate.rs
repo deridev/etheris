@@ -168,8 +168,8 @@ fn create_inner_shadow(dummy: User, character: &CharacterModel) -> FighterData {
         MentalLevel::Novice => 1.0,
         MentalLevel::Accustomed => 1.5,
         MentalLevel::Spirited => 1.8,
-        MentalLevel::Strong => 2.5,
-        MentalLevel::Master => 3.5,
+        MentalLevel::Strong => 2.25,
+        MentalLevel::Master => 3.0,
         MentalLevel::Legend => 5.0,
         MentalLevel::Champion => 8.0,
     };
@@ -196,8 +196,8 @@ fn create_inner_shadow(dummy: User, character: &CharacterModel) -> FighterData {
     );
     multiply_by_multiplier!(shadow_character.stats.health_level, overall_multiplier);
 
-    multiply_by_multiplier!(shadow_character.stats.ether.value, overall_multiplier, i32);
-    multiply_by_multiplier!(shadow_character.stats.ether.max, overall_multiplier, i32);
+    multiply_by_multiplier!(shadow_character.stats.ether.value, overall_multiplier * 0.8, i32);
+    multiply_by_multiplier!(shadow_character.stats.ether.max, overall_multiplier * 0.8, i32);
 
     multiply_by_multiplier!(
         shadow_character.stats.resistance.value,
@@ -221,7 +221,7 @@ fn create_inner_shadow(dummy: User, character: &CharacterModel) -> FighterData {
         FighterData::new_from_character(1, &shadow_character, dummy, Default::default());
     fighter.user = None;
     fighter.name = "Sombra Interior".to_string();
-    fighter.brain = Some(BrainKind::Insane);
+    fighter.brain = Some(BrainKind::Boss);
 
     fighter
 }

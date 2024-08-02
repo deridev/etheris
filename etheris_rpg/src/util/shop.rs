@@ -234,6 +234,9 @@ impl Shop {
                     ));
                 ctx.update_message(Response::from(error_message).remove_all_components())
                     .await?;
+                tokio::time::sleep(Duration::from_secs(1)).await;
+                self.update_specific_page(&character, &message, &mut ctx, page, &pages)
+                    .await?;
                 continue;
             }
 
