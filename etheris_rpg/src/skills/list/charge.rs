@@ -18,7 +18,7 @@ impl Skill for Charge {
             description: "Concentra e carrega uma poderosa investida para lançar com uma grande potência.",
             explanation: "Utilizar ether para fortalecer alguns músculos e estabilizar o equilíbrio do corpo é a preparação perfeita para uma investida de alta potência.",
             complexity: SkillComplexity::Simple,
-            use_cost: SkillCost { ether: if self.charged { 5 } else { 10 } },
+            use_cost: SkillCost { ether: if self.charged { 5 } else { 15 } },
         }
     }
 
@@ -50,7 +50,7 @@ impl Skill for Charge {
         let target = api.target().clone();
 
         let base_damage = api.rng().gen_range(10..=15);
-        let damage = api.rng().gen_range(20..=30);
+        let damage = api.rng().gen_range(20..=25);
 
         let multiplier = fighter.strength_multiplier() * 1.1;
         let damage = base_damage + ((damage as f32) * multiplier) as i32;

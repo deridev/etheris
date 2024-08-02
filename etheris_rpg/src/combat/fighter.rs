@@ -392,11 +392,7 @@ impl Fighter {
 
             finishers,
             actions: data.actions.clone(),
-            power: if data.brain == Some(BrainKind::Insane) {
-                data.potential
-            } else {
-                0.5
-            },
+            power: data.potential.min(1.0),
             potential: data.potential,
 
             is_defeated: false,
