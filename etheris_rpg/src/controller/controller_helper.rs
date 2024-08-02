@@ -111,7 +111,7 @@ pub async fn tick_every_effect(
                         .await;
 
                     api.emit_message(format!(
-                        "***{}** queimou e recebeu **{dmg}**!",
+                        "**{}** queimou e recebeu **{dmg}**!",
                         fighter_name
                     ));
                 }
