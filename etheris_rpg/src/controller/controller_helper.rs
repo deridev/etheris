@@ -137,7 +137,7 @@ pub async fn tick_every_effect(
                         .await;
 
                     api.emit_message(format!(
-                        "***{}** está em combustão e recebeu **{dmg}**!",
+                        "**{}** está em combustão e recebeu **{dmg}**!",
                         fighter_name
                     ));
                 }
@@ -155,7 +155,7 @@ pub async fn tick_every_effect(
                     ));
                     if safe {
                         api.emit_message(format!(
-                            "***{}** não está mais com uma maldição!",
+                            "**{}** não está mais com uma maldição!",
                             fighter_name
                         ));
                     }
@@ -169,7 +169,7 @@ pub async fn tick_every_effect(
 
                     if unprotected {
                         api.emit_message(format!(
-                            "***{}** perdeu a proteção leve extra!*",
+                            "**{}** perdeu a proteção leve extra!*",
                             api.fighter().name
                         ));
                     }
@@ -249,7 +249,7 @@ pub async fn tick_every_effect(
                     ));
 
                     if melted {
-                        api.emit_message(format!("***{}** descongelou*", api.fighter().name));
+                        api.emit_message(format!("**{}** descongelou*", api.fighter().name));
                     }
                 }
                 EffectKind::Bleeding => {
