@@ -10,7 +10,7 @@ use rand::{rngs::StdRng, seq::SliceRandom, Rng, SeedableRng};
 
 use crate::prelude::*;
 
-const XP_REQUIRED_TO_LEVELUP: u32 = 150;
+const XP_REQUIRED_TO_LEVELUP: u32 = 100;
 const KNOWLEDGE_XP_REQUIRED_TO_LEVELUP: u32 = 250;
 
 #[command("Evolua seu personagem através do esforço mental")]
@@ -45,7 +45,7 @@ pub async fn study(mut ctx: CommandContext) -> anyhow::Result<()> {
 
     let xp = match character.stats.intelligence_level {
         0..=3 => StdRng::from_entropy().gen_range(50..=70),
-        4..=10 => StdRng::from_entropy().gen_range(20..=45),
+        4..=100 => StdRng::from_entropy().gen_range(20..=45),
         _ => StdRng::from_entropy().gen_range(10..=30),
     };
 
@@ -139,13 +139,23 @@ pub async fn study(mut ctx: CommandContext) -> anyhow::Result<()> {
     upgrade_intelligence_level!(2); // 11 AP
     upgrade_intelligence_level!(3); // 12 AP
     upgrade_intelligence_level!(5); // 13 AP
-    upgrade_intelligence_level!(10); // 14 AP
-    upgrade_intelligence_level!(20); // 15 AP
-    upgrade_intelligence_level!(30); // 16 AP
-    upgrade_intelligence_level!(40); // 17 AP
-    upgrade_intelligence_level!(50); // 18 AP
-    upgrade_intelligence_level!(60); // 19 AP
-    upgrade_intelligence_level!(80); // 20 AP
+    upgrade_intelligence_level!(7); // 14 AP
+    upgrade_intelligence_level!(10); // 15 AP
+    upgrade_intelligence_level!(15); // 16 AP
+    upgrade_intelligence_level!(20); // 17 AP
+    upgrade_intelligence_level!(25); // 18 AP
+    upgrade_intelligence_level!(30); // 19 AP
+    upgrade_intelligence_level!(35); // 20 AP
+    upgrade_intelligence_level!(40); // 21 AP
+    upgrade_intelligence_level!(45); // 22 AP
+    upgrade_intelligence_level!(50); // 23 AP
+    upgrade_intelligence_level!(55); // 24 AP
+    upgrade_intelligence_level!(60); // 25 AP
+    upgrade_intelligence_level!(70); // 26 AP
+    upgrade_intelligence_level!(80); // 27 AP
+    upgrade_intelligence_level!(90); // 28 AP
+    upgrade_intelligence_level!(95); // 29 AP
+    upgrade_intelligence_level!(100); // 30 AP
 
     character.action_points -= 2;
 

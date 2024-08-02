@@ -85,7 +85,7 @@ pub async fn train(mut ctx: CommandContext) -> anyhow::Result<()> {
 fn random_xp_amount(level: u32) -> u32 {
     match level {
         0..=3 => StdRng::from_entropy().gen_range(50..=70),
-        4..=10 => StdRng::from_entropy().gen_range(20..=45),
+        4..=100 => StdRng::from_entropy().gen_range(20..=45),
         _ => StdRng::from_entropy().gen_range(10..=30),
     }
 }
