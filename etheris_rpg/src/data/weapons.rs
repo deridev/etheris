@@ -7,7 +7,7 @@ use crate::list::prelude::*;
 async fn weapon_stick(mut api: BattleApi<'_>) -> anyhow::Result<()> {
     let base_damage = api.rng().gen_range(2..=6);
 
-    let damage = api.rng().gen_range(8..=16);
+    let damage = api.rng().gen_range(8..=12);
     let damage = base_damage + (damage as f32 * api.fighter().weapon_multiplier()) as i32;
 
     let damage = api

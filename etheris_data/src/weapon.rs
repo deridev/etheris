@@ -28,7 +28,7 @@ impl WeaponKind {
 
     pub fn intelligence_weight(&self) -> f32 {
         match self {
-            Self::Stick => 0.5,
+            Self::Stick => 0.3,
             Self::Knife => 0.1,
             Self::Bat => 0.1,
             Self::Umbrella => 0.3,

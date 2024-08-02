@@ -92,16 +92,17 @@ pub async fn usecmd(
             }
 
             let mut user_character = parse_user_character!(ctx, user);
-            user_character.health_xp += 150;
+            user_character.health_xp += 180;
             user_character.knowledge_xp += 80;
-            user_character.strength_xp += 150;
-            user_character.intelligence_xp += 150;
+            user_character.strength_xp += 180;
+            user_character.intelligence_xp += 180;
+            user_character.add_orbs(75);
             ctx.db().characters().save(user_character).await?;
 
             ctx.reply(
                 Response::new_user_reply(
                     &user,
-                    "você recebeu um presente! O presente te deu muito XP. Aproveite e agradeça a pessoa que te ofereceu!",
+                    "você recebeu um presente! O presente te deu muito XP e alguns orbs. Aproveite e agradeça a pessoa que te ofereceu!",
                 )
                 .add_emoji_prefix(items::special::GIFT.emoji)
             ).await?;
