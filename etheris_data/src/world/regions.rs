@@ -131,32 +131,32 @@ impl WorldRegion {
             },
             Self::Emerelis => RegionData {
                 kind: RegionKind::Plains,
-                first_travel_price: 300,
-                after_travel_price: 150,
+                first_travel_price: 200,
+                after_travel_price: 100,
             },
             Self::Gloomwood => RegionData {
                 kind: RegionKind::Forest,
-                first_travel_price: 500,
+                first_travel_price: 400,
                 after_travel_price: 200,
             },
             Self::Metrolis => RegionData {
                 kind: RegionKind::City,
-                first_travel_price: 800,
+                first_travel_price: 500,
                 after_travel_price: 100,
             },
             Self::Mudland => RegionData {
                 kind: RegionKind::Forest,
-                first_travel_price: 800,
+                first_travel_price: 600,
                 after_travel_price: 300,
             },
             Self::Murkswamp => RegionData {
                 kind: RegionKind::Swamp,
-                first_travel_price: 1100,
-                after_travel_price: 450,
+                first_travel_price: 800,
+                after_travel_price: 400,
             },
             Self::Sunreach => RegionData {
                 kind: RegionKind::Savannah,
-                first_travel_price: 1300,
+                first_travel_price: 1200,
                 after_travel_price: 550,
             },
             Self::Tenypt => RegionData {
@@ -166,18 +166,18 @@ impl WorldRegion {
             },
             Self::Ethergrove => RegionData {
                 kind: RegionKind::EtherealForest,
-                first_travel_price: 1500,
+                first_travel_price: 1350,
                 after_travel_price: 800,
             },
             Self::Starbreeze => RegionData {
                 kind: RegionKind::EtherealForest,
-                first_travel_price: 1800,
+                first_travel_price: 1600,
                 after_travel_price: 800,
             },
             Self::SwordTown => RegionData {
                 kind: RegionKind::City,
                 first_travel_price: 2000,
-                after_travel_price: 500,
+                after_travel_price: 250,
             },
             Self::Sandywater => RegionData {
                 kind: RegionKind::Desert,

@@ -47,8 +47,8 @@ impl Skill for EtherShadow {
         }
 
         let resistance = (fighter.resistance.max as f32 * 0.4) as i32;
-        let vitality = (fighter.vitality.max as f32 * 0.4) as i32;
-        let ether = (fighter.ether.max as f32 * 0.5) as i32;
+        let vitality = (fighter.vitality.max as f32 * 0.5) as i32;
+        let ether = (fighter.ether.max as f32 * 0.65) as i32;
 
         api.battle_mut().join_fighter(FighterData { 
             team: fighter.team, 
@@ -73,7 +73,7 @@ impl Skill for EtherShadow {
 
         api.emit_message(format!("**{}** invocou uma sombra de si mesmo para ajudar na batalha!", fighter.name));
 
-        let overload = api.rng().gen_range(3.0..=5.0);
+        let overload = api.rng().gen_range(8.0..=15.0);
         api.add_overload(api.fighter_index, overload).await;
 
         Ok(())
