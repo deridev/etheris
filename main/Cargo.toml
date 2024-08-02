@@ -21,3 +21,4 @@ tokio-stream = "0.1.14"
 anyhow = { workspace = true }
 once_cell = { workspace = true }
 rand = { workspace = true }
+chrono = { workspace = true }

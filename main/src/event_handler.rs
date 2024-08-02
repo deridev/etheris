@@ -1,11 +1,12 @@
 use std::sync::{atomic::Ordering, Arc};
 
+use chrono::{DateTime, Duration, Utc};
 use etheris_common::config;
 use etheris_data::emojis;
 use etheris_database::EtherisDatabase;
 use etheris_discord::{
     twilight_gateway::Event,
-    twilight_model::gateway::payload::incoming::{InteractionCreate, MessageCreate, Ready},
+    twilight_model::gateway::payload::incoming::{GuildCreate, InteractionCreate, MessageCreate, Ready},
     InteractionType, UserExtension,
 };
 use etheris_framework::{watcher::Watcher, EtherisClient};
@@ -56,6 +57,11 @@ impl EventHandler {
                     eprintln!("Error on message create:\n{}\n", e);
                 }
             }
+            Event::GuildCreate(guild_create) => {
+                if let Err(e) = self.guild_create(guild_create).await {
+                    eprintln!("Error on guild create:\n{}\n", e);
+                }
+            }
             _ => {}
         };
     }
@@ -99,6 +105,32 @@ impl EventHandler {
                 .await?;
         }
 
+        Ok(())
+    }
+
+    pub async fn guild_create(&self, guild_create: Box<GuildCreate>) -> anyhow::Result<()> {
+        if guild_create.unavailable {
+            return Ok(());
+        }
+
+        let Some(joined_at) = guild_create.joined_at else {
+            return Ok(());
+        };
+
+        // Parse the ISO8601 timestamp
+        let parsed_time: DateTime<Utc> = joined_at.iso_8601().to_string().parse()?; 
+        let now = Utc::now();
+        
+        // Calculate the difference
+        let duration = now.signed_duration_since(parsed_time);
+        
+        // Check if the duration is less than 1 minute
+        let is_recent = duration < Duration::minutes(1);
+        if !is_recent {
+            return Ok(());
+        }
+
+        self.client.emit_guild_create_hook(guild_create).await?;
         Ok(())
     }
 }

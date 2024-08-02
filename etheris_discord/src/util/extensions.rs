@@ -1,8 +1,7 @@
 use twilight_model::{
     application::interaction::{
         message_component::MessageComponentInteractionData, Interaction, InteractionData,
-    },
-    user::User,
+    }, guild::Guild, user::User
 };
 
 pub trait UserExtension {
@@ -29,6 +28,20 @@ impl UserExtension for User {
 
     fn display_name(&self) -> String {
         self.global_name.clone().unwrap_or(self.name.clone())
+    }
+}
+
+pub trait GuildExtension {
+    fn icon_url(&self) -> String;
+}
+
+impl GuildExtension for Guild {
+    fn icon_url(&self) -> String {
+        let Some(icon) = self.icon else {
+            return "https://external-preview.redd.it/fauTrGFvbnTjWM6A6AC8sGqohLQxKHQTfZjhtPbWY7g.jpg?auto=webp&s=5d8e36356dead73ec2e624e41659d411b5fbca53".into();
+        };
+
+        format!("https://cdn.discordapp.com/icons/{}/{}.png", self.id, icon)
     }
 }
 

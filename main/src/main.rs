@@ -29,7 +29,7 @@ async fn main() {
     })
     .expect("expected a valid Discord token");
 
-    let intents = Intents::GUILD_MESSAGES | Intents::MESSAGE_CONTENT;
+    let intents = Intents::GUILD_MESSAGES | Intents::MESSAGE_CONTENT | Intents::GUILDS;
     let config = Config::new(discord_token.clone(), intents);
 
     let database = Arc::new(
