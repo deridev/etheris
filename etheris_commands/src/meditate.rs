@@ -1,6 +1,7 @@
 use std::time::Duration;
 
 use etheris_rpg::{Battle, BattleController, BattleSettings, FighterData};
+use personality::Personality;
 
 use crate::prelude::*;
 
@@ -176,6 +177,7 @@ fn create_inner_shadow(dummy: User, character: &CharacterModel) -> FighterData {
 
     let mut shadow_character = character.clone();
     shadow_character.potential += 0.2;
+    shadow_character.personalities.push(Personality::Insanity);
 
     macro_rules! multiply_by_multiplier {
         ($value:expr, $multiplier:expr) => {

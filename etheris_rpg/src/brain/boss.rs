@@ -76,6 +76,7 @@ impl BossBrain {
         let phase_weights = self.action_weights.get_mut(&self.phase).unwrap();
 
         *phase_weights.get_mut(&BattleInputKind::Finish).unwrap() = 10.0;
+        *phase_weights.get_mut(&BattleInputKind::UseItem).unwrap() = 0.1;
 
         // Reset weights for actions that can't be used in current composure
         for (input_kind, weight) in phase_weights.iter_mut() {
@@ -207,6 +208,10 @@ impl Brain for BossBrain {
 
     async fn should_risk_life(&mut self, api: BattleApi<'_>) -> bool {
         if api.fighter().boss.is_some() {
+            return true;
+        }
+
+        if api.fighter().personalities.contains(&Personality::Insanity) {
             return true;
         }
 
