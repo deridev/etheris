@@ -25,9 +25,9 @@ impl Skill for SimpleCut {
         let target = api.target().clone();
 
         let base_damage = api.rng().gen_range(4..=8);
-        let damage = base_damage + api.rng().gen_range(14..=15);
+        let damage = base_damage + api.rng().gen_range(10..=14);
 
-        let multiplier = fighter.intelligence_multiplier();
+        let multiplier = fighter.intelligence_multiplier() * 0.85;
         let damage = ((damage as f32) * multiplier) as i32;
 
         let damage = api.apply_damage(
@@ -38,7 +38,7 @@ impl Skill for SimpleCut {
                 amount: damage,
                 balance_effectiveness: 5,
                 accuracy: 95,
-                effect: Some(Effect::new(EffectKind::Bleeding, 30, fighter.index))
+                effect: Some(Effect::new(EffectKind::Bleeding, 25, fighter.index))
             },
         ).await;
 

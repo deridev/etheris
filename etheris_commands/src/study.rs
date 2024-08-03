@@ -10,7 +10,7 @@ use rand::{rngs::StdRng, seq::SliceRandom, Rng, SeedableRng};
 
 use crate::prelude::*;
 
-const XP_REQUIRED_TO_LEVELUP: u32 = 100;
+const XP_REQUIRED_TO_LEVELUP: u32 = 150;
 const KNOWLEDGE_XP_REQUIRED_TO_LEVELUP: u32 = 250;
 
 #[command("Evolua seu personagem através do esforço mental")]

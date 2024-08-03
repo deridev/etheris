@@ -29,7 +29,7 @@ make_enemy!(
             .with_resistance(ImmunityKind::Bleeding, 0.5),
         strength: 40,
         intelligence: 15,
-        resistance: 400,
+        resistance: 600,
         vitality: 185,
         ether: 25,
         weapon: None,

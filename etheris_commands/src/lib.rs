@@ -34,6 +34,7 @@ mod explore;
 mod hunt;
 mod infos;
 mod inventory;
+mod invite;
 mod learn;
 mod meditate;
 mod profile;
@@ -50,6 +51,7 @@ mod travel;
 mod tutorial;
 mod unequip;
 mod usecmd;
+mod vote;
 mod work;
 
 mod test;
@@ -96,6 +98,8 @@ pub static COMMANDS: Lazy<CommandMap> = Lazy::new(|| {
     register_command!(map, adm::AdmCommand);
     register_command!(map, sell::SellCommand);
     register_command!(map, meditate::MeditateCommand);
+    register_command!(map, vote::VoteCommand);
+    register_command!(map, invite::InviteCommand);
 
     send::register_commands(&mut map);
     skill::register_commands(&mut map);

@@ -49,6 +49,11 @@ impl ButtonBuilder {
         self
     }
 
+    pub fn set_url(mut self, url: impl ToString) -> Self {
+        self.data.url = Some(url.to_string());
+        self
+    }
+
     pub fn set_label(mut self, label: impl ToString) -> Self {
         self.data.label = Some(label.to_string());
         self

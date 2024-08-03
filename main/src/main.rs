@@ -18,6 +18,8 @@ use etheris_discord::{
 use etheris_framework::{watcher::Watcher, EtherisClient};
 use tokio_stream::StreamExt;
 
+mod topgg;
+
 #[tokio::main]
 async fn main() {
     dotenv::dotenv().unwrap();
@@ -45,6 +47,8 @@ async fn main() {
 
     let client = Arc::new(EtherisClient::new(discord_token));
     let watcher = Arc::new(Watcher::new());
+
+    topgg::spawn_vote_thread(client.clone(), database.clone());
 
     let db = database.clone();
     let client_clone = client.clone();

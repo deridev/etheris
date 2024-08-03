@@ -17,8 +17,11 @@ etheris_rpg = { path = "../etheris_rpg" }
 dotenv = "0.15.0"
 tokio = { version = "1.32.0", features = ["rt", "rt-multi-thread", "macros"] }
 tokio-stream = "0.1.14"
+warp = "0.3"
 
 anyhow = { workspace = true }
 once_cell = { workspace = true }
 rand = { workspace = true }
 chrono = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }

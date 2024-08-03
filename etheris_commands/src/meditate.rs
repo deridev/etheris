@@ -68,6 +68,7 @@ pub async fn meditate(mut ctx: CommandContext) -> anyhow::Result<()> {
     tokio::time::sleep(Duration::from_secs(2)).await;
 
     let mut character = parse_user_character!(ctx, author);
+    character.action_points = character.action_points.saturating_sub(3);
 
     let (_, inner_shadow_fighter) = {
         let author_fighter = all_fighters.iter().find(|f| f.team == 0 && f.user.is_some());

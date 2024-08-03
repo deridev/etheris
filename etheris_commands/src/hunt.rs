@@ -8,7 +8,7 @@ use crate::prelude::*;
 #[character_required(true)]
 pub async fn hunt(mut ctx: CommandContext) -> anyhow::Result<()> {
     let author = ctx.author().await?;
-    let character = parse_user_character!(ctx, author);
+    let mut character = parse_user_character!(ctx, author);
 
     if character.action_points < 1 {
         ctx.send(
@@ -24,6 +24,9 @@ pub async fn hunt(mut ctx: CommandContext) -> anyhow::Result<()> {
     }
 
     verify_user_cooldown!(ctx, author, "HUNT");
+
+    character.action_points = character.action_points.saturating_sub(1);
+    ctx.db().characters().save(character.clone()).await?;
 
     let enemies = get_enemies_by_regions(&[character.region]);
     if enemies.is_empty() {

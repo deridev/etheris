@@ -49,7 +49,7 @@ impl Skill for Overcoming {
     }
 
     async fn passive_fighter_tick(&mut self, mut api: BattleApi<'_>) -> SkillResult<()> {
-        self.multiplier = (self.multiplier + 0.125).clamp(0.0, 2.25);
+        self.multiplier = (self.multiplier + 0.085).clamp(0.0, 2.25);
         
         let fighter = api.fighter_mut();
         if let Some(modifier) = fighter.modifiers.get_mut_with_tag(TAG) {

@@ -99,7 +99,7 @@ make_enemy!(
                 EnemyRewardItem {
                     amount: (1, 1),
                     item: items::tool::SHOVEL,
-                    probability: Probability::new(5),
+                    probability: Probability::new(2),
                 },
                 EnemyRewardItem {
                     amount: (1, 2),
@@ -123,11 +123,11 @@ make_enemy!(
         personalities: &[Personality::Cowardice, Personality::Aggressiveness],
         potential: EnemyPotential::Low,
         immunities: BodyImmunities::new().with_little_resistance(ImmunityKind::Fire),
-        strength: 15,
-        intelligence: 6,
-        resistance: 230,
-        vitality: 65,
-        ether: 30,
+        strength: 21,
+        intelligence: 14,
+        resistance: 520,
+        vitality: 125,
+        ether: 40,
         weapon: Some(WeaponKind::Knife),
         allies: None,
         skills: vec![
@@ -137,7 +137,7 @@ make_enemy!(
             SkillKind::Suplex
         ],
         drop: EnemyReward {
-            orbs: (30, 80),
+            orbs: (60, 100),
             xp: (50, 60),
             items: vec![
                 EnemyRewardItem {
@@ -310,11 +310,11 @@ make_enemy!(
         immunities: BodyImmunities::new()
             .with_little_resistance(ImmunityKind::Cut)
             .with_little_resistance(ImmunityKind::Bleeding),
-        strength: 11,
+        strength: 28,
         intelligence: 6,
-        resistance: 315,
-        vitality: 80,
-        ether: 20,
+        resistance: 480,
+        vitality: 120,
+        ether: 25,
         weapon: None,
         allies: None,
         skills: vec![
@@ -323,7 +323,7 @@ make_enemy!(
             SkillKind::TornadoKick,
         ],
         drop: EnemyReward {
-            orbs: (20, 60),
+            orbs: (40, 60),
             xp: (30, 50),
             items: vec![EnemyRewardItem {
                 amount: (1, 7),
@@ -346,10 +346,10 @@ make_enemy!(
         personalities: &[Personality::Courage, Personality::Intelligence],
         potential: EnemyPotential::Medium,
         immunities: BodyImmunities::new().with_little_resistance(ImmunityKind::Physical),
-        strength: 10,
-        intelligence: 12,
-        resistance: 160,
-        vitality: 50,
+        strength: 15,
+        intelligence: 28,
+        resistance: 480,
+        vitality: 185,
         ether: 60,
         weapon: Some(WeaponKind::Bat),
         allies: None,
@@ -382,7 +382,7 @@ make_enemy!(
     weak_mercenary,
     Enemy {
         identifier: "weak_mercenary",
-        name: "Mercenário",
+        name: "Mercenário Fraco",
         base_probability: Probability::ALWAYS,
         brain: BrainKind::Simple,
         boss: None,
@@ -434,10 +434,10 @@ make_enemy!(
         immunities: BodyImmunities::new()
             .with_little_weakness(ImmunityKind::Water)
             .with_little_weakness(ImmunityKind::Ice),
-        strength: 22,
-        intelligence: 10,
-        resistance: 315,
-        vitality: 60,
+        strength: 35,
+        intelligence: 13,
+        resistance: 515,
+        vitality: 80,
         ether: 50,
         weapon: Some(WeaponKind::Stick),
         allies: None,
@@ -449,7 +449,7 @@ make_enemy!(
             SkillKind::Suplex,
         ],
         drop: EnemyReward {
-            orbs: (45, 60),
+            orbs: (45, 90),
             xp: (30, 60),
             items: vec![EnemyRewardItem {
                 amount: (1, 1),
@@ -474,7 +474,7 @@ make_enemy!(
         immunities: BodyImmunities::new().with_little_resistance(ImmunityKind::Physical),
         strength: 32,
         intelligence: 5,
-        resistance: 364,
+        resistance: 564,
         vitality: 111,
         ether: 30,
         weapon: Some(WeaponKind::Knife),
@@ -486,7 +486,7 @@ make_enemy!(
             SkillKind::InstinctiveReaction,
         ],
         drop: EnemyReward {
-            orbs: (25, 60),
+            orbs: (25, 70),
             xp: (40, 90),
             items: vec![
                 EnemyRewardItem {
@@ -520,10 +520,10 @@ make_enemy!(
         personalities: &[Personality::Intelligence, Personality::Insanity],
         potential: EnemyPotential::Medium,
         immunities: BodyImmunities::new(),
-        strength: 8,
-        intelligence: 15,
-        resistance: 208,
-        vitality: 93,
+        strength: 15,
+        intelligence: 41,
+        resistance: 608,
+        vitality: 193,
         ether: 50,
         weapon: Some(WeaponKind::Umbrella),
         allies: None,
@@ -569,10 +569,10 @@ make_enemy!(
             .with_resistance(ImmunityKind::Water, 0.5)
             .with_resistance(ImmunityKind::Bleeding, 1.0)
             .with_weakness(ImmunityKind::Ice, 1.0),
-        strength: 6,
-        intelligence: 5,
-        resistance: 280,
-        vitality: 112,
+        strength: 62,
+        intelligence: 12,
+        resistance: 680,
+        vitality: 162,
         ether: 45,
         weapon: None,
         allies: None,
@@ -625,9 +625,9 @@ make_enemy!(
             .with_resistance(ImmunityKind::Water, 0.8)
             .with_resistance(ImmunityKind::Bleeding, 1.0)
             .with_weakness(ImmunityKind::Fire, 1.0),
-        strength: 12,
+        strength: 26,
         intelligence: 6,
-        resistance: 320,
+        resistance: 420,
         vitality: 120,
         ether: 50,
         weapon: Some(WeaponKind::Stick),
@@ -681,11 +681,11 @@ make_enemy!(
         personalities: &[Personality::Calm, Personality::Courage],
         potential: EnemyPotential::Medium,
         immunities: BodyImmunities::new().with_little_resistance(ImmunityKind::Bleeding),
-        strength: 25,
-        intelligence: 8,
-        resistance: 250,
-        vitality: 73,
-        ether: 50,
+        strength: 35,
+        intelligence: 20,
+        resistance: 650,
+        vitality: 218,
+        ether: 60,
         weapon: Some(WeaponKind::Bat),
         allies: Some(vec![(Probability::new(100), Box::new(weak_mercenary()))]),
         skills: vec![
@@ -697,7 +697,7 @@ make_enemy!(
             SkillKind::Refresh,
         ],
         drop: EnemyReward {
-            orbs: (40, 110),
+            orbs: (80, 110),
             xp: (10, 50),
             items: vec![
                 EnemyRewardItem {
@@ -766,10 +766,10 @@ make_enemy!(
         personalities: &[Personality::Cowardice],
         potential: EnemyPotential::Low,
         immunities: BodyImmunities::new(),
+        strength: 6,
+        intelligence: 3,
         resistance: 180,
         vitality: 55,
-        intelligence: 3,
-        strength: 6,
         ether: 15,
         allies: None,
         weapon: None,
@@ -809,7 +809,7 @@ make_enemy!(
         ether: 30,
         allies: None,
         weapon: None,
-        skills: vec![SkillKind::ResplendentPunch,],
+        skills: vec![SkillKind::ResplendentPunch, SkillKind::PoisonousGas],
         drop: EnemyReward {
             orbs: (10, 42),
             xp: (20, 50),
