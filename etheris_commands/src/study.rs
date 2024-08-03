@@ -68,7 +68,7 @@ pub async fn study(mut ctx: CommandContext) -> anyhow::Result<()> {
     character.intelligence_xp = new_xp;
     character.stats.intelligence_level += levels_upgraded;
 
-    let refill_minutes_upgrade = if character.stats.intelligence_level < 20 {
+    let refill_minutes_upgrade = if character.stats.intelligence_level < 30 {
         levels_upgraded * 3
     } else {
         0
