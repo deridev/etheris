@@ -198,8 +198,16 @@ fn create_inner_shadow(dummy: User, character: &CharacterModel) -> FighterData {
     );
     multiply_by_multiplier!(shadow_character.stats.health_level, overall_multiplier);
 
-    multiply_by_multiplier!(shadow_character.stats.ether.value, overall_multiplier * 0.8, i32);
-    multiply_by_multiplier!(shadow_character.stats.ether.max, overall_multiplier * 0.8, i32);
+    multiply_by_multiplier!(
+        shadow_character.stats.ether.value,
+        overall_multiplier * 0.8,
+        i32
+    );
+    multiply_by_multiplier!(
+        shadow_character.stats.ether.max,
+        overall_multiplier * 0.8,
+        i32
+    );
 
     multiply_by_multiplier!(
         shadow_character.stats.resistance.value,

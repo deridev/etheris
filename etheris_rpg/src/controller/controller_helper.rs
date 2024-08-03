@@ -110,10 +110,7 @@ pub async fn tick_every_effect(
                         )
                         .await;
 
-                    api.emit_message(format!(
-                        "**{}** queimou e recebeu **{dmg}**!",
-                        fighter_name
-                    ));
+                    api.emit_message(format!("**{}** queimou e recebeu **{dmg}**!", fighter_name));
                 }
                 EffectKind::Burning => {
                     api.fighter_mut()

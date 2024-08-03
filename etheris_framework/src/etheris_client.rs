@@ -2,8 +2,11 @@ use etheris_common::{config, Color};
 use etheris_database::EtherisDatabase;
 use etheris_discord::{
     twilight_model::{
-        gateway::payload::incoming::GuildCreate, id::{marker::UserMarker, Id}, user::{CurrentUser, User}
-    }, DiscordHttpClient, EmbedAuthor, EmbedBuilder, GuildExtension
+        gateway::payload::incoming::GuildCreate,
+        id::{marker::UserMarker, Id},
+        user::{CurrentUser, User},
+    },
+    DiscordHttpClient, EmbedAuthor, EmbedBuilder, GuildExtension,
 };
 use std::{
     collections::HashSet,

@@ -82,7 +82,7 @@ pub async fn battle(
     let author_character = parse_user_character!(ctx, author);
     let opponent_character = parse_user_character!(ctx, opponent);
 
-    if author_character.region != opponent_character.region {
+    if serious_battle && author_character.region != opponent_character.region {
         ctx.send(
             Response::new_user_reply(
                 &author,

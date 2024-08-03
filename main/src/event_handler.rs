@@ -6,7 +6,9 @@ use etheris_data::emojis;
 use etheris_database::EtherisDatabase;
 use etheris_discord::{
     twilight_gateway::Event,
-    twilight_model::gateway::payload::incoming::{GuildCreate, InteractionCreate, MessageCreate, Ready},
+    twilight_model::gateway::payload::incoming::{
+        GuildCreate, InteractionCreate, MessageCreate, Ready,
+    },
     InteractionType, UserExtension,
 };
 use etheris_framework::{watcher::Watcher, EtherisClient};
@@ -118,12 +120,12 @@ impl EventHandler {
         };
 
         // Parse the ISO8601 timestamp
-        let parsed_time: DateTime<Utc> = joined_at.iso_8601().to_string().parse()?; 
+        let parsed_time: DateTime<Utc> = joined_at.iso_8601().to_string().parse()?;
         let now = Utc::now();
-        
+
         // Calculate the difference
         let duration = now.signed_duration_since(parsed_time);
-        
+
         // Check if the duration is less than 1 minute
         let is_recent = duration < Duration::minutes(1);
         if !is_recent {

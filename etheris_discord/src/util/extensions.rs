@@ -1,7 +1,9 @@
 use twilight_model::{
     application::interaction::{
         message_component::MessageComponentInteractionData, Interaction, InteractionData,
-    }, guild::Guild, user::User
+    },
+    guild::Guild,
+    user::User,
 };
 
 pub trait UserExtension {
