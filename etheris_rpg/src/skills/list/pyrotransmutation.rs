@@ -16,7 +16,7 @@ impl Skill for Pyrotransmutation {
         SkillData {
             identifier: "pyrotransmutation",
             name: "Pirotransmutação",
-            description: "Transforma seu corpo em fogo, se tornando imune a fogo e aumentando seu dano em 50% por 4 rodadas.",
+            description: "Transforma seu corpo em fogo, se tornando imune a fogo e aumentando seu dano em 50% por 5 rodadas.",
             explanation: "Uma habilidade poderosa e complexa. Moldando a propriedade física do seu corpo temporariamente, o corpo evolui por alguns minutos. Extremamente perigoso, mas poderoso.",
             complexity: SkillComplexity::Hard,
             use_cost: SkillCost { ether: 30 },
@@ -40,10 +40,11 @@ impl Skill for Pyrotransmutation {
 
     async fn on_use(&mut self, mut api: BattleApi<'_>) -> SkillResult<()> {
         self.active = true;
-        self.turn_count = 4;
+        self.turn_count = 5;
 
         let fighter = api.fighter_mut();
         fighter.body_immunities.add_resistance(ImmunityKind::Fire, 1.0);
+        fighter.body_immunities.add_resistance(ImmunityKind::Ice, 0.4);
         fighter.body_immunities.add_weakness(ImmunityKind::Water, 1.0);
         fighter.modifiers.add(Modifier::new(ModKind::DmgMultiplier(1.5), None).with_tag("pyrotransmutation_dmg"));
 
@@ -62,6 +63,7 @@ impl Skill for Pyrotransmutation {
             
             let fighter = api.fighter_mut();
             fighter.body_immunities.remove_resistance(ImmunityKind::Fire, 1.0);
+            fighter.body_immunities.remove_resistance(ImmunityKind::Ice, 0.4);
             fighter.body_immunities.remove_weakness(ImmunityKind::Water, 1.0);
             fighter.modifiers.remove_all_with_tag("pyrotransmutation_dmg");
 

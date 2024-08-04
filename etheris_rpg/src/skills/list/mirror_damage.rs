@@ -17,10 +17,11 @@ impl Skill for MirrorDamage {
         let ether_cost = match self.accumulated_damage {
             0 => 0,
             1..=10 => 5,
-            11..=30 => 10,
-            31..=50 => 20,
-            51..=80 => 35,
-            _ => 50
+            11..=50 => 10,
+            51..=150 => 20,
+            151..=200 => 35,
+            201..=500 => 50, 
+            _ => 80
         };
 
         SkillData {
@@ -51,7 +52,7 @@ impl Skill for MirrorDamage {
         } else if self.accumulated_damage < 500 {
             Probability::new(30)
         } else {
-            Probability::new(50)
+            Probability::new(60)
         }
     }
 

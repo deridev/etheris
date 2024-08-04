@@ -42,7 +42,9 @@ impl Skill for IcyShot {
             },
         ).await;
 
-        api.apply_effect(target.index, Effect::new(EffectKind::Bleeding, 40, fighter.index)).await;
+        if !damage.missed {
+            api.apply_effect(target.index, Effect::new(EffectKind::Bleeding, 40, fighter.index)).await;
+        }
 
         api.emit_message(
             format!(

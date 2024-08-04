@@ -445,12 +445,12 @@ impl Fighter {
 
     pub fn strength_multiplier(&self) -> f32 {
         let base = 1.5 + (self.strength_level as f32);
-        base * (self.power as f32) * 0.2
+        base * (self.power as f32) * 0.22
     }
 
     pub fn intelligence_multiplier(&self) -> f32 {
-        let base = 1.3 + (self.intelligence_level as f32);
-        base * (self.power as f32) * 0.165
+        let base = 1.5 + (self.intelligence_level as f32);
+        base * (self.power as f32) * 0.17
     }
 
     pub fn mixed_multiplier(&self, strength_weight: f32, intelligence_weight: f32) -> f32 {

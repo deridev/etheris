@@ -235,6 +235,10 @@ impl<'a> BattleApi<'a> {
         let culprit = self.battle().get_fighter(damage.culprit).clone();
         let culprit_index = culprit.index;
 
+        if culprit.balance > 95 {
+            damage.accuracy = damage.accuracy.saturating_add(15);
+        }
+
         let modifiers_dmg = culprit.modifiers.overall_dmg_multiplier();
         if modifiers_dmg != 1.0 {
             damage.amount = ((damage.amount as f32) * modifiers_dmg) as i32;
@@ -310,9 +314,9 @@ impl<'a> BattleApi<'a> {
                 dodge_prob = Probability::NEVER;
             }
 
-            let unlucky_miss_prob = Probability::new(2);
+            let unlucky_miss_prob = Probability::new(1);
             let bad_accuracy_prob = Probability::new(
-                105u8.saturating_sub(damage.accuracy + if target.balance > 80 { 15 } else { 0 }),
+                110u8.saturating_sub(damage.accuracy + if target.balance > 80 { 15 } else { 0 }),
             );
 
             let good_accuracy =
@@ -338,7 +342,7 @@ impl<'a> BattleApi<'a> {
         if let Composure::OnAir(_) = culprit.composure {
             if !matches!(target.composure, Composure::OnAir(_)) {
                 damage.amount = (damage.amount as f32 * 1.3) as i32;
-                damage.accuracy = damage.accuracy.saturating_add(15);
+                damage.accuracy = damage.accuracy.saturating_add(20);
             }
         }
 

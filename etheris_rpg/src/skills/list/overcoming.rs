@@ -23,7 +23,7 @@ impl Skill for Overcoming {
         SkillData {
             identifier: "overcoming",
             name: "Superação",
-            description: "Começa a batalha com seu poder pela metade, mas com o passar do tempo vai ficando mais e mais forte, até ficar mais forte que o normal.",
+            description: "Começa a batalha com seu poder de ataque pela metade, mas com o passar do tempo vai ficando mais e mais forte, até ficar mais forte que o normal.",
             explanation: "Usa a metaconsciência do ether: se impôr uma limitação te concede mais ether e poder com o tempo.",
             complexity: SkillComplexity::Normal,
             use_cost: SkillCost { ether: 0 },
@@ -32,7 +32,6 @@ impl Skill for Overcoming {
 
     fn display(&self, fighter: &Fighter) -> SkillDisplay {
         let mut display = self.default_display(fighter);
-
         display.sub_header.push_str(&format!("\n**Poder**: {}%", (self.multiplier * 100.0) as i32));
 
         display
@@ -49,7 +48,8 @@ impl Skill for Overcoming {
     }
 
     async fn passive_fighter_tick(&mut self, mut api: BattleApi<'_>) -> SkillResult<()> {
-        self.multiplier = (self.multiplier + 0.085).clamp(0.0, 2.25);
+        let amount = if self.multiplier < 1.0 { 0.1 } else { 0.065 };
+        self.multiplier = (self.multiplier + amount).clamp(0.0, 2.25);
         
         let fighter = api.fighter_mut();
         if let Some(modifier) = fighter.modifiers.get_mut_with_tag(TAG) {

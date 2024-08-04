@@ -43,10 +43,10 @@ impl Skill for EtherFlow {
         }
 
         self.active = true;
-        self.turns_counter = 4;
+        self.turns_counter = 5;
 
         let fighter = api.fighter_mut();
-        fighter.modifiers.add(Modifier::new(ModKind::EtherRegenMultiplier(1.5), Some(3)).with_tag("ether_flow_regen"));
+        fighter.modifiers.add(Modifier::new(ModKind::EtherRegenMultiplier(1.65), Some(3)).with_tag("ether_flow_regen"));
         fighter.modifiers.add(Modifier::new(ModKind::DmgMultiplier(0.9), Some(3)).with_tag("ether_flow_damage"));
 
         let fighter_name = fighter.name.clone();
