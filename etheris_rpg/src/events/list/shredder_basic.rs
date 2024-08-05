@@ -497,7 +497,7 @@ make_event!(
         identifier: "shredder_heist",
         spawn: EventSpawn {
             base_probability: Probability::new(20),
-            weighted_regions: vec![(WorldRegion::Gloomwood, 1), (WorldRegion::Mudland, 3)],
+            weighted_regions: vec![(WorldRegion::Gloomwood, 1), (WorldRegion::Mudland, 2)],
             conditions: vec![
                 Condition::HasTag(TAG),
                 Condition::HasTag("shredder_member")
@@ -604,7 +604,7 @@ fn shredder_heist_success(_: EventBuildState) -> Event {
                                 (Probability::new(100), items::special::GIFT, (1, 1)),
                                 (Probability::new(30), items::special::INTELLIGENCE_CRYSTAL, (1, 1)),
                             ],
-                            orbs: (100, 300),
+                            orbs: (80, 200),
                             xp: XpReward::default()
                         },
                         extra_consequences: vec![
