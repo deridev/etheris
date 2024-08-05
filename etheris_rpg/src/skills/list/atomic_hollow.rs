@@ -25,16 +25,9 @@ impl Skill for AtomicHollow {
         }
     }
 
-    fn can_use(&self, api: BattleApi<'_>) -> bool {
-        api.fighter().ether.value >= calculate_cost(api.fighter()) && self.default_can_use(api)
-    }
-
     async fn on_use(&mut self, mut api: BattleApi<'_>) -> SkillResult<()> {
         let fighter = api.fighter().clone();
         let target = api.target().clone();
-
-        let cost = calculate_cost(&fighter);
-        api.fighter_mut().ether.value -= cost;
 
         const EFFECT_KINDS: &[EffectKind] = &[EffectKind::Burning, EffectKind::Ice, EffectKind::Bleeding, EffectKind::Shocked];
 
