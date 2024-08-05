@@ -521,7 +521,9 @@ make_event!(
                             allies: vec![weak_shredder(), weak_shredder()],
                             prompt: false,
                             on_win_knockout_event: Some(shredder_heist_success),
+                            on_win_kill_event: Some(shredder_heist_success),
                             on_lose_knockout_event: Some(shredder_heist_failure),
+                            on_lose_die_event: Some(shredder_heist_failure),
                             ..Default::default()
                         }),
                         ..Default::default()
