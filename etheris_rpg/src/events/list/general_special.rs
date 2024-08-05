@@ -407,11 +407,91 @@ make_event!(
     }
 );
 
+pub fn special_general_blind_seer(_: EventBuildState) -> Event {
+    Event {
+        identifier: "special_general_blind_seer",
+        spawn: EventSpawn {
+            base_probability: Probability::new(7),
+            weighted_regions: all_regions(1),
+            conditions: vec![]
+        },
+        emoji: Emoji::from_unicode("👁️"),
+        message: EventMessage::Single("você encontra uma mulher misteriosa. Ela possui uma venda em seus olhos, e diz ser uma vidente. Ela lhe oferece uma proposta. \"Você... Por míseros **125 ◎**, eu lhe direi o quão grandioso és... O que me diz?\""), 
+        actions: vec![
+            common::ignore_action(),
+            Action {
+                name: "Aceitar a proposta".to_string(),
+                emoji: Some(Emoji::from_unicode("💸")),
+                conditions: vec![Condition::HasOrbs(125)],
+                consequences: vec![
+                    Consequence {
+                        kind: ConsequenceKind::Event(blind_seer_proposal),
+                        ..Default::default()
+                    }
+                ],
+                ..Default::default()
+            }
+        ],
+    }
+}
+
+fn blind_seer_proposal(state: EventBuildState) -> Event {
+    Event {
+        identifier: "blind_seer_proposal",
+        spawn: EventSpawn::never(),
+        emoji: Emoji::from_unicode("👁️"),
+        message: EventMessage::Single("a vidente te pergunta: \"Excelente... Diga-me, quer ver o nível da sua força ou da sua mente?\""),
+        actions: vec![
+            Action {
+                name: "Escolher força".to_string(),
+                emoji: None,
+                consequences: vec![
+                    Consequence {
+                        kind: ConsequenceKind::Message {
+                            emoji: Some(Emoji::from_unicode("💪")),
+                            message: format!("a vidente ri. \"Se fosse para colocar sua força em um número... Eu daria **{}**. Mas nunca se esqueça, a força é uma jornada que nunca termina. Ha, ha, ha!\"", state.character.stats.strength_level), 
+                        },
+                        ..Default::default()
+                    }
+                ],
+                extra_consequences: vec![
+                    Consequence {
+                        kind: ConsequenceKind::RemoveOrbs(125),
+                        ..Default::default()
+                    }
+                ],
+                ..Default::default()
+            },
+            Action {
+                name: "Escolher inteligência".to_string(),
+                emoji: None,
+                consequences: vec![
+                    Consequence {
+                        kind: ConsequenceKind::Message {
+                            emoji: Some(Emoji::from_unicode("🌀")),
+                            message: format!("a vidente ri. \"Se fosse para colocar sua inteligência em um número... Eu daria **{}**. Mas nunca se esqueça, estudar é uma jornada que nunca termina. Ha, ha, ha!\"", state.character.stats.intelligence_level), 
+                        },
+                        ..Default::default()
+                    }
+                ],
+                extra_consequences: vec![
+                    Consequence {
+                        kind: ConsequenceKind::RemoveOrbs(125),
+                        ..Default::default()
+                    }
+                ],
+                ..Default::default()
+            },
+        ],
+        ..Default::default()
+    }
+}
+
 pub fn special_general_mysterious_merchant(_: EventBuildState) -> Event {
     Event {
         identifier: "special_general_mysterious_merchant",
         spawn: EventSpawn {
-            base_probability: Probability::new(5),
+            base_probability: Probability::new(4),
             weighted_regions: all_regions(1),
             conditions: vec![]
         },
@@ -429,8 +509,11 @@ pub fn special_general_mysterious_merchant(_: EventBuildState) -> Event {
                             message: "você abre a caixa misteriosa e encontra algo valioso!".to_string(),
                             iterations: 1,
                             items: vec![
-                                (Probability::new(70), items::special::GIFT, (1, 1)),
-                                (Probability::new(50), items::special::TRAP, (1, 1)),
+                                (Probability::new(70), items::cosmetic::STRAWHAT, (1, 1)),
+                                (Probability::new(70), items::cosmetic::EYE_BANDANA, (1, 1)),
+                                (Probability::new(60), items::lore::GOLDEN_ROBOT_POEM, (1, 1)),
+                                (Probability::new(30), items::special::GIFT, (1, 1)),
+                                (Probability::new(30), items::special::TRAP, (1, 1)),
                                 (Probability::new(15), items::special::INVIGORATING_CRYSTAL, (1, 1)),
                                 (Probability::new(5), items::special::INTELLIGENCE_CRYSTAL, (1, 1)),
                             ],

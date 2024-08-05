@@ -13,10 +13,10 @@ impl Skill for CursedBlood {
         SkillData {
             identifier: "cursed_blood",
             name: "Sangue Amaldiçoado",
-            description: "Usando seu sangue ou do seu alvo, aplica uma maldição no seu alvo que o faz tomar o dano que causa aos outros. Requer que você ou o alvo estejam sangrando.",
+            description: "Usando seu sangue ou do seu alvo, aplica uma maldição no seu alvo que o faz tomar parte do dano que causa aos outros. Requer que você ou o alvo estejam sangrando.",
             explanation: "Não se sabe quem criou a Maldição do Karma: *Soridu'Karmi*, mas ela é uma poderosa maldição que faz com que todo o dano que você causa para alguém volte em parte para você. A habilidade do Sangue Amaldiçoado usa ether para aplicar a maldição no alvo, sendo assim uma habilidade complexa e poderosa.",
             complexity: SkillComplexity::Hard,
-            use_cost: SkillCost { ether: 45 },
+            use_cost: SkillCost { ether: 40 },
         }
     }
 
@@ -35,8 +35,9 @@ impl Skill for CursedBlood {
         };
 
         api.apply_effect(target.index, Effect::new(EffectKind::Curse, amount, fighter.index)).await;
+        api.apply_effect(target.index, Effect::new(EffectKind::Poisoned, 10, fighter.index)).await;
 
-        api.emit_message(format!("**{}** aplicou uma maldição em **{}** através do sangue!", api.fighter().name, target.name));
+        api.emit_message(format!("**{}** aplicou uma maldição perigosa em **{}** através do sangue!", api.fighter().name, target.name));
         Ok(())
     }
 }

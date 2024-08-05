@@ -24,7 +24,7 @@ impl Skill for SimpleCut {
         let fighter = api.fighter().clone();
         let target = api.target().clone();
 
-        let base_damage = api.rng().gen_range(4..=8);
+        let base_damage = api.rng().gen_range(6..=10);
         let damage = base_damage + api.rng().gen_range(10..=14);
 
         let multiplier = fighter.intelligence_multiplier() * 0.85;

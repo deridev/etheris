@@ -18,7 +18,7 @@ pub async fn usecmd(
     user: Option<User>,
 ) -> anyhow::Result<()> {
     let author = ctx.author().await?;
-    let mut character = parse_user_character!(ctx, author);
+    let character = parse_user_character!(ctx, author);
     let Some(inventory_item) = character.get_inventory_item_by_name(&item) else {
         ctx.reply(
             Response::new_user_reply(&author, "você não possui esse item ou esse item não existe! Utilize **/inventário** para ver os seus itens.")
@@ -178,7 +178,7 @@ pub async fn usecmd(
             tokio::time::sleep(Duration::from_secs(2)).await;
 
             let fighters = vec![
-                FighterData::new_from_character(0, &character, author, Default::default()),
+                FighterData::new_from_character(0, &character, author.clone(), Default::default()),
                 FighterData::new_from_character(1, &user_character, user, Default::default()),
             ];
 
@@ -209,6 +209,7 @@ pub async fn usecmd(
         }
     }
 
+    let mut character = parse_user_character!(ctx, author);
     character.remove_item(item, 1);
     ctx.db().characters().save(character).await?;
 

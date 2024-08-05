@@ -6,10 +6,11 @@ use etheris_data::emojis;
 use etheris_database::EtherisDatabase;
 use etheris_discord::{
     twilight_gateway::Event,
-    twilight_model::gateway::payload::incoming::{
-        GuildCreate, InteractionCreate, MessageCreate, Ready,
+    twilight_model::{
+        channel::message::component::ButtonStyle,
+        gateway::payload::incoming::{GuildCreate, InteractionCreate, MessageCreate, Ready},
     },
-    InteractionType, UserExtension,
+    ActionRowBuilder, ButtonBuilder, InteractionType, UserExtension,
 };
 use etheris_framework::{watcher::Watcher, EtherisClient};
 
@@ -89,7 +90,15 @@ impl EventHandler {
 
         for ping in pings {
             if message.content.trim().to_lowercase() == ping {
+                let action_row = ActionRowBuilder::new().add_button(
+                    ButtonBuilder::new()
+                        .set_url("https://discord.gg/bh7JtSS322")
+                        .set_label("Servidor oficial Etheris")
+                        .set_custom_id("etherisguild")
+                        .set_style(ButtonStyle::Link),
+                );
                 self.client.http.create_message(message.channel_id)
+                    .components(&[action_row.build()])?
                     .content(&format!("{} **|** Olá, {}! Eu sou Etheris, um bot de RPG único no Discord. Para começar sua jornada, use **/registrar**! Se não souber o que fazer, use **/tutorial** para ser guiado em direção ao mundo de Etheris.", emojis::ETHER, message.author.mention()))
                     ?.await?;
                 break;

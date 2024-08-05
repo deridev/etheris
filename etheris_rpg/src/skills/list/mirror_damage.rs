@@ -27,7 +27,7 @@ impl Skill for MirrorDamage {
         SkillData {
             identifier: "mirror_damage",
             name: "Espelhar Dano",
-            description: "Acumula 60% de todo o dano físico recebido e então retorna de uma vez só. O dano acumulado não passa de 1000.",
+            description: "Acumula 40% de todo o dano físico recebido e então retorna de uma vez só. O dano acumulado não passa de 1000.",
             explanation: "A energia ether é tão versátil que com treinamento suficiente é possível armazenar impacto físico de forma segura no fluxo de ether do corpo, e então basta liberar esse ether com impacto acumulado no alvo e o dano se transfere.",
             complexity: SkillComplexity::Normal,
             use_cost: SkillCost { ether: ether_cost },
@@ -67,8 +67,9 @@ impl Skill for MirrorDamage {
 
     async fn passive_on_damage(&mut self, mut api: BattleApi<'_>, damage: DamageSpecifier) -> SkillResult<()> {
         let damage = match damage.kind {
-            DamageKind::Physical | DamageKind::PhysicalCut => (damage.amount as f32 * 0.6) as i32,
-            DamageKind::SpecialPhysical => (damage.amount as f32 * 0.5) as i32,
+            DamageKind::Physical | DamageKind::PhysicalCut => (damage.amount as f32 * 0.4) as i32,
+            DamageKind::SpecialPhysical => (damage.amount as f32 * 0.35) as i32,
+            DamageKind::Cut => (damage.amount as f32 * 0.15) as i32,
             _ => 0
         };
 

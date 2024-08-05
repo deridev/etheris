@@ -42,13 +42,16 @@ impl Skill for CyclonePush {
             },
         ).await;
 
-        api.emit_message(
+        api.emit_random_message(&[
             format!(
                 "**{}** lançou um ciclone de vento para empurrar **{}**, causando **{damage}** e tirando equilíbrio!",
                 fighter.name, target.name
             ),
-
-        );
+            format!(
+                "**{}** lançou uma tempestade de vento para empurrar **{}** que causou **{damage}** e desequilibrou!",
+                fighter.name, target.name
+            ),
+        ]);
 
         Ok(())
     }

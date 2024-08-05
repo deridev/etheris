@@ -269,7 +269,7 @@ make_event!(
         ]),
         actions: vec![
             Action {
-                name: "Buscar Abrigo".to_string(),
+                name: "Buscar abrigo".to_string(),
                 emoji: Some(Emoji::from_unicode("🏜️")),
                 consequences: vec![
                     Consequence {
@@ -311,7 +311,7 @@ make_event!(
                 ..Default::default()
             },
             Action {
-                name: "Usar Ether para Criar Barreira".to_string(),
+                name: "Usar ether para criar barreira".to_string(),
                 emoji: Some(Emoji::from_unicode("🛡️")),
                 conditions: vec![Condition::HasEther(20)],
                 consequences: vec![
@@ -371,7 +371,7 @@ make_event!(
                 ..Default::default()
             },
             Action {
-                name: "Enfrentar a Tempestade".to_string(),
+                name: "Enfrentar a tempestade".to_string(),
                 emoji: Some(Emoji::from_unicode("💪")),
                 conditions: vec![Condition::HasPersonality(Personality::Courage)],
                 consequences: vec![
@@ -381,8 +381,12 @@ make_event!(
                             message: "com coragem sobre-humana, você atravessa a tempestade e descobre um antigo tesouro desenterrado pela areia.".to_string(),
                             iterations: 1,
                             items: vec![
-                                (Probability::new(100), items::special::GIFT, (1, 1)),
-                                (Probability::new(80), items::ore::GOLD_ORE, (2, 4)),
+                                (Probability::new(70), items::ore::IRON_ORE, (1, 3)),
+                                (Probability::new(70), items::ore::LEAD_ORE, (1, 3)),
+                                (Probability::new(70), items::ore::TIN_ORE, (1, 3)),
+                                (Probability::new(30), items::material::STICK, (1, 7)),
+                                (Probability::new(30), items::special::GIFT, (1, 1)),
+                                (Probability::new(2), items::ore::GOLD_ORE, (2, 4)),
                             ],
                             orbs: (50, 100),
                             xp: XpReward {
@@ -509,6 +513,7 @@ make_event!(
                                 (Probability::new(80), items::consumable::WATER, (1, 3)),
                                 (Probability::new(60), items::consumable::FRIED_EGG, (1, 2)),
                                 (Probability::new(40), items::consumable::APPLE, (1, 2)),
+                                (Probability::new(30), items::consumable::BACON, (1, 2)),
                                 (Probability::new(20), items::material::STICK, (2, 5)),
                                 (Probability::new(10), items::tool::SHOVEL, (1, 1)),
                             ],

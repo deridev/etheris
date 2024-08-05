@@ -1271,3 +1271,66 @@ make_event!(
         ]
     }
 );
+
+make_event!(
+    basic_mudland_trapped,
+    Event {
+        identifier: "basic_mudland_trapped",
+        spawn: EventSpawn {
+            base_probability: Probability::new(25),
+            weighted_regions: vec![(WorldRegion::Mudland, 1)],
+            conditions: vec![]
+        },
+        emoji: Emoji::from_unicode("🟫"),
+        message: EventMessage::Single(
+            "você pisou em lama e seu pré ficou preso. O que você quer fazer?"
+        ),
+        actions: vec![
+            Action {
+                name: "Cavar".to_string(),
+                emoji: Some(items::tool::SHOVEL.emoji),
+                conditions: vec![Condition::HasItem(items::tool::SHOVEL, 1)],
+                consequences: vec![Consequence {
+                    kind: ConsequenceKind::Rewards {
+                        message: "você cavou a lama e escaopou!".to_string(),
+                        iterations: 1,
+                        items: vec![],
+                        orbs: (0, 0),
+                        xp: XpReward {
+                            health: (10, 30),
+                            intelligence: (0, 10),
+                            strength: (5, 20),
+                            knowledge: (0, 0)
+                        }
+                    },
+                    extra_consequences: vec![Consequence {
+                        kind: ConsequenceKind::RemoveItemDurability(items::tool::SHOVEL, 1),
+                        ..Default::default()
+                    }],
+                    ..Default::default()
+                }],
+                ..Default::default()
+            },
+            Action {
+                name: "Tentar sair".to_string(),
+                emoji: None,
+                conditions: vec![],
+                consequences: vec![Consequence {
+                    kind: ConsequenceKind::Prejudice {
+                        message: "você tentou tirar a lama, mas se feriu no processo!".to_string(),
+                        items_amount: (0, 0),
+                        max_item_valuability: 0,
+                        fixed_orbs: (0, 0),
+                        orbs_percentage: 0.0,
+                        specific_items: vec![],
+                        damage_percentage: 0.2,
+                        damage_limit: 100
+                    },
+                    extra_consequences: vec![],
+                    ..Default::default()
+                },],
+                ..Default::default()
+            }
+        ]
+    }
+);

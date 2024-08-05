@@ -44,7 +44,11 @@ impl Skill for ResplendentPunch {
             },
         ).await;
 
-        api.fighter_mut().modifiers.add(Modifier::new(ModKind::DmgMultiplier(1.15), Some(4)).with_tag("resplendent_punch_dmg_buff"));
+        if damage.missed {
+            api.fighter_mut().overload += 0.85;
+        }
+
+        api.fighter_mut().modifiers.add(Modifier::new(ModKind::DmgMultiplier(1.10), Some(20)).with_tag("resplendent_punch_dmg_buff"));
 
         if critical {
             api.emit_random_message(&[

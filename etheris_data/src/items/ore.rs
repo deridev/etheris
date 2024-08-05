@@ -67,7 +67,7 @@ pub const COPPER_ORE: Item = Item {
 
 pub const TIN_ORE: Item = Item {
     identifier: "tin_ore",
-    display_name: "Minério de Estranho",
+    display_name: "Minério de Estanho",
     emoji: Emoji::from_emote(Some("tin_ore"), 1104794061191249920),
     tags: ORE_TAGS,
     purchase_properties: PurchaseProperties {

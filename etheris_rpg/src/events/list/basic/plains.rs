@@ -801,7 +801,7 @@ make_event!(basic_plains_trapped, Event {
             ..Default::default()
         },
         Action {
-            name: "Abrir Armadilha Com a Mão".to_string(),
+            name: "Abrir armadilha com a mão".to_string(),
             emoji: None,
             conditions: vec![],
             consequences: vec![
@@ -854,6 +854,7 @@ make_event!(
                                 (Probability::new(80), items::consumable::WATER, (1, 3)),
                                 (Probability::new(60), items::consumable::FRIED_EGG, (1, 2)),
                                 (Probability::new(40), items::consumable::APPLE, (1, 2)),
+                                (Probability::new(40), items::consumable::LEMON, (1, 1)),
                                 (Probability::new(20), items::material::STICK, (2, 5)),
                                 (Probability::new(10), items::tool::SHOVEL, (1, 1)),
                             ],

@@ -28,7 +28,7 @@ impl Skill for DefensiveJump {
         let meters = api.rng().gen_range(3..=4);
         api.fighter_mut().composure = Composure::OnAir(meters);
         api.fighter_mut().balance = api.fighter_mut().balance.saturating_add(5).min(100);
-        api.fighter_mut().defense += 2;
+        api.fighter_mut().defense += 3;
 
         api.emit_message(format!("**{}** deu um salto defensivo de **{meters} metros**!", api.fighter().name));
 

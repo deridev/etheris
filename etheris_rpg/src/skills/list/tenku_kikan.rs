@@ -93,11 +93,11 @@ impl Skill for TenkuKikan {
 
         api.emit_message(format!("**{}** sacrificou os resquícios da alma de **{}** para invocar uma réplica com força inferior!", api.fighter().name, soul.name));
 
-        soul.ether = (soul.ether as f32 * 0.6) as i32;
+        soul.ether = (soul.ether as f32 * 0.7) as i32;
         soul.resistance = (soul.resistance as f32 * 0.6) as i32;
-        soul.vitality = (soul.vitality as f32 * 0.6) as i32;
+        soul.vitality = (soul.vitality as f32 * 0.7) as i32;
         soul.intelligence = (soul.intelligence as f32 * 0.6) as u32;
-        soul.strength = (soul.strength as f32 * 0.6) as u32;
+        soul.strength = (soul.strength as f32 * 0.45) as u32;
         api.battle_mut().join_fighter(FighterData {
             team,
             name: format!("{} (Réplica)", soul.name),

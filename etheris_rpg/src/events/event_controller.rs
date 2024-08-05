@@ -910,6 +910,10 @@ impl EventController {
                 character.remove_karma(amount);
                 self.ctx.db().characters().save(character).await?;
             }
+            ConsequenceKind::RemoveOrbs(amount) => {
+                character.remove_orbs(amount);
+                self.ctx.db().characters().save(character).await?;
+            }
         }
 
         Ok(())

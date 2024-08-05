@@ -749,13 +749,11 @@ make_enemy!(
         drop: EnemyReward {
             orbs: (40, 90),
             xp: (80, 120),
-            items: vec![
-                EnemyRewardItem {
-                    amount: (1, 1),
-                    item: items::consumable::BEEF,
-                    probability: Probability::new(90),
-                }
-            ],
+            items: vec![EnemyRewardItem {
+                amount: (1, 1),
+                item: items::consumable::BEEF,
+                probability: Probability::new(90),
+            }],
         }
     }
 );

@@ -358,7 +358,7 @@ make_event!(
     Event {
         identifier: "basic_mountain_mysterious_cave",
         spawn: EventSpawn {
-            weighted_regions: vec![(WorldRegion::Wornpeaks, 2)],
+            weighted_regions: vec![(WorldRegion::Wornpeaks, 1)],
             ..Default::default()
         },
         emoji: Emoji::from_unicode("🕳️"),
@@ -431,9 +431,9 @@ make_event!(
                                 (Probability::new(60), items::ore::TIN_ORE, (1, 3)),
                                 (Probability::new(20), items::ore::IRON_ORE, (1, 3)),
                                 (Probability::new(5), items::ore::GOLD_ORE, (1, 2)),
-                                (Probability::new(2), items::ore::DIAMOND_ORE, (1, 1)),
+                                (Probability::new(1), items::ore::DIAMOND_ORE, (1, 1)),
                             ],
-                            orbs: (20, 50),
+                            orbs: (20, 40),
                             xp: XpReward {
                                 strength: (10, 20),
                                 intelligence: (5, 15),
@@ -556,7 +556,7 @@ pub fn basic_mountain_avalanche_event(state: EventBuildState) -> Event {
                                         (Probability::new(100), items::special::GIFT, (1, 1)),
                                         (Probability::new(50), items::special::INVIGORATING_CRYSTAL, (1, 1)),
                                     ],
-                                    orbs: (20, 600),
+                                    orbs: (20, 200),
                                     xp: XpReward {
                                         strength: (20, 40),
                                         intelligence: (10, 20),
@@ -610,7 +610,7 @@ pub fn basic_mountain_avalanche_event(state: EventBuildState) -> Event {
                                     message: "ao dissipar seu escudo, você percebe que alguns itens ficaram presos nele.".to_string(),
                                     iterations: 1,
                                     items: vec![
-                                        (Probability::new(100), items::consumable::GREEN_APPLE, (1, 4)),
+                                        (Probability::new(100), items::consumable::CHICKEN_MEAT, (1, 4)),
                                         (Probability::new(10), items::special::TRAP, (1, 1)),
                                     ],
                                     orbs: (10, 40),

@@ -17,6 +17,7 @@ const KNOWLEDGE_XP_REQUIRED_TO_LEVELUP: u32 = 250;
 #[name("estudar")]
 #[character_required(true)]
 pub async fn study(mut ctx: CommandContext) -> anyhow::Result<()> {
+    let guild_id = ctx.interaction.guild_id.unwrap_or(Id::new(12345678));
     let author = ctx.author().await?;
     let mut character = parse_user_character!(ctx, author);
     if character.action_points < 2 {
@@ -43,11 +44,19 @@ pub async fn study(mut ctx: CommandContext) -> anyhow::Result<()> {
         )
         .await?;
 
+    let xp_multiplier = if guild_id == Id::new(config::GUILD_ID) {
+        1.25
+    } else {
+        1.0
+    };
+
     let xp = match character.stats.intelligence_level {
         0..=3 => StdRng::from_entropy().gen_range(50..=70),
         4..=100 => StdRng::from_entropy().gen_range(20..=45),
         _ => StdRng::from_entropy().gen_range(10..=30),
     };
+
+    let xp = (xp as f64 * xp_multiplier) as u32;
 
     character.intelligence_xp += xp;
     character.knowledge_xp += xp + StdRng::from_entropy().gen_range(5..=10);

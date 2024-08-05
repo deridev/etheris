@@ -38,7 +38,7 @@ impl Skill for ThermalFists {
                 culprit: fighter.index,
                 kind: DamageKind::Fire,
                 amount: fire_damage,
-                balance_effectiveness: 10,
+                balance_effectiveness: 7,
                 accuracy: 85,
                 effect: Some(Effect::new(EffectKind::Flaming, 30, fighter.index))
             },
@@ -50,7 +50,7 @@ impl Skill for ThermalFists {
                 culprit: fighter.index,
                 kind: DamageKind::Ice,
                 amount: ice_damage,
-                balance_effectiveness: 10,
+                balance_effectiveness: 7,
                 accuracy: 85,
                 effect: Some(Effect::new(EffectKind::Ice, 25, fighter.index))
             },

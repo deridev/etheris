@@ -51,6 +51,8 @@ use_skill!(ether_flow);
 use_skill!(pyrotransmutation);
 use_skill!(poisonous_gas);
 use_skill!(thermal_fists);
+use_skill!(deep_cut);
+use_skill!(electrical_discharge);
 
 mod specific;
 pub use specific::*;
@@ -109,5 +111,7 @@ pub fn get_boxed_skill_from_kind(kind: SkillKind) -> Box<dyn super::Skill + Send
         SkillKind::Pyrotransmutation => Box::<Pyrotransmutation>::default(),
         SkillKind::PoisonousGas => Box::<PoisonousGas>::default(),
         SkillKind::ThermalFists => Box::<ThermalFists>::default(),
+        SkillKind::DeepCut => Box::<DeepCut>::default(),
+        SkillKind::ElectricalDischarge => Box::<ElectricalDischarge>::default(),
     }
 }

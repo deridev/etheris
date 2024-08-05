@@ -203,6 +203,7 @@ pub enum ConsequenceKind {
     RemoveTag(String),
     AddKarma(i32),
     RemoveKarma(i32),
+    RemoveOrbs(i64),
 }
 
 impl Default for ConsequenceKind {

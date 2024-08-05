@@ -63,6 +63,8 @@ pub enum SkillKind {
     Pyrotransmutation,
     PoisonousGas,
     ThermalFists,
+    DeepCut,
+    ElectricalDischarge,
 }
 
 impl SkillKind {
@@ -110,6 +112,8 @@ impl SkillKind {
             Self::Pyrotransmutation,
             Self::PoisonousGas,
             Self::ThermalFists,
+            Self::DeepCut,
+            Self::ElectricalDischarge,
         ]
     }
 
@@ -166,6 +170,8 @@ impl SkillKind {
             Self::Pyrotransmutation => &[Personality::Aggressiveness, Personality::Cowardice],
             Self::PoisonousGas => &[Personality::Aggressiveness, Personality::Cowardice],
             Self::ThermalFists => &[Personality::Arrogance, Personality::Intelligence],
+            Self::DeepCut => &[Personality::Insanity, Personality::Arrogance],
+            Self::ElectricalDischarge => &[Personality::Cowardice, Personality::Aggressiveness],
         }
     }
 
@@ -201,9 +207,11 @@ impl SkillKind {
             Self::WoundHealing => 24,
             Self::BloodSpear => 25,
             Self::ThermalFists => 30,
+            Self::ElectricalDischarge => 33,
             Self::CursedBlood => 35,
             Self::ParalyzingBet => 40,
             Self::EtherShadow => 45,
+            Self::DeepCut => 50,
             Self::SkillMirror => 55,
             Self::AtomicHollow => 60,
             Self::YinYang => 70,
@@ -251,7 +259,9 @@ impl SkillKind {
             | Self::Pyrotransmutation
             | Self::Overcoming
             | Self::GarhyanRatSummon
-            | Self::ThermalFists => 3,
+            | Self::ThermalFists
+            | Self::DeepCut
+            | Self::ElectricalDischarge => 3,
             Self::WaterJet | Self::FlamingBall | Self::EtherShadow | Self::SkillMirror => 4,
             Self::YinYang | Self::Hakikotenchou => 5,
             Self::TenkuKikan(..) => 6,

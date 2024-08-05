@@ -104,7 +104,7 @@ pub async fn tick_every_effect(
                                 kind: DamageKind::Fire,
                                 amount: (dmg as f64 * immunity_dmg_multiplier) as i32,
                                 balance_effectiveness: 1,
-                                accuracy: 100,
+                                accuracy: 255,
                                 ..Default::default()
                             },
                         )
@@ -127,7 +127,7 @@ pub async fn tick_every_effect(
                                 kind: DamageKind::Fire,
                                 amount: (dmg as f64 * immunity_dmg_multiplier) as i32,
                                 balance_effectiveness: 4,
-                                accuracy: 100,
+                                accuracy: 255,
                                 ..Default::default()
                             },
                         )
@@ -265,7 +265,7 @@ pub async fn tick_every_effect(
                                 kind: DamageKind::Special,
                                 amount: (dmg as f64 * immunity_dmg_multiplier) as i32,
                                 balance_effectiveness: 0,
-                                accuracy: 100,
+                                accuracy: 255,
                                 effect: None,
                             },
                         );
@@ -295,7 +295,7 @@ pub async fn tick_every_effect(
                                 kind: DamageKind::Poisonous,
                                 amount: (dmg as f64 * immunity_dmg_multiplier) as i32,
                                 balance_effectiveness: 3,
-                                accuracy: 100,
+                                accuracy: 255,
                                 ..Default::default()
                             },
                         )

@@ -35,8 +35,13 @@ impl Probability {
 
     pub fn generate_random_bool(&self) -> bool {
         let probability = self.value_f64();
+        if probability == 0.0 {
+            return false;
+        } else if probability >= 1.0 {
+            return true;
+        }
 
-        rand::thread_rng().gen_bool(probability.clamp(0.0, 1.0))
+        rand::thread_rng().gen_bool(probability.clamp(0.01, 1.0))
     }
 }
 

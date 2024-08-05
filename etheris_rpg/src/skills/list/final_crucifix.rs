@@ -30,7 +30,7 @@ impl Skill for FinalCrucifix {
 
     async fn on_use(&mut self, mut api: BattleApi<'_>) -> SkillResult<()> {
         let fighter_team = api.fighter().team;
-        let multiplier = api.fighter().mixed_multiplier(0.1, 1.1);
+        let multiplier = api.fighter().mixed_multiplier(0.1, 1.05);
 
         api.fighter_mut().flags.insert(FighterFlags::CANNOT_REGEN_ETHER);
 
@@ -60,7 +60,7 @@ impl Skill for FinalCrucifix {
             
             let base_damage = api.rng().gen_range(15..=30); 
             let ally_damage = base_damage + (api.rng().gen_range(10..=15) as f32 * multiplier) as i32;
-            let enemy_damage = base_damage + (api.rng().gen_range(45..=60) as f32 * multiplier) as i32;
+            let enemy_damage = base_damage + (api.rng().gen_range(45..=50) as f32 * multiplier) as i32;
 
             let fighter = api.battle().get_fighter(index).clone();
             let dmg = if fighter.team == fighter_team {

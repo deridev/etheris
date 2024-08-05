@@ -50,6 +50,7 @@ pub static ALL_EVENTS: Lazy<Vec<EventBuilder>> = Lazy::new(|| {
         general_special::creative_general_mysterious_portal,
         general_special::special_ether_fountain,
         general_special::special_adventurer_soul,
+        general_special::special_general_blind_seer,
         general_special::special_general_mysterious_merchant,
         // Plains
         basic::plains::basic_plains_exploration,
@@ -87,6 +88,7 @@ pub static ALL_EVENTS: Lazy<Vec<EventBuilder>> = Lazy::new(|| {
         basic::forest::basic_forest_unusual_rock,
         basic::forest::basic_forest_house,
         basic::forest::basic_gloomwood_mysterious_fog,
+        basic::forest::basic_mudland_trapped,
         // Desert
         basic::desert::basic_desert_exploration,
         basic::desert::basic_desert_digging,

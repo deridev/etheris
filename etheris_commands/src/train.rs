@@ -96,8 +96,17 @@ pub async fn strength_training(
     mut ctx: CommandContext,
     mut character: CharacterModel,
 ) -> anyhow::Result<()> {
+    let guild_id = ctx.interaction.guild_id.unwrap_or(Id::new(12345678));
     let author = ctx.author().await?;
     let xp = random_xp_amount(character.stats.strength_level);
+
+    let xp_multiplier = if guild_id == Id::new(config::GUILD_ID) {
+        1.25
+    } else {
+        1.0
+    };
+
+    let xp = (xp as f64 * xp_multiplier) as u32;
     character.strength_xp += xp;
 
     let levels_upgraded = character.strength_xp / XP_REQUIRED_TO_LEVELUP;
@@ -155,8 +164,18 @@ pub async fn health_training(
     mut ctx: CommandContext,
     mut character: CharacterModel,
 ) -> anyhow::Result<()> {
+    let guild_id = ctx.interaction.guild_id.unwrap_or(Id::new(12345678));
     let author = ctx.author().await?;
     let xp = random_xp_amount(character.stats.health_level);
+
+    let xp_multiplier = if guild_id == Id::new(config::GUILD_ID) {
+        1.25
+    } else {
+        1.0
+    };
+
+    let xp = (xp as f64 * xp_multiplier) as u32;
+
     character.health_xp += xp;
 
     let levels_upgraded = character.health_xp / XP_REQUIRED_TO_LEVELUP;

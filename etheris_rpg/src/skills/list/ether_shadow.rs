@@ -46,9 +46,9 @@ impl Skill for EtherShadow {
             skills.push(kind);
         }
 
-        let resistance = (fighter.resistance.max as f32 * 0.4) as i32;
+        let resistance = (fighter.resistance.max as f32 * 0.6) as i32;
         let vitality = (fighter.vitality.max as f32 * 0.5) as i32;
-        let ether = (fighter.ether.max as f32 * 0.65) as i32;
+        let ether = (fighter.ether.max as f32 * 0.7) as i32;
 
         api.battle_mut().join_fighter(FighterData { 
             team: fighter.team, 
@@ -61,7 +61,7 @@ impl Skill for EtherShadow {
             personalities: fighter.personalities.clone(), 
             potential: fighter.power,
             skills, 
-            strength_level: 1 + (fighter.strength_level as f32 * 0.3) as u32, 
+            strength_level: 1 + (fighter.strength_level as f32 * 0.2) as u32, 
             intelligence_level: 1 + (fighter.intelligence_level as f32 * 0.3) as u32, 
             weapon: fighter.weapon.map(|w| w.kind), 
             resistance: Attribute::from(resistance), 

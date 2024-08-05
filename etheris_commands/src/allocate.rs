@@ -99,7 +99,11 @@ pub async fn allocate(
     }
 
     character.remove_item(item, quantity);
-    character.add_battle_item(item, quantity, Some(inventory_item.values.clone()));
+    character.add_battle_item(
+        item,
+        quantity.min(MAX_ITEM_AMOUNT),
+        Some(inventory_item.values.clone()),
+    );
 
     ctx.db().characters().save(character).await?;
 
