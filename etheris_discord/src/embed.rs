@@ -157,6 +157,10 @@ impl EmbedBuilder {
         self
     }
 
+    pub fn get_description(&self) -> String {
+        self.embed.description.clone().unwrap_or_default()
+    }
+
     pub fn set_timestamp(mut self, timestamp: Timestamp) -> Self {
         self.embed.timestamp = Some(timestamp);
         self

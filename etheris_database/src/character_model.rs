@@ -575,7 +575,11 @@ impl CharacterModel {
         for item in self.inventory.iter_mut() {
             for value in item.values.values.iter_mut() {
                 if let ItemValue::Recipes(recipes) = value {
-                    recipes.push(recipe.clone())
+                    recipes.push(recipe.clone());
+
+                    // Deduplicate recipes
+                    let recipes_hashset: HashSet<String> = recipes.iter().cloned().collect();
+                    *recipes = recipes_hashset.into_iter().collect();
                 }
             }
         }
