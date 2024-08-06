@@ -496,7 +496,7 @@ make_event!(
     Event {
         identifier: "shredder_heist",
         spawn: EventSpawn {
-            base_probability: Probability::new(20),
+            base_probability: Probability::new(4),
             weighted_regions: vec![(WorldRegion::Gloomwood, 1), (WorldRegion::Mudland, 2)],
             conditions: vec![
                 Condition::HasTag(TAG),

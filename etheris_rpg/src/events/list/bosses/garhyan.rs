@@ -147,6 +147,15 @@ make_event!(garhyan_first_agression, Event {
             emoji: None,
             consequences: vec![
                 Consequence {
+                    kind: ConsequenceKind::Message {
+                        emoji: None,
+                        message: "\"ótimo!\" - Garhyan exclama. \"Meu cemitério já tá cheio de corpos. Agora você é um Retalhador! Pode sair daqui com vida.\"".to_string()
+                    },
+                    ..Default::default()
+                },
+            ],
+            extra_consequences: vec![
+                Consequence {
                     kind: ConsequenceKind::AddTag("shredder_member".to_string()),
                     ..Default::default()
                 },
@@ -156,13 +165,6 @@ make_event!(garhyan_first_agression, Event {
                 },
                 Consequence {
                     kind: ConsequenceKind::RemoveKarma(3),
-                    ..Default::default()
-                },
-                Consequence {
-                    kind: ConsequenceKind::Message {
-                        emoji: None,
-                        message: "\"ótimo!\" - Garhyan exclama. \"Meu cemitério já tá cheio de corpos. Agora você é um Retalhador! Pode sair daqui com vida.\"".to_string()
-                    },
                     ..Default::default()
                 },
             ],

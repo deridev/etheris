@@ -13,6 +13,10 @@ impl<K: Eq + Hash, V: Clone> Cache<K, V> {
         }
     }
 
+    pub fn clear(&self) {
+        self.inner_cache.lock().unwrap().clear();
+    }
+
     pub fn remove(&self, key: &K) -> Option<V> {
         self.inner_cache.lock().unwrap().pop(key)
     }

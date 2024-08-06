@@ -823,10 +823,10 @@ impl BattleController {
                 }
 
                 // Special items
-                match item.display_name {
+                match item.identifier {
                     "invigorating_crystal" => {
-                        let hp = (fighter.health().max as f32 * 0.25) as i32;
-                        let ether = (fighter.ether.max as f32 * 0.65) as i32;
+                        let hp = (fighter.health().max as f32 * 0.6) as i32;
+                        let ether = fighter.ether.max;
 
                         {
                             let fighter = self.battle.get_fighter_mut(fighter.index);
@@ -848,7 +848,7 @@ impl BattleController {
                     "intelligence_crystal" => {
                         {
                             let fighter = self.battle.get_fighter_mut(fighter.index);
-                            fighter.intelligence_level += 10;
+                            fighter.intelligence_level += 15;
                         }
 
                         self.emit_turn_message(format!(

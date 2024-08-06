@@ -167,6 +167,23 @@ impl CharacterCommands {
         Ok(models)
     }
 
+
+    pub async fn add_ap_to_everyone(&self, amount: u32) -> anyhow::Result<()> {
+        let update = doc! {
+            "$inc": { "action_points": amount }
+        };
+
+        let filter = doc! { "alive": true };
+
+        self.collection.update_many(filter, update, None).await?;
+
+        // Clear the cache to ensure it reflects the updated data
+        CACHE_ID.clear();
+        CACHE_USER_ID.clear();
+
+        Ok(())
+    }
+
     pub async fn register_character(
         &self,
         user_id: Id<UserMarker>,

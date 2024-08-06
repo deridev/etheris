@@ -22,18 +22,6 @@ pub async fn allocate(
     let mut character = parse_user_character!(ctx, author);
     let quantity = quantity.unwrap_or(1).clamp(1, i32::MAX as i64) as usize;
 
-    if character.battle_inventory.len() >= MAX_ALLOCATIONS {
-        ctx.send(
-            Response::new_user_reply(
-                &author,
-                format!("você já tem mais de {MAX_ALLOCATIONS} itens diferentes itens no inventário de batalha! Use **/desalocar** para remover itens do inventário de batalha."),	
-            )
-            .add_emoji_prefix(emojis::ERROR)
-            .set_ephemeral(),
-        ).await?;
-        return Ok(());
-    }
-
     let Some(inventory_item) = character.get_inventory_item_by_name(&item_name).cloned() else {
         ctx.reply(
             Response::new_user_reply(
@@ -50,6 +38,18 @@ pub async fn allocate(
     let Some(item) = get_item(&inventory_item.identifier) else {
         return Ok(());
     };
+
+    if character.battle_inventory.len() >= MAX_ALLOCATIONS && !character.battle_inventory.iter().any(|i| i.identifier == item.identifier) {
+        ctx.send(
+            Response::new_user_reply(
+                &author,
+                format!("você já tem mais de {MAX_ALLOCATIONS} itens diferentes itens no inventário de batalha! Use **/desalocar** para remover itens do inventário de batalha."),	
+            )
+            .add_emoji_prefix(emojis::ERROR)
+            .set_ephemeral(),
+        ).await?;
+        return Ok(());
+    }
 
     if !item.stackable || item.tags.contains(&ItemTag::Crystal) {
         quantity = 1;

@@ -216,8 +216,8 @@ impl SkillKind {
             Self::AtomicHollow => 60,
             Self::YinYang => 70,
             Self::TenkuKikan(_) => 80,
-            Self::FinalCrucifix => 130,
             Self::Hakikotenchou => 90,
+            Self::FinalCrucifix => 130,
 
             Self::GarhyanRatSummon => u32::MAX,
             Self::AgorathForcedDuel => u32::MAX,
@@ -264,8 +264,8 @@ impl SkillKind {
             | Self::ElectricalDischarge => 3,
             Self::WaterJet | Self::FlamingBall | Self::EtherShadow | Self::SkillMirror => 4,
             Self::YinYang | Self::Hakikotenchou => 5,
-            Self::TenkuKikan(..) => 6,
             Self::ParalyzingBet | Self::AgorathForcedDuel => 6,
+            Self::TenkuKikan(..) => 7,
             Self::FinalCrucifix | Self::EthriaAdaptation => 7,
         }
     }

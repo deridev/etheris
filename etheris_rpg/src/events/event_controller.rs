@@ -135,15 +135,6 @@ impl EventController {
             })
             .collect();
 
-        println!(
-            "\n======================================\n{}\n",
-            events
-                .iter()
-                .map(|(e, w)| format!("- {w} | {}", e.identifier))
-                .collect::<Vec<_>>()
-                .join("\n")
-        );
-
         if events.is_empty() {
             return None;
         }
@@ -881,6 +872,10 @@ impl EventController {
                 self.ctx.db().characters().save(character).await?;
             }
             ConsequenceKind::AddActionPoint(amount) => {
+                if character.action_points > character.max_action_points {
+                    return Ok(());
+                }
+
                 character.action_points =
                     (character.action_points + amount).min(character.max_action_points);
                 self.ctx.db().characters().save(character).await?;

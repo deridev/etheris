@@ -69,8 +69,8 @@ fn calculate_gain(
     let pl_difference = (player_pl - enemy_pl) as f64;
 
     let mut reduction_factor = if pl_difference >= 0.0 {
-        // Player is stronger
-        1.0 / (1.0 + multiplier * pl_difference)
+        let scaled_difference = (pl_difference / 15.0).min(100.0);  // Scale and cap the difference
+        1.0 / (1.0 + scaled_difference.powf(1.75) * multiplier)  // Gradual decrease
     } else {
         // Player is weaker
         1.0 + ((multiplier * 0.8) / 10.0) * pl_difference.abs()

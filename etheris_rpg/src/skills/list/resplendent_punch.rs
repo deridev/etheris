@@ -1,7 +1,16 @@
 use super::prelude::*;
 
-#[derive(Debug, Clone, Default)]
-pub struct ResplendentPunch;
+#[derive(Debug, Clone)]
+pub struct ResplendentPunch {
+    accuracy: u8,
+    extra_cost: i32,
+}
+
+impl Default for ResplendentPunch {
+    fn default() -> Self {
+        Self { accuracy: 40, extra_cost: 0 }
+    }
+}
 
 #[async_trait::async_trait]
 impl Skill for ResplendentPunch {
@@ -13,10 +22,10 @@ impl Skill for ResplendentPunch {
         SkillData {
             identifier: "resplendent_punch",
             name: "Soco Resplandecente",
-            description: "Ataca com um soco imbuído de muito ether, mas com 40% de chance de acertar. Se acertar, o inimigo não poderá regenerar ether por 4 turnos e você aumenta o seu próprio dano.",
+            description: "Ataca com um soco imbuído de muito ether, mas com baixa chance de acertar. Se resplandecer, o inimigo não poderá regenerar ether por 5 turnos e você aumenta o seu próprio dano.",
             explanation: "Utiliza o mesmo princípio do Soco Imbuído, mas é intensificiado pela metaconsciência do ether por ter uma condição de uso (baixa chance de acerto), tornando o ether mais poderoso.",
             complexity: SkillComplexity::Normal,
-            use_cost: SkillCost { ether: 40 },
+            use_cost: SkillCost { ether: 40 + self.extra_cost },
         }
     }
 
@@ -32,25 +41,43 @@ impl Skill for ResplendentPunch {
         let multiplier = (fighter.strength_multiplier() + fighter.intelligence_multiplier()) / 2.0;
         let damage = ((damage as f32) * multiplier) as i32;
 
+        let accuracy = self.accuracy + if critical { 15 } else { 0 };
+
         let damage = api.apply_damage(
             target.index,
             DamageSpecifier {
                 kind: DamageKind::SpecialPhysical,
                 amount: damage,
-                balance_effectiveness: if critical { 20 } else { 10 },
-                accuracy: if critical { 50 } else { 40 },
-                effect: Some(Effect::new(EffectKind::Exhausted, 3, fighter.index)),
+                balance_effectiveness: if critical { 24 } else { 13 },
+                accuracy,
+                effect: Some(Effect::new(EffectKind::Exhausted, 5, fighter.index)),
                 ..Default::default()
             },
         ).await;
 
         if damage.missed {
             api.fighter_mut().overload += 0.85;
+            self.accuracy = self.accuracy.saturating_add(6);
+            self.extra_cost = self.extra_cost.saturating_add(2);
+        } else {
+            self.extra_cost = 0;
+            self.accuracy = 40;
         }
 
         api.fighter_mut().modifiers.add(Modifier::new(ModKind::DmgMultiplier(1.10), Some(20)).with_tag("resplendent_punch_dmg_buff"));
 
-        if critical {
+        if damage.missed {
+            api.emit_random_message(&[
+                format!(
+                    "**{}** errou o soco resplandecente em **{}**. Os Punhos Resplandecentes estão prontos para outra tentativa!",
+                    fighter.name, target.name
+                ),
+                format!(
+                    "**{}** tentou dar um soco resplandecente em **{}** mas não acertou! O resplandecer tá mais comum agora.",
+                    fighter.name, target.name
+                ),
+            ]);
+        } else if critical {
             api.emit_random_message(&[
                 format!(
                     "**{}** deu um soco resplandecente na cara de **{}** que causou **{damage}**!",

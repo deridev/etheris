@@ -113,10 +113,7 @@ impl BossBrain {
         match battle_state.composure {
             Composure::Standing => {
                 if battle_state.fighter_health_ratio < 0.3 {
-                    *phase_weights.get_mut(&BattleInputKind::Defend).unwrap() += 0.5;
-                }
-                if battle_state.target_health_ratio < 0.2 {
-                    *phase_weights.get_mut(&BattleInputKind::Finish).unwrap() += 1.0;
+                    *phase_weights.get_mut(&BattleInputKind::Defend).unwrap() += 0.2;
                 }
             }
             Composure::OnGround => {
@@ -331,7 +328,7 @@ impl BossBrain {
 
                 // Adjust chance based on boss phase
                 if self.phase == BossPhase::Aggressive {
-                    chance.add(20);
+                    chance.add(5);
                 }
 
                 if chance.generate_random_bool() {

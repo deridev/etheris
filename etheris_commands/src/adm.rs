@@ -24,6 +24,8 @@ pub enum Command {
     Translate(String),
     Untranslate(String),
     GenerateSkin,
+    AddAP(IdString, u32),
+    AddAPAll(u32),
 }
 
 impl Command {
@@ -39,6 +41,8 @@ impl Command {
         "translate <text>",
         "untranslate <text>",
         "generate skin",
+        "add ap <id> [quantity]",
+        "add ap_all [quantity]",
     ];
 
     pub fn parse(input: &str) -> Option<Command> {
@@ -92,6 +96,15 @@ impl Command {
                             "remove" => Some(Command::RemoveItem(id, item, quantity)),
                             _ => None,
                         }
+                    }
+                    "ap" => {
+                        let id = splitted.next()?.to_lowercase();
+                        let quantity = splitted.next().unwrap_or("1").parse::<u32>().ok()?;
+                        Some(Command::AddAP(id, quantity))
+                    }
+                    "ap_all" => {
+                        let quantity = splitted.next().unwrap_or("1").parse::<u32>().ok()?;
+                        Some(Command::AddAPAll(quantity))
                     }
                     _ => None,
                 }
@@ -300,6 +313,34 @@ pub async fn adm(
 
             ctx.reply(Response::from(embed).set_attachments(vec![attachment]))
                 .await?;
+        }
+        Command::AddAP(id, quantity) => {
+            let mut character = parse_character!(id).context("character not found")?;
+
+            character.action_points += quantity;
+            ctx.db().characters().save(character.clone()).await?;
+
+            ctx.reply(Response::new_user_reply(
+                &author,
+                format!(
+                    "você adicionou **{} AP** ao personagem {} com sucesso.",
+                    quantity, character.name
+                ),
+            ))
+            .await?;
+        }
+        Command::AddAPAll(quantity) => {
+            let quantity = quantity.clamp(1, u32::MAX);
+            ctx.db().characters().add_ap_to_everyone(quantity).await?;
+
+            ctx.reply(Response::new_user_reply(
+                &author,
+                format!(
+                    "você adicionou **{} AP** a todos os personagens com sucesso.",
+                    quantity
+                ),
+            ))
+            .await?;
         }
     }
 
