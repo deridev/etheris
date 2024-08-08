@@ -111,6 +111,14 @@ pub const ALL_RECIPES: &[Recipe] = &[
         ],
     },
     Recipe {
+        output: "coffee",
+        output_quantity: 1,
+        ingredients: &[
+            Ingredient::new("water", 1),
+            Ingredient::new("coffee_powder", 1),
+        ],
+    },
+    Recipe {
         output: "plank",
         output_quantity: 3,
         ingredients: &[Ingredient::new("knife", 1), Ingredient::new("raw_trunk", 1)],
