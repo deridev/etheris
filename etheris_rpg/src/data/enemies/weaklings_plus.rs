@@ -35,6 +35,7 @@ make_enemy!(
             SkillKind::Charge,
             SkillKind::Suplex,
         ],
+        pacts: vec![],
         drop: EnemyReward {
             orbs: (30, 50),
             xp: (50, 80),
@@ -83,6 +84,7 @@ make_enemy!(
             SkillKind::TornadoKick,
             SkillKind::CyclonePush,
         ],
+        pacts: vec![],
         drop: EnemyReward {
             orbs: (30, 50),
             xp: (45, 70),
@@ -128,6 +130,7 @@ make_enemy!(
             SkillKind::CyclonePush,
             SkillKind::Charge,
         ],
+        pacts: vec![],
         drop: EnemyReward {
             orbs: (50, 70),
             xp: (50, 80),
@@ -169,6 +172,7 @@ make_enemy!(
             SkillKind::ElectricSlap,
             SkillKind::WaterJet,
         ],
+        pacts: vec![],
         drop: EnemyReward {
             orbs: (50, 70),
             xp: (50, 80),
@@ -208,6 +212,7 @@ make_enemy!(
             SkillKind::ImbuedPunch,
             SkillKind::DefensiveJump,
         ],
+        pacts: vec![],
         drop: EnemyReward {
             orbs: (40, 90),
             xp: (70, 110),
@@ -258,6 +263,7 @@ make_enemy!(
             SkillKind::IcyBreath,
             SkillKind::DefensiveJump,
         ],
+        pacts: vec![],
         drop: EnemyReward {
             orbs: (50, 80),
             xp: (30, 60),
@@ -302,6 +308,7 @@ make_enemy!(
             SkillKind::WaterBlessing,
             SkillKind::Charge,
         ],
+        pacts: vec![],
         drop: EnemyReward {
             orbs: (30, 90),
             xp: (30, 60),
@@ -347,6 +354,7 @@ make_enemy!(
             SkillKind::Charge,
             SkillKind::IcyBreath,
         ],
+        pacts: vec![],
         drop: EnemyReward {
             orbs: (10, 90),
             xp: (20, 70),
@@ -389,6 +397,7 @@ make_enemy!(
             SkillKind::WaterBlessing,
             SkillKind::Suplex,
         ],
+        pacts: vec![],
         drop: EnemyReward {
             orbs: (20, 50),
             xp: (40, 70),
@@ -432,6 +441,7 @@ make_enemy!(
             SkillKind::Charge,
             SkillKind::Refresh,
         ],
+        pacts: vec![],
         drop: EnemyReward {
             orbs: (60, 100),
             xp: (40, 70),
@@ -466,6 +476,7 @@ make_enemy!(
         weapon: None,
         allies: Some(vec![(Probability::new(10), Box::new(greenagis_mutant()))]),
         skills: vec![SkillKind::Bite, SkillKind::MirrorDamage],
+        pacts: vec![],
         drop: EnemyReward {
             orbs: (15, 60),
             xp: (30, 60),
@@ -509,6 +520,7 @@ make_enemy!(
             SkillKind::ParalyzingBet,
             SkillKind::WaterBlessing,
         ],
+        pacts: vec![],
         drop: EnemyReward {
             orbs: (20, 90),
             xp: (40, 60),
@@ -555,6 +567,7 @@ make_enemy!(
             SkillKind::TornadoKick,
             SkillKind::YinYang,
         ],
+        pacts: vec![],
         drop: EnemyReward {
             orbs: (50, 70),
             xp: (50, 80),
@@ -594,6 +607,7 @@ make_enemy!(
             SkillKind::Refresh,
             SkillKind::TenkuKikan(None),
         ],
+        pacts: vec![],
         drop: EnemyReward {
             orbs: (60, 160),
             xp: (50, 100),
@@ -649,6 +663,7 @@ make_enemy!(
             SkillKind::DefensiveJump,
             SkillKind::TornadoKick,
         ],
+        pacts: vec![],
         drop: EnemyReward {
             orbs: (40, 70),
             xp: (50, 80),
@@ -693,6 +708,7 @@ make_enemy!(
             SkillKind::MirrorDamage,
             SkillKind::InstinctiveReaction,
         ],
+        pacts: vec![],
         drop: EnemyReward {
             orbs: (60, 100),
             xp: (70, 110),
@@ -745,6 +761,7 @@ make_enemy!(
             SkillKind::InstinctiveReaction,
             SkillKind::Refresh,
         ],
+        pacts: vec![],
         drop: EnemyReward {
             orbs: (50, 90),
             xp: (60, 100),

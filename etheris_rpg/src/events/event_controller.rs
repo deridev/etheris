@@ -837,7 +837,9 @@ impl EventController {
                 shop.prompt(self.user.clone(), &mut self.ctx).await?;
             }
             ConsequenceKind::RemoveItemDurability(item, amount) => {
-                let Some(inventory_item) = character.get_inventory_item_mut(&item) else {
+                let Some((inventory_index, inventory_item)) =
+                    character.get_inventory_item_indexed_mut(&item)
+                else {
                     return Ok(());
                 };
 
@@ -853,7 +855,7 @@ impl EventController {
                 }
 
                 if broke {
-                    character.remove_item(item, amount as usize);
+                    character.inventory.remove(inventory_index);
                     self.ctx
                         .send_in_channel(
                             Response::new_user_reply(

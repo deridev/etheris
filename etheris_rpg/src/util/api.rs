@@ -235,6 +235,11 @@ impl<'a> BattleApi<'a> {
         let culprit = self.battle().get_fighter(damage.culprit).clone();
         let culprit_index = culprit.index;
 
+        for pacts in culprit.pacts.clone() {
+            let mut dyn_pact = pacts.dynamic_pact.lock().await;
+            dyn_pact.modify_damage(&mut damage).ok();
+        }
+
         if culprit.balance > 95 {
             damage.accuracy = damage.accuracy.saturating_add(15);
         }
@@ -409,7 +414,7 @@ impl<'a> BattleApi<'a> {
             self.battle_mut()
                 .turn_end_queues
                 .damage_misses
-                .push((damage, target_index));
+                .push((culprit_index, damage, target_index));
         }
 
         let has_fallen = self.battle_mut().rng.gen_bool(falling_prob);
@@ -508,7 +513,7 @@ impl<'a> BattleApi<'a> {
                     );
 
                 self.battle_mut().deferred_turn_messages.push(format!(
-                    "***{}** recebeu **{dmg} dano** do seu próprio ataque graças à maldição!*",
+                    "**{}** recebeu **{dmg} dano** do seu próprio ataque graças à maldição!*",
                     culprit.name
                 ))
             }

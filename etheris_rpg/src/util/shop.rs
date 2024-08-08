@@ -509,11 +509,18 @@ impl Shop {
         page: usize,
         pages: &[(EmbedBuilder, Vec<usize>)],
     ) -> anyhow::Result<()> {
-        let mut page = pages.get(page).expect("pages.get(page) should not fail").clone();
+        let mut page = pages
+            .get(page)
+            .expect("pages.get(page) should not fail")
+            .clone();
         let items = self.get_shop_items(&page.1);
 
         let description = page.0.get_description();
-        page.0 = page.0.set_description(format!("## {} {} ◎\n{description}", emojis::ORB, character.orbs));
+        page.0 = page.0.set_description(format!(
+            "## {} {} ◎\n{description}",
+            emojis::ORB,
+            character.orbs
+        ));
 
         ctx.update_specific_message(
             message,

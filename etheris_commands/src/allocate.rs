@@ -1,10 +1,8 @@
+use config::{BATTLE_INVENTORY_MAX_ALLOCATIONS, BATTLE_INVENTORY_MAX_ITEM_AMOUNT};
 use etheris_data::items::get_item;
 use items::ItemTag;
 
 use crate::prelude::*;
-
-const MAX_ALLOCATIONS: usize = 6;
-const MAX_ITEM_AMOUNT: usize = 5;
 
 #[command("Aloque itens para o inventário de batalha!")]
 #[name("alocar")]
@@ -39,11 +37,16 @@ pub async fn allocate(
         return Ok(());
     };
 
-    if character.battle_inventory.len() >= MAX_ALLOCATIONS && !character.battle_inventory.iter().any(|i| i.identifier == item.identifier) {
+    if character.battle_inventory.len() >= BATTLE_INVENTORY_MAX_ALLOCATIONS
+        && !character
+            .battle_inventory
+            .iter()
+            .any(|i| i.identifier == item.identifier)
+    {
         ctx.send(
             Response::new_user_reply(
                 &author,
-                format!("você já tem mais de {MAX_ALLOCATIONS} itens diferentes itens no inventário de batalha! Use **/desalocar** para remover itens do inventário de batalha."),	
+                format!("você já tem mais de {BATTLE_INVENTORY_MAX_ALLOCATIONS} itens diferentes itens no inventário de batalha! Use **/desalocar** para remover itens do inventário de batalha."),	
             )
             .add_emoji_prefix(emojis::ERROR)
             .set_ephemeral(),
@@ -85,11 +88,11 @@ pub async fn allocate(
             return Ok(());
         }
 
-        if battle_inventory_item.quantity + quantity > MAX_ITEM_AMOUNT {
+        if battle_inventory_item.quantity + quantity > BATTLE_INVENTORY_MAX_ITEM_AMOUNT {
             ctx.reply(
                 Response::new_user_reply(
                     &author,
-                    format!("você só pode ter **{MAX_ITEM_AMOUNT}x** do mesmo item no inventário de batalha!"),
+                    format!("você só pode ter **{BATTLE_INVENTORY_MAX_ITEM_AMOUNT}x** do mesmo item no inventário de batalha!"),
                 )
                 .add_emoji_prefix(emojis::ERROR),
             )
@@ -101,7 +104,7 @@ pub async fn allocate(
     character.remove_item(item, quantity);
     character.add_battle_item(
         item,
-        quantity.min(MAX_ITEM_AMOUNT),
+        quantity.min(BATTLE_INVENTORY_MAX_ITEM_AMOUNT),
         Some(inventory_item.values.clone()),
     );
 

@@ -50,6 +50,12 @@ pub async fn study(mut ctx: CommandContext) -> anyhow::Result<()> {
         1.0
     };
 
+    let xp_multiplier = if character.region.city().is_some() {
+        xp_multiplier + 1.25
+    } else {
+        xp_multiplier
+    };
+
     let xp = match character.stats.intelligence_level {
         0..=3 => StdRng::from_entropy().gen_range(50..=70),
         4..=100 => StdRng::from_entropy().gen_range(20..=45),
@@ -77,7 +83,7 @@ pub async fn study(mut ctx: CommandContext) -> anyhow::Result<()> {
     character.intelligence_xp = new_xp;
     character.stats.intelligence_level += levels_upgraded;
 
-    let refill_minutes_upgrade = if character.stats.intelligence_level < 30 {
+    let refill_minutes_upgrade = if character.refill_minutes > 220 {
         levels_upgraded * 3
     } else {
         0
@@ -128,6 +134,7 @@ pub async fn study(mut ctx: CommandContext) -> anyhow::Result<()> {
 
     if refill_minutes_upgrade > 0 {
         character.refill_minutes -= refill_minutes_upgrade;
+        character.refill_minutes = character.refill_minutes.max(220);
         messages.push(format!("Agora seus pontos de ação recarregam **{refill_minutes_upgrade} minutos** mais rápido!"));
     }
 

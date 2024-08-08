@@ -38,7 +38,7 @@ pub async fn work(mut ctx: CommandContext) -> anyhow::Result<()> {
     verify_user_cooldown!(ctx, author, "WORK");
     ctx.db()
         .cooldowns()
-        .create_cooldown(author.id, "WORK", chrono::Duration::try_minutes(5).unwrap())
+        .create_cooldown(author.id, "WORK", chrono::Duration::try_minutes(1).unwrap())
         .await?;
 
     let rng = &mut StdRng::from_entropy();

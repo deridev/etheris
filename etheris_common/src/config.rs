@@ -8,3 +8,5 @@ pub const GUILD_ID: u64 = 1268614586492387409;
 pub const DEBUG: bool = false;
 
 pub const YEAR_LENGTH: Duration = Duration::from_secs(60 * 60 * 24 * 3); // 3 days
+pub const BATTLE_INVENTORY_MAX_ALLOCATIONS: usize = 4;
+pub const BATTLE_INVENTORY_MAX_ITEM_AMOUNT: usize = 5;

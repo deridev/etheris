@@ -1,5 +1,7 @@
 use etheris_data::items::get_item_by_weapon;
-use etheris_rpg::{list::get_boxed_skill_from_kind, Fighter, FighterData};
+use etheris_rpg::{
+    list::get_boxed_skill_from_kind, pacts::list::get_boxed_pact_from_kind, Fighter, FighterData,
+};
 
 use crate::prelude::*;
 
@@ -26,6 +28,28 @@ pub async fn profile(
     let attachment =
         image.map(|image| DiscordAttachment::from_bytes("image.png".to_owned(), image, 1));
 
+    let pact_string = {
+        let mut parts = vec![];
+        for pact in character.pacts.iter() {
+            let dyn_pact = get_boxed_pact_from_kind(pact.clone());
+            let data = dyn_pact.data(&fighter);
+            parts.push(format!("**{}**", data.name));
+        }
+
+        parts.join(", ")
+    };
+
+    let defeated_bosses_string = if character.defeated_bosses.is_empty() {
+        String::new()
+    } else {
+        let mut parts = vec![];
+        for defeated_boss in character.defeated_bosses.iter() {
+            parts.push(format!("`{}`", defeated_boss.name()));
+        }
+
+        format!("\n**Chefes derrotados**: {}", parts.join(", "))
+    };
+
     let embed = EmbedBuilder::new()
         .set_author(EmbedAuthor {
             name: format!("Personagem de {}", user.display_name()),
@@ -33,7 +57,7 @@ pub async fn profile(
         })
         .set_color(Color::BLURPLE)
         .set_description(format!(
-            "{}\n{}\n**Habilidades**: {}\n**Nível de Poder**: `{} PL`",
+            "{}\n{}\n**Habilidades**: {}{}\n**Nível de Poder**: `{} PL`{defeated_bosses_string}",
             character
                 .personalities
                 .iter()
@@ -54,6 +78,11 @@ pub async fn profile(
                 .map(|s| format!("`{}`", get_boxed_skill_from_kind(s.clone()).data(&fighter).name))
                 .collect::<Vec<_>>()
                 .join(", "),
+            if character.pacts.is_empty() {
+                String::new()
+            } else {
+                format!("\n**Pactos**: {}", pact_string)
+            },
             character.pl
         ))
         .add_field_with_emoji(

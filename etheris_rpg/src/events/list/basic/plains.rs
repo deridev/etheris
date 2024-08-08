@@ -401,6 +401,7 @@ make_enemy!(
             SkillKind::CyclonePush,
             SkillKind::TornadoKick,
         ],
+        pacts: vec![],
         drop: EnemyReward {
             orbs: (40, 60),
             xp: (20, 40),

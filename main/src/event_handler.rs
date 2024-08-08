@@ -94,7 +94,6 @@ impl EventHandler {
                     ButtonBuilder::new()
                         .set_url("https://discord.gg/bh7JtSS322")
                         .set_label("Servidor oficial Etheris")
-                        .set_custom_id("etherisguild")
                         .set_style(ButtonStyle::Link),
                 );
                 self.client.http.create_message(message.channel_id)

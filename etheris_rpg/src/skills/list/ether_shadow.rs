@@ -19,7 +19,7 @@ impl Skill for EtherShadow {
         SkillData {
             identifier: "ether_shadow",
             name: "Sombra de Ether",
-            description: "Invoca uma sombra sua feita de ether para ajudar na batlha. Um uso por batalha.",
+            description: "Invoca uma sombra sua feita de ether para ajudar na batalha. Um uso por batalha.",
             explanation: "Habilidade de materialização simples, mas requer entendimento profundo do seu próprio ether para invocar uma sombra sua.",
             complexity: SkillComplexity::Hard,
             use_cost: SkillCost { ether: 60 },
@@ -68,12 +68,13 @@ impl Skill for EtherShadow {
             vitality: Attribute::from(vitality),
             ether: Attribute::from(ether), 
             drop: Default::default(),
-            immunities: fighter.body_immunities.clone()
+            immunities: fighter.body_immunities.clone(),
+            pacts: fighter.pacts.iter().map(|p| p.base_kind.clone()).collect(),
         });
 
         api.emit_message(format!("**{}** invocou uma sombra de si mesmo para ajudar na batalha!", fighter.name));
 
-        let overload = api.rng().gen_range(8.0..=15.0);
+        let overload = api.rng().gen_range(20.0..=30.0);
         api.add_overload(api.fighter_index, overload).await;
 
         Ok(())

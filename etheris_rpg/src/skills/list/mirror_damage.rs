@@ -58,7 +58,7 @@ impl Skill for MirrorDamage {
 
     async fn passive_fighter_tick(&mut self, mut api: BattleApi<'_>) -> SkillResult<()> {
         if self.accumulated_damage > 0 && api.fighter().ether.value <= 0 {
-            api.emit_message(format!("***{}** ficou sem ether e perdeu o dano acumulado na habilidade **{}***", api.fighter().name, self.data(api.fighter()).name));
+            api.emit_message(format!("**{}** ficou sem ether e perdeu o dano acumulado na habilidade **{}**", api.fighter().name, self.data(api.fighter()).name));
             self.accumulated_damage = 0;
         }
 
@@ -80,9 +80,9 @@ impl Skill for MirrorDamage {
         self.accumulated_damage = self.accumulated_damage.add(damage).min(1000);
 
         if self.accumulated_damage == 1000 {
-            api.emit_message(format!("***{}** acumulou o dano máximo na habilidade **{}***", api.fighter().name, self.data(api.fighter()).name));
+            api.emit_message(format!("**{}** acumulou o dano máximo na habilidade **{}**", api.fighter().name, self.data(api.fighter()).name));
         } else {
-            api.emit_message(format!("***{}** acumulou **{damage} dano** na habilidade **{}***", api.fighter().name, self.data(api.fighter()).name));
+            api.emit_message(format!("**{}** acumulou **{damage} dano** na habilidade **{}**", api.fighter().name, self.data(api.fighter()).name));
         }
         
         Ok(())

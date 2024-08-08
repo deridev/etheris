@@ -4,6 +4,7 @@ pub mod common;
 pub mod controller;
 pub mod data;
 pub mod events;
+pub mod pacts;
 pub mod skills;
 mod util;
 

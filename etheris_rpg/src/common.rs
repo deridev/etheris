@@ -1,8 +1,9 @@
 use etheris_data::{items::Item, ItemValues};
 
-use crate::{skills::Skill, Effect, FighterIndex};
+use crate::{pacts::Pact, skills::Skill, Effect, FighterIndex};
 
 pub type BoxedSkill = Box<dyn Skill + Send + 'static>;
+pub type BoxedPact = Box<dyn Pact + Send + 'static>;
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Default)]
 pub struct DamageSpecifier {

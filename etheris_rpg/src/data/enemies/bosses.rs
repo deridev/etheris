@@ -44,6 +44,7 @@ make_enemy!(
             SkillKind::Refresh,
             SkillKind::GarhyanRatSummon,
         ],
+        pacts: vec![PactKind::Coward],
         drop: EnemyReward {
             orbs: (300, 500),
             xp: (200, 300),
@@ -64,7 +65,7 @@ make_enemy!(
                     probability: Probability::new(100),
                 }
             ],
-        },
+        }
     }
 );
 
@@ -97,6 +98,7 @@ make_enemy!(
             SkillKind::Charge,
             SkillKind::TornadoKick,
         ],
+        pacts: vec![PactKind::Unshakable, PactKind::Consistency],
         drop: EnemyReward {
             orbs: (500, 800),
             xp: (250, 400),
@@ -134,12 +136,13 @@ make_enemy!(
         potential: EnemyPotential::High,
         immunities: BodyImmunities::new()
             .with_resistance(ImmunityKind::Physical, 0.8)
+            .with_resistance(ImmunityKind::Cut, 0.6)
             .with_resistance(ImmunityKind::Electric, 0.6)
             .with_resistance(ImmunityKind::Bleeding, 0.8)
             .with_little_weakness(ImmunityKind::Water),
-        strength: 112,
+        strength: 90,
         intelligence: 25,
-        resistance: 6934,
+        resistance: 7934,
         vitality: 5800,
         ether: 60,
         weapon: None,
@@ -148,9 +151,11 @@ make_enemy!(
             SkillKind::Refresh,
             SkillKind::InstinctiveReaction,
             SkillKind::FirePunch,
+            SkillKind::AtomicBreath,
             SkillKind::CursedBlood,
             SkillKind::IcyShot,
         ],
+        pacts: vec![PactKind::Hercules, PactKind::Phoenix],
         drop: EnemyReward {
             orbs: (500, 800),
             xp: (250, 400),
@@ -168,6 +173,11 @@ make_enemy!(
                 EnemyRewardItem {
                     amount: (1, 1),
                     item: items::special::GIFT,
+                    probability: Probability::new(100),
+                },
+                EnemyRewardItem {
+                    amount: (1, 1),
+                    item: items::special::INTERNAL_KEY,
                     probability: Probability::new(100),
                 }
             ],
@@ -188,11 +198,12 @@ make_enemy!(
         potential: EnemyPotential::High,
         immunities: BodyImmunities::new()
             .with_resistance(ImmunityKind::Cut, 0.4)
+            .with_resistance(ImmunityKind::Special, 0.6)
             .with_resistance(ImmunityKind::Ice, 0.2)
             .with_little_weakness(ImmunityKind::Electric),
         strength: 70,
         intelligence: 180,
-        resistance: 4085,
+        resistance: 6085,
         vitality: 3951,
         ether: 150,
         weapon: Some(WeaponKind::EthriaKatana),
@@ -206,6 +217,12 @@ make_enemy!(
             SkillKind::FlamingBall,
             SkillKind::Suplex,
             SkillKind::BloodDonation,
+            SkillKind::YinYang,
+        ],
+        pacts: vec![
+            PactKind::Insatiable,
+            PactKind::FallenAngel,
+            PactKind::Alchemist
         ],
         drop: EnemyReward {
             orbs: (500, 800),
@@ -225,6 +242,11 @@ make_enemy!(
                     amount: (1, 1),
                     item: items::special::GIFT,
                     probability: Probability::new(100),
+                },
+                EnemyRewardItem {
+                    amount: (1, 1),
+                    item: items::special::INTERNAL_KEY,
+                    probability: Probability::new(100),
                 }
             ],
         },
@@ -232,13 +254,13 @@ make_enemy!(
 );
 
 make_enemy!(
-    microlord_diabolius,
+    microlord_bedialus,
     Enemy {
-        identifier: "microlord_diabolius",
-        name: BossKind::MicrolordDiabolius.name(),
+        identifier: "microlord_bedialus",
+        name: BossKind::MicrolordBedialus.name(),
         base_probability: Probability::NEVER,
         brain: BrainKind::Boss,
-        boss: Some(BossKind::MicrolordDiabolius),
+        boss: Some(BossKind::MicrolordBedialus),
         regions: &[],
         personalities: &[Personality::Cowardice, Personality::Arrogance],
         potential: EnemyPotential::Medium,
@@ -248,10 +270,10 @@ make_enemy!(
             .with_resistance(ImmunityKind::Ice, 0.8)
             .with_little_weakness(ImmunityKind::Cut)
             .with_little_weakness(ImmunityKind::Physical),
-        strength: 28,
-        intelligence: 160,
-        resistance: 2931,
-        vitality: 421,
+        strength: 58,
+        intelligence: 198,
+        resistance: 7931,
+        vitality: 648,
         ether: 150,
         weapon: None,
         allies: None,
@@ -264,6 +286,11 @@ make_enemy!(
             SkillKind::WaterBlessing,
             SkillKind::WaterJet,
             SkillKind::ResplendentPunch,
+        ],
+        pacts: vec![
+            PactKind::Alchemist,
+            PactKind::Consistency,
+            PactKind::Phoenix
         ],
         drop: EnemyReward {
             orbs: (300, 500),
@@ -301,10 +328,10 @@ make_enemy!(
             .with_little_resistance(ImmunityKind::Cut)
             .with_little_resistance(ImmunityKind::Physical)
             .with_little_weakness(ImmunityKind::Ice),
-        strength: 190,
+        strength: 230,
         intelligence: 115,
-        resistance: 1750,
-        vitality: 1199,
+        resistance: 8750,
+        vitality: 6199,
         ether: 80,
         weapon: None,
         allies: None,
@@ -318,8 +345,13 @@ make_enemy!(
             SkillKind::Intimidation,
             SkillKind::DefensiveJump,
             SkillKind::InstinctiveReaction,
-            SkillKind::Suplex,
-            SkillKind::AtomicHollow,
+            SkillKind::DeepCut,
+            SkillKind::AtomicBreath,
+        ],
+        pacts: vec![
+            PactKind::Insatiable,
+            PactKind::FallenAngel,
+            PactKind::Unshakable
         ],
         drop: EnemyReward {
             orbs: (700, 1000),

@@ -26,6 +26,7 @@ make_enemy!(
         weapon: None,
         allies: None,
         skills: vec![],
+        pacts: vec![],
         drop: EnemyReward {
             orbs: (0, 0),
             xp: (0, 0),
@@ -61,6 +62,7 @@ make_enemy!(
             SkillKind::TornadoKick,
             SkillKind::ElectricSlap,
         ],
+        pacts: vec![],
         drop: EnemyReward {
             orbs: (80, 150),
             xp: (100, 150),

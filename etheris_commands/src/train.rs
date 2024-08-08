@@ -106,6 +106,12 @@ pub async fn strength_training(
         1.0
     };
 
+    let xp_multiplier = if character.region.city().is_some() {
+        xp_multiplier + 1.25
+    } else {
+        xp_multiplier
+    };
+
     let xp = (xp as f64 * xp_multiplier) as u32;
     character.strength_xp += xp;
 
@@ -172,6 +178,12 @@ pub async fn health_training(
         1.25
     } else {
         1.0
+    };
+
+    let xp_multiplier = if character.region.city().is_some() {
+        xp_multiplier + 1.25
+    } else {
+        xp_multiplier
     };
 
     let xp = (xp as f64 * xp_multiplier) as u32;

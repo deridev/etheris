@@ -69,6 +69,7 @@ impl Skill for GarhyanRatSummon {
             vitality: Attribute::from(75),
             ether: Attribute::from(25),
             drop: Reward::default(),
+            pacts: vec![],
         });
 
         api.emit_message(format!(

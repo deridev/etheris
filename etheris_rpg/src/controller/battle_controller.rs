@@ -43,6 +43,7 @@ pub struct BattleController {
     pub current_turn_history: TurnHistory,
 
     should_reinput: bool,
+    last_input: Option<BattleInput>,
 }
 
 impl BattleController {
@@ -54,6 +55,7 @@ impl BattleController {
             last_interaction: None,
             current_turn_history: TurnHistory::default(),
             should_reinput: false,
+            last_input: None,
         }
     }
 
@@ -139,6 +141,13 @@ impl BattleController {
         }
 
         self.battle.reallocate_all_targets();
+
+        for fighter in self.battle.fighters.iter_mut() {
+            for pact in fighter.pacts.clone() {
+                let mut dyn_pact = pact.dynamic_pact.lock().await;
+                dyn_pact.setup_fighter(fighter).ok();
+            }
+        }
 
         Ok(())
     }
@@ -238,9 +247,22 @@ impl BattleController {
                             if n == winner_team { "🌟 " } else { "" },
                             fighters
                                 .iter()
-                                .map(|f| f.name.to_owned())
+                                .map(|f| {
+                                    let health_percentage =
+                                        ((f.health().value as f64 / f.health().max as f64) * 100.0)
+                                            .round() as i32;
+                                    format!(
+                                        "- **{}**{}",
+                                        f.name,
+                                        if health_percentage > 0 {
+                                            format!(" ({}% vida restando)", health_percentage)
+                                        } else {
+                                            String::new()
+                                        }
+                                    )
+                                })
                                 .collect::<Vec<_>>()
-                                .join(", ")
+                                .join("\n")
                         )
                     })
                     .collect::<Vec<_>>()
@@ -403,16 +425,23 @@ impl BattleController {
     }
 
     pub async fn update_turn_history_message(&mut self) -> anyhow::Result<()> {
+        if self.battle.history.last().map(|h| h.messages.is_empty()).unwrap_or(false) {
+            println!("Empty history. Last input: {:?}", self.last_input);
+        }
+
         let response = Response::from(self.create_turn_embed()).remove_all_components();
 
         if let Some(message) = &self.last_message {
-            self.ctx.update_specific_message(message, response).await?;
+            self.ctx
+                .update_specific_message(message, response)
+                .await
+                .ok();
             tokio::time::sleep(Duration::from_secs(
                 2 + (self.current_turn_history.messages.len() as u64).saturating_sub(2),
             ))
             .await;
         } else {
-            let message = self.ctx.send(response).await?;
+            let message = self.ctx.send_in_channel(response).await?.model().await?;
             self.last_message = Some(message);
         }
 
@@ -647,6 +676,8 @@ impl BattleController {
         let fighter = self.battle.get_current_fighter().clone();
         let fighter_name = fighter.name.clone();
 
+        self.last_input = Some(input.clone());
+
         match input {
             BattleInput::Nothing => {
                 self.emit_turn_message(format!("**{}** não fez nada!", fighter.name));
@@ -832,6 +863,7 @@ impl BattleController {
                             let fighter = self.battle.get_fighter_mut(fighter.index);
                             fighter.heal(fighter.index, hp);
                             fighter.ether.add(ether);
+                            fighter.remove_item(item, 1);
                         }
 
                         self.emit_turn_message(format!(
@@ -849,6 +881,7 @@ impl BattleController {
                         {
                             let fighter = self.battle.get_fighter_mut(fighter.index);
                             fighter.intelligence_level += 15;
+                            fighter.remove_item(item, 1);
                         }
 
                         self.emit_turn_message(format!(
@@ -879,11 +912,15 @@ impl BattleController {
                     1,
                     fighter.health().max,
                 );
-                let ether_regeneration = math::calculate_ether_regeneration(
+                let mut ether_regeneration = math::calculate_ether_regeneration(
                     consumption_properties,
                     1,
                     fighter.ether.max,
                 );
+
+                if fighter.has_effect(EffectKind::Exhausted) {
+                    ether_regeneration /= 4;
+                }
 
                 let mut messages = vec![];
                 if health_regeneration > 0 {

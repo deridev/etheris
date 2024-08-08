@@ -47,7 +47,9 @@ impl Skill for Pyrotransmutation {
         fighter.body_immunities.add_resistance(ImmunityKind::Ice, 0.4);
         fighter.body_immunities.add_weakness(ImmunityKind::Water, 1.0);
         fighter.modifiers.add(Modifier::new(ModKind::DmgMultiplier(1.5), None).with_tag("pyrotransmutation_dmg"));
-        fighter.overload += 0.5;
+        
+        let fighter_index = api.fighter_index;
+        api.add_overload(fighter_index, 0.5).await;
 
         api.emit_message(format!("**{}** usou a pirotransmutação!", api.fighter().name));
 

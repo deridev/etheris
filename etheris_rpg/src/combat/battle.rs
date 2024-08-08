@@ -69,7 +69,7 @@ impl Default for BattleSettings {
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Default)]
 pub struct TurnEndQueues {
     pub damages: Vec<(DamageSpecifier, FighterIndex)>,
-    pub damage_misses: Vec<(DamageSpecifier, FighterIndex)>,
+    pub damage_misses: Vec<(FighterIndex, DamageSpecifier, FighterIndex)>,
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -329,7 +329,7 @@ impl Battle {
             fighter.overload = if ether_rec == 0 {
                 fighter.overload
             } else {
-                fighter.overload.sub(0.3).clamp(0.0, 1000.0)
+                fighter.overload.sub(0.45).max(0.0)
             };
 
             fighter.balance = fighter.balance.add(3).min(100);

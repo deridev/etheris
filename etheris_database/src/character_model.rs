@@ -14,7 +14,7 @@ use etheris_data::{
     personality::Personality,
     weapon::WeaponKind,
     world::regions::WorldRegion,
-    BossKind, ItemValue, ItemValues, SkillKind,
+    BossKind, ItemValue, ItemValues, PactKind, SkillKind,
 };
 use etheris_discord::twilight_model::id::{marker::UserMarker, Id};
 use mongodb::bson::oid::ObjectId;
@@ -64,6 +64,10 @@ const fn _default_battle_stats() -> BattleStats {
         life_risks: 0,
         withdrawals: 0,
     }
+}
+
+const fn _default_max_pacts() -> u8 {
+    1
 }
 
 fn _default_stats() -> CharacterStats {
@@ -195,6 +199,7 @@ pub enum MentalLevel {
     Novice,
     Accustomed,
     Spirited,
+    Experient,
     Strong,
     Master,
     Champion,
@@ -202,6 +207,21 @@ pub enum MentalLevel {
 }
 
 impl MentalLevel {
+    pub fn level(&self) -> u32 {
+        match self {
+            Self::Laymen => 1,
+            Self::Beginner => 2,
+            Self::Novice => 3,
+            Self::Accustomed => 4,
+            Self::Spirited => 5,
+            Self::Experient => 6,
+            Self::Strong => 7,
+            Self::Master => 8,
+            Self::Champion => 9,
+            Self::Legend => 10,
+        }
+    }
+
     pub fn reward_multiplier(&self) -> f64 {
         match self {
             Self::Laymen => 0.3,
@@ -209,7 +229,8 @@ impl MentalLevel {
             Self::Novice => 0.8,
             Self::Accustomed => 1.0,
             Self::Spirited => 1.1,
-            Self::Strong => 1.2,
+            Self::Experient => 1.2,
+            Self::Strong => 1.3,
             Self::Master => 1.4,
             Self::Champion => 1.6,
             Self::Legend => 2.0,
@@ -225,6 +246,7 @@ impl Display for MentalLevel {
             Self::Novice => f.write_str("Novato"),
             Self::Accustomed => f.write_str("Acostumado"),
             Self::Spirited => f.write_str("Espirituoso"),
+            Self::Experient => f.write_str("Experiente"),
             Self::Strong => f.write_str("Forte"),
             Self::Master => f.write_str("Mestre"),
             Self::Champion => f.write_str("Campeão"),
@@ -256,6 +278,11 @@ pub struct CharacterModel {
     pub skills: Vec<SkillKind>,
     pub learned_skills: Vec<SkillKind>,
     pub learnable_skills: Vec<SkillKind>,
+
+    #[serde(default = "HashSet::new")]
+    pub pacts: HashSet<PactKind>,
+    #[serde(default = "_default_max_pacts")]
+    pub max_pacts: u8,
 
     pub defeated_bosses: HashSet<BossKind>,
     pub visited_regions: HashSet<WorldRegion>,
@@ -337,6 +364,9 @@ impl CharacterModel {
             learnable_skills: vec![SkillKind::ImbuedPunch],
             skills,
             personalities,
+
+            pacts: HashSet::new(),
+            max_pacts: _default_max_pacts(),
 
             visited_regions: HashSet::new(),
             region: WorldRegion::Greenagis,
@@ -555,6 +585,16 @@ impl CharacterModel {
         self.inventory
             .iter_mut()
             .find(|it| it.identifier == item.identifier)
+    }
+
+    pub fn get_inventory_item_indexed_mut(
+        &mut self,
+        item: &Item,
+    ) -> Option<(usize, &mut InventoryItem)> {
+        self.inventory
+            .iter_mut()
+            .enumerate()
+            .find(|(_, it)| it.identifier == item.identifier)
     }
 
     pub fn get_battle_inventory_item(&self, item: &Item) -> Option<&InventoryItem> {

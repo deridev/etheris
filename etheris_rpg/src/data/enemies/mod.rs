@@ -1,7 +1,7 @@
 use etheris_common::Probability;
 use etheris_data::{
     items::Item, personality::Personality, weapon::WeaponKind, world::regions::WorldRegion,
-    BossKind, SkillKind,
+    BossKind, PactKind, SkillKind,
 };
 use once_cell::sync::Lazy;
 use rand::Rng;
@@ -69,8 +69,8 @@ fn calculate_gain(
     let pl_difference = (player_pl - enemy_pl) as f64;
 
     let mut reduction_factor = if pl_difference >= 0.0 {
-        let scaled_difference = (pl_difference / 15.0).min(100.0);  // Scale and cap the difference
-        1.0 / (1.0 + scaled_difference.powf(1.75) * multiplier)  // Gradual decrease
+        let scaled_difference = (pl_difference / 15.0).min(100.0); // Scale and cap the difference
+        1.0 / (1.0 + scaled_difference.powf(1.75) * multiplier) // Gradual decrease
     } else {
         // Player is weaker
         1.0 + ((multiplier * 0.8) / 10.0) * pl_difference.abs()
@@ -134,6 +134,33 @@ pub struct Enemy {
     pub allies: Option<Vec<(Probability, Box<Enemy>)>>,
     pub skills: Vec<SkillKind>,
     pub drop: EnemyReward,
+    pub pacts: Vec<PactKind>,
+}
+
+impl Default for Enemy {
+    fn default() -> Self {
+        Self {
+            identifier: "invalid_enemy",
+            name: "Inimigo",
+            base_probability: Probability::NEVER,
+            brain: BrainKind::Simple,
+            boss: None,
+            regions: &[],
+            personalities: &[],
+            potential: EnemyPotential::Low,
+            immunities: BodyImmunities::new(),
+            strength: 0,
+            intelligence: 0,
+            resistance: 0,
+            vitality: 0,
+            ether: 0,
+            weapon: None,
+            allies: None,
+            skills: vec![],
+            drop: EnemyReward::default(),
+            pacts: vec![],
+        }
+    }
 }
 
 impl Enemy {
@@ -156,7 +183,7 @@ pub static ALL_ENEMIES: Lazy<Vec<Enemy>> = Lazy::new(|| {
         bosses::agorath(),
         bosses::orsinium(),
         bosses::ethria(),
-        bosses::microlord_diabolius(),
+        bosses::microlord_bedialus(),
         bosses::macrolord_vastorrant(),
         // Weaklings
         weaklings::giant_rat(),

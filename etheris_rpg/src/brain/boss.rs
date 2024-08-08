@@ -76,6 +76,7 @@ impl BossBrain {
         let phase_weights = self.action_weights.get_mut(&self.phase).unwrap();
 
         *phase_weights.get_mut(&BattleInputKind::Finish).unwrap() = 10.0;
+        *phase_weights.get_mut(&BattleInputKind::Defend).unwrap() = 0.45;
         *phase_weights.get_mut(&BattleInputKind::UseItem).unwrap() = 0.1;
 
         // Reset weights for actions that can't be used in current composure
@@ -85,7 +86,9 @@ impl BossBrain {
             }
         }
 
-        if (self.phase == BossPhase::Desperate || api.rng().gen_bool(0.01))
+        if (self.phase == BossPhase::Aggressive
+            || self.phase == BossPhase::Opening
+            || api.rng().gen_bool(0.01))
             && fighter.actions.contains(&BattleAction::ControlPower)
             && fighter.potential > fighter.power
         {
@@ -113,7 +116,7 @@ impl BossBrain {
         match battle_state.composure {
             Composure::Standing => {
                 if battle_state.fighter_health_ratio < 0.3 {
-                    *phase_weights.get_mut(&BattleInputKind::Defend).unwrap() += 0.2;
+                    *phase_weights.get_mut(&BattleInputKind::Defend).unwrap() += 0.1;
                 }
             }
             Composure::OnGround => {
@@ -140,7 +143,7 @@ impl BossBrain {
                     *phase_weights.get_mut(&BattleInputKind::UseItem).unwrap() += 0.2;
                 }
                 Personality::Calm => {
-                    *phase_weights.get_mut(&BattleInputKind::Defend).unwrap() += 0.3;
+                    *phase_weights.get_mut(&BattleInputKind::Defend).unwrap() += 0.2;
                 }
                 // Add more personality-based adjustments as needed
                 _ => {}
@@ -162,12 +165,12 @@ impl BossBrain {
                 .iter()
                 .all(|action| matches!(action, &BattleInput::Attack))
             {
-                *phase_weights.get_mut(&BattleInputKind::Defend).unwrap() += 0.3;
+                *phase_weights.get_mut(&BattleInputKind::Defend).unwrap() += 0.2;
             } else if recent_actions
                 .iter()
                 .all(|action| matches!(action, &BattleInput::Defend))
             {
-                *phase_weights.get_mut(&BattleInputKind::UseSkill).unwrap() += 0.3;
+                *phase_weights.get_mut(&BattleInputKind::UseSkill).unwrap() += 0.4;
             }
         }
     }

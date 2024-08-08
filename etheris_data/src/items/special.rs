@@ -7,6 +7,8 @@ pub const ALL_ITEMS: &[Item] = &[
     TRAP,
     INTELLIGENCE_CRYSTAL,
     INVIGORATING_CRYSTAL,
+    INTERNAL_KEY,
+    EMBLEM_OF_THE_TWO_LORDS,
 ];
 
 pub const RECIPE_BOOK: Item = Item {
@@ -76,6 +78,34 @@ pub const INVIGORATING_CRYSTAL: Item = Item {
     purchase_properties: PurchaseProperties {
         base_price: 700,
         base_sell_price: 300,
+        ..PurchaseProperties::default()
+    },
+    ..Item::default()
+};
+
+pub const INTERNAL_KEY: Item = Item {
+    identifier: "internal_key",
+    display_name: "Chave Interna",
+    emoji: Emoji::from_emote(Some("internal_key"), 1270735015117983754),
+    tags: &[ItemTag::Special],
+    has_consumption_function: false,
+    purchase_properties: PurchaseProperties {
+        base_price: 500,
+        base_sell_price: 50,
+        ..PurchaseProperties::default()
+    },
+    ..Item::default()
+};
+
+pub const EMBLEM_OF_THE_TWO_LORDS: Item = Item {
+    identifier: "emblem_of_the_two_lords",
+    display_name: "Embleda dos Dois Lordes",
+    emoji: Emoji::from_emote(Some("emblem_of_the_two_lords"), 1270929377848197211),
+    tags: &[ItemTag::Special],
+    has_consumption_function: false,
+    purchase_properties: PurchaseProperties {
+        base_price: 5000,
+        base_sell_price: 500,
         ..PurchaseProperties::default()
     },
     ..Item::default()

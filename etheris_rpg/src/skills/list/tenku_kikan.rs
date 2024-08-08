@@ -52,6 +52,10 @@ impl Skill for TenkuKikan {
 
     async fn passive_on_kill(&mut self, mut api: BattleApi<'_>, killed: FighterIndex) -> SkillResult<()> {
         let killed = api.battle().get_fighter(killed);
+        if killed.vitality.value > 0 || api.fighter().vitality.value <= 0 {
+            return Ok(());
+        }
+        
         if self.soul.is_some() {
             api.defer_message(format!("**{}** não conseguiu armazenar a alma de **{}** no {} pois já há uma alma armazenada!", api.fighter().name, killed.name, self.data(api.fighter()).name));
             return Ok(());
@@ -61,6 +65,12 @@ impl Skill for TenkuKikan {
         for skill in killed.skills.iter() {
             let skill_kind = skill.dynamic_skill.lock().await.kind();
             skills.push(skill_kind);
+        }
+
+        let mut pacts = Vec::with_capacity(killed.pacts.len());
+        for pact in killed.pacts.iter() {
+            let pact_kind = pact.base_kind.clone();
+            pacts.push(pact_kind);
         }
 
         let soul = Soul {
@@ -73,6 +83,7 @@ impl Skill for TenkuKikan {
             intelligence: killed.intelligence_level,
             personalities: killed.personalities.to_owned(),
             skills,
+            pacts,
         };
 
         api.defer_message(format!("**{}** usou **{}** e armazenou a alma de **{}**!", api.fighter().name, self.data(api.fighter()).name, soul.name));
@@ -120,10 +131,11 @@ impl Skill for TenkuKikan {
 
             weapon: None,
             skills: soul.skills,
+            pacts: soul.pacts,
             immunities: BodyImmunities::new()
         });
 
-        api.add_overload(api.fighter_index, 15.0).await;
+        api.add_overload(api.fighter_index, 40.0).await;
 
         Ok(())
     }

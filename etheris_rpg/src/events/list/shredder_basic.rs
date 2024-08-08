@@ -369,7 +369,7 @@ make_event!(
     Event {
         identifier: "shredder_recruitment",
         spawn: EventSpawn {
-            base_probability: Probability::new(5),
+            base_probability: Probability::new(15),
             weighted_regions: vec![(WorldRegion::Gloomwood, 2), (WorldRegion::Mudland, 3)],
             conditions: vec![
                 Condition::HasTag(TAG),
@@ -479,6 +479,7 @@ make_enemy!(
             SkillKind::Suplex,
             SkillKind::Charge,
         ],
+        pacts: vec![],
         drop: EnemyReward {
             orbs: (10, 15),
             xp: (20, 50),
@@ -488,6 +489,7 @@ make_enemy!(
                 probability: Probability::new(100),
             }],
         },
+        ..Default::default()
     }
 );
 

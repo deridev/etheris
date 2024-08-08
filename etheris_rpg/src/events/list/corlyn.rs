@@ -218,6 +218,23 @@ pub fn corlyn_quest_icefields(_: EventBuildState) -> Event {
                         },
                         ..Default::default()
                     },
+                    Consequence {
+                        kind: ConsequenceKind::Rewards {
+                            message: "há um emblema na sua mão. Você não sabe como ele foi parar ali.".to_string(),
+                            iterations: 1,
+                            items: vec![
+                                (Probability::new(100), items::special::EMBLEM_OF_THE_TWO_LORDS, (1, 1)),
+                            ],
+                            orbs: (0, 0),
+                            xp: XpReward {
+                                health: (0, 0),
+                                intelligence: (0, 0),
+                                strength: (0, 0),
+                                knowledge: (0, 0)
+                            }
+                        },
+                        ..Default::default()
+                    },
                 ],
                 ..Default::default()
             },

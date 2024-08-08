@@ -10,6 +10,9 @@ pub mod weapon;
 pub mod world;
 pub use boss::*;
 
+mod pact_kind;
+pub use pact_kind::*;
+
 mod skill_kind;
 pub use skill_kind::*;
 

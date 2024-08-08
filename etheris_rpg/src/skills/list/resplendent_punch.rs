@@ -56,7 +56,7 @@ impl Skill for ResplendentPunch {
         ).await;
 
         if damage.missed {
-            api.fighter_mut().overload += 0.85;
+            api.add_overload(api.fighter_index, 0.85).await;
             self.accuracy = self.accuracy.saturating_add(6);
             self.extra_cost = self.extra_cost.saturating_add(2);
         } else {
@@ -73,7 +73,7 @@ impl Skill for ResplendentPunch {
                     fighter.name, target.name
                 ),
                 format!(
-                    "**{}** tentou dar um soco resplandecente em **{}** mas não acertou! O resplandecer tá mais comum agora.",
+                    "**{}** tentou dar um soco resplandecente em **{}** mas não acertou! O resplandecer está mais comum agora.",
                     fighter.name, target.name
                 ),
             ]);

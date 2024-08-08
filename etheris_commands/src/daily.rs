@@ -12,17 +12,19 @@ pub async fn daily(mut ctx: CommandContext) -> anyhow::Result<()> {
         .await?;
 
     let mut character = parse_user_character!(ctx, author);
-    character.action_points = character.max_action_points;
+    character.action_points = character.max_action_points.max(character.action_points);
     character.stats.resistance.value = character.stats.resistance.max;
     character.stats.vitality.value = character.stats.vitality.max;
     character.stats.ether.value = character.stats.ether.max;
+
+    character.add_item(items::special::INTERNAL_KEY, 1, None);
 
     ctx.db().characters().save(character).await?;
 
     ctx.send(
         Response::new_user_reply(
             &author,
-            "você pegou seu daily e regenerou tudo do seu personagem ao máximo!",
+            format!("você pegou seu daily e regenerou tudo do seu personagem ao máximo, além de receber **{} 1x {}**!", items::special::INTERNAL_KEY.emoji, items::special::INTERNAL_KEY.display_name),
         )
         .add_emoji_prefix(emojis::SUCCESS),
     )

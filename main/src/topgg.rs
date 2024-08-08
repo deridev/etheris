@@ -2,6 +2,7 @@ use std::net::SocketAddr;
 use std::sync::Arc;
 
 use etheris_common::Color;
+use etheris_data::items;
 use etheris_database::EtherisDatabase;
 use etheris_discord::twilight_model::id::Id;
 use etheris_discord::EmbedBuilder;
@@ -85,6 +86,7 @@ async fn vote(
     character.stats.resistance.value = character.stats.resistance.max;
     character.stats.vitality.value = character.stats.vitality.max;
     character.stats.ether.value = character.stats.ether.max;
+    character.add_item(items::special::INTERNAL_KEY, 1, None);
 
     database.characters().save(character).await?;
 
@@ -98,7 +100,7 @@ async fn vote(
     let embed = EmbedBuilder::new_common()
         .set_color(Color::GREEN)
         .set_author_to_user(&user)
-        .set_description("## Obrigado por votar! 💫\nPor ter votado em Etheris, seu personagem descansou completamente. Aproveite Etheris!")
+        .set_description(format!("## Obrigado por votar! 💫\nPor ter votado em Etheris, seu personagem descansou completamente e ganhou **1x {} {}**. Aproveite Etheris!", items::special::INTERNAL_KEY.display_name, items::special::INTERNAL_KEY.emoji))
         .add_footer_text("Em 12 horas você poderá votar novamente. 👀");
     client
         .http

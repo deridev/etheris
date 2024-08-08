@@ -6,7 +6,7 @@ pub enum BossKind {
     Agorath,
     Orsinium,
     Ethria,
-    MicrolordDiabolius,
+    MicrolordBedialus,
     MacrolordVastorrant,
 }
 
@@ -17,7 +17,7 @@ impl BossKind {
             Self::Agorath => "Duelista Agorath",
             Self::Orsinium => "Orsinium, o Colosso Forjado",
             Self::Ethria => "Evolucionária Ethria",
-            Self::MicrolordDiabolius => "Microlorde Diabolius",
+            Self::MicrolordBedialus => "Microlorde Bedialus",
             Self::MacrolordVastorrant => "Macrolorde Vastorránt",
         }
     }
@@ -30,7 +30,7 @@ impl BossKind {
             Self::Agorath => "Guerreiro vagante invencível, em busca de uma derrota em um duelo.",
             Self::Orsinium => "Golem de batalha incansável, o último guardião de uma civilização esquecida no tempo.",
             Self::Ethria => "Outrora política influente, dedicou sua vida a evoluir a raça humana até o próximo patamar através do ether.",
-            Self::MicrolordDiabolius => "Irmão covarde de um insano líder que pretende ascender a própria existência.",
+            Self::MicrolordBedialus => "Irmão covarde de um insano líder que almeja o topo.",
             Self::MacrolordVastorrant => "Tirano louco que busca superar sua própria existência e ascender ao céu."  
         }
     }

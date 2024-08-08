@@ -1,7 +1,7 @@
 use etheris_common::Identifiable;
 use serde::{Deserialize, Serialize};
 
-use crate::{personality::Personality, BrainKind};
+use crate::{personality::Personality, BrainKind, PactKind};
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
 pub struct Soul {
@@ -13,6 +13,8 @@ pub struct Soul {
     pub vitality: i32,
     pub resistance: i32,
     pub skills: Vec<SkillKind>,
+    #[serde(default)]
+    pub pacts: Vec<PactKind>,
     pub personalities: Vec<Personality>,
 }
 
@@ -65,6 +67,7 @@ pub enum SkillKind {
     ThermalFists,
     DeepCut,
     ElectricalDischarge,
+    AtomicBreath,
 }
 
 impl SkillKind {
@@ -114,6 +117,7 @@ impl SkillKind {
             Self::ThermalFists,
             Self::DeepCut,
             Self::ElectricalDischarge,
+            Self::AtomicBreath,
         ]
     }
 
@@ -172,6 +176,7 @@ impl SkillKind {
             Self::ThermalFists => &[Personality::Arrogance, Personality::Intelligence],
             Self::DeepCut => &[Personality::Insanity, Personality::Arrogance],
             Self::ElectricalDischarge => &[Personality::Cowardice, Personality::Aggressiveness],
+            Self::AtomicBreath => &[Personality::Insanity, Personality::Calm],
         }
     }
 
@@ -214,6 +219,7 @@ impl SkillKind {
             Self::DeepCut => 50,
             Self::SkillMirror => 55,
             Self::AtomicHollow => 60,
+            Self::AtomicBreath => 65,
             Self::YinYang => 70,
             Self::TenkuKikan(_) => 80,
             Self::Hakikotenchou => 90,
@@ -262,7 +268,11 @@ impl SkillKind {
             | Self::ThermalFists
             | Self::DeepCut
             | Self::ElectricalDischarge => 3,
-            Self::WaterJet | Self::FlamingBall | Self::EtherShadow | Self::SkillMirror => 4,
+            Self::WaterJet
+            | Self::FlamingBall
+            | Self::EtherShadow
+            | Self::SkillMirror
+            | Self::AtomicBreath => 4,
             Self::YinYang | Self::Hakikotenchou => 5,
             Self::ParalyzingBet | Self::AgorathForcedDuel => 6,
             Self::TenkuKikan(..) => 7,

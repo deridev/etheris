@@ -40,6 +40,7 @@ make_enemy!(
             SkillKind::ImbuedPunch,
             SkillKind::MirrorDamage,
         ],
+        pacts: vec![],
         drop: EnemyReward {
             orbs: (20, 60),
             xp: (30, 85),
@@ -83,6 +84,7 @@ make_enemy!(
             SkillKind::ElectricSlap,
             SkillKind::SimpleCut,
         ],
+        pacts: vec![],
         drop: EnemyReward {
             orbs: (50, 70),
             xp: (30, 70),
@@ -119,6 +121,7 @@ make_enemy!(
             SkillKind::FirePunch,
             SkillKind::MirrorDamage,
         ],
+        pacts: vec![],
         drop: EnemyReward {
             orbs: (30, 60),
             xp: (30, 70),
@@ -156,6 +159,7 @@ make_enemy!(
             SkillKind::TornadoKick,
             SkillKind::WaterBlessing,
         ],
+        pacts: vec![],
         drop: EnemyReward {
             orbs: (30, 60),
             xp: (50, 65),
@@ -196,6 +200,7 @@ make_enemy!(
             SkillKind::DefensiveJump,
             SkillKind::ImbuedPunch,
         ],
+        pacts: vec![],
         drop: EnemyReward {
             orbs: (60, 120),
             xp: (70, 130),
@@ -242,6 +247,7 @@ make_enemy!(
             SkillKind::SimpleCut,
             SkillKind::MirrorDamage,
         ],
+        pacts: vec![],
         drop: EnemyReward {
             orbs: (50, 100),
             xp: (60, 110),
@@ -290,6 +296,7 @@ make_enemy!(
             SkillKind::Refresh,
             SkillKind::WoundHealing,
         ],
+        pacts: vec![],
         drop: EnemyReward {
             orbs: (60, 120),
             xp: (80, 150),
@@ -333,6 +340,7 @@ make_enemy!(
             SkillKind::CyclonePush,
             SkillKind::TornadoKick,
         ],
+        pacts: vec![],
         drop: EnemyReward {
             orbs: (35, 65),
             xp: (45, 75),
@@ -390,6 +398,7 @@ make_enemy!(
             SkillKind::ParalyzingBet,
         ],
         allies: None,
+        pacts: vec![],
         drop: EnemyReward {
             orbs: (40, 100),
             xp: (80, 130),
@@ -433,6 +442,7 @@ make_enemy!(
             SkillKind::WoundHealing,
         ],
         allies: None,
+        pacts: vec![],
         drop: EnemyReward {
             orbs: (30, 90),
             xp: (50, 150),
@@ -492,6 +502,7 @@ make_enemy!(
             SkillKind::InstinctiveReaction,
             SkillKind::AtomicHollow,
         ],
+        pacts: vec![],
         drop: EnemyReward {
             orbs: (150, 300),
             xp: (150, 350),

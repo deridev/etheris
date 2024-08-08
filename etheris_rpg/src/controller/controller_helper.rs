@@ -190,6 +190,10 @@ pub async fn tick_every_effect(
                     ));
 
                     if let Some(shock) = api.fighter().get_effect(EffectKind::Shocked) {
+                        if shock.amount < 10 || effect.amount < 10 {
+                            return Ok(());
+                        }
+
                         let dmg = match shock.amount {
                             0..=30 => 0.05,
                             31..=60 => 0.08,
@@ -313,6 +317,7 @@ pub async fn tick_every_effect(
             }
         }
     }
+
     Ok(())
 }
 
@@ -405,16 +410,34 @@ pub async fn passives(controller: &mut BattleController) -> anyhow::Result<()> {
         }
     }
 
-    // Passives: on_damage_miss
-    for (damage, fighter) in controller.battle.turn_end_queues.damage_misses.clone() {
+    // Passives: on_damage (pact)
+    for (damage, fighter) in controller.battle.turn_end_queues.damages.clone() {
         let fighter_index = fighter;
         let target_index = damage.culprit;
+
+        for pact in controller.battle.get_fighter(fighter).pacts.clone() {
+            let mut api = BattleApi::new(controller);
+            api.fighter_index = fighter_index;
+            api.target_index = target_index;
+
+            pact.dynamic_pact
+                .lock()
+                .await
+                .on_damage(api, damage)
+                .await
+                .ok();
+        }
+    }
+
+    // Passives: on_damage_miss
+    for (who_missed, damage, fighter) in controller.battle.turn_end_queues.damage_misses.clone() {
+        let fighter_index = fighter;
 
         let skills = controller.battle.get_fighter(fighter).skills.clone();
         for skill in skills {
             let mut api = BattleApi::new(controller);
             api.fighter_index = fighter_index;
-            api.target_index = target_index;
+            api.target_index = who_missed;
 
             skill
                 .dynamic_skill
@@ -444,6 +467,21 @@ pub async fn passives(controller: &mut BattleController) -> anyhow::Result<()> {
                 .passive_fighter_tick(api)
                 .await
                 .ok();
+        }
+    }
+
+    // Passives: tick fighter pacts
+    for fighter_index in controller.battle.alive_fighters.clone() {
+        let fighter = controller.battle.get_fighter_mut(fighter_index);
+        let fighter_index = fighter.index;
+        let target_index = fighter.target;
+
+        for pact in fighter.pacts.clone() {
+            let mut api = BattleApi::new(controller);
+            api.fighter_index = fighter_index;
+            api.target_index = target_index;
+
+            pact.dynamic_pact.lock().await.fighter_tick(api).await.ok();
         }
     }
 
@@ -484,7 +522,7 @@ pub async fn tick_cycle(
         if let Composure::OnAir(meters) = fighter.composure {
             if meters <= 1 {
                 controller.battle.get_fighter_mut(*fighter_index).composure = Composure::Standing;
-                controller.emit_turn_message(format!("***{}** pousou no chão!*", fighter_name));
+                controller.emit_turn_message(format!("**{}** pousou no chão!", fighter_name));
             } else {
                 controller.battle.get_fighter_mut(*fighter_index).composure =
                     Composure::OnAir(meters - 1);

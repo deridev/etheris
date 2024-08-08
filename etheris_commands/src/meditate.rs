@@ -93,7 +93,8 @@ pub async fn meditate(mut ctx: CommandContext) -> anyhow::Result<()> {
             MentalLevel::Beginner => Some(MentalLevel::Novice),
             MentalLevel::Novice => Some(MentalLevel::Accustomed),
             MentalLevel::Accustomed => Some(MentalLevel::Spirited),
-            MentalLevel::Spirited => Some(MentalLevel::Strong),
+            MentalLevel::Spirited => Some(MentalLevel::Experient),
+            MentalLevel::Experient => Some(MentalLevel::Strong),
             MentalLevel::Strong => Some(MentalLevel::Master),
             MentalLevel::Master => Some(MentalLevel::Champion),
             MentalLevel::Champion => Some(MentalLevel::Legend),
@@ -101,8 +102,8 @@ pub async fn meditate(mut ctx: CommandContext) -> anyhow::Result<()> {
         };
 
         if next_mental_level.is_none() {
-            knowledge_xp = (knowledge_xp as f32 * 0.4).round() as u32 + 2;
-            intelligence_xp = (intelligence_xp as f32 * 0.4).round() as u32 + 2;
+            knowledge_xp = (knowledge_xp as f32 * 0.3).round() as u32 + 2;
+            intelligence_xp = (intelligence_xp as f32 * 0.2).round() as u32 + 2;
         }
         
         let mut extras = vec![];
@@ -118,6 +119,18 @@ pub async fn meditate(mut ctx: CommandContext) -> anyhow::Result<()> {
         if MentalLevel::Accustomed == character.mental_level {
             character.actions.insert(BattleAction::ControlPower);
             extras.push("**Agora você é capaz de controlar o seu poder no meio de batalhas!**".to_string());
+        }
+
+        const MENTAL_PACT_MAX: &[(MentalLevel, u8)] = &[
+            (MentalLevel::Spirited, 2),
+            (MentalLevel::Champion, 3),
+        ];
+
+        for (level, pact_count) in MENTAL_PACT_MAX {
+            if level.level() <= character.mental_level.level() && character.max_pacts < *pact_count {
+                extras.push(format!("**Agora você pode formar {pact_count} pactos!**"));
+                character.max_pacts = *pact_count;
+            }
         }
 
         ctx.db().characters().save(character).await?;
@@ -170,10 +183,11 @@ fn create_inner_shadow(dummy: User, character: &CharacterModel) -> FighterData {
         MentalLevel::Novice => 1.0,
         MentalLevel::Accustomed => 1.5,
         MentalLevel::Spirited => 1.8,
-        MentalLevel::Strong => 2.25,
-        MentalLevel::Master => 3.0,
-        MentalLevel::Legend => 6.0,
-        MentalLevel::Champion => 8.0,
+        MentalLevel::Experient => 2.25,
+        MentalLevel::Strong => 3.0,
+        MentalLevel::Master => 6.0,
+        MentalLevel::Legend => 8.0,
+        MentalLevel::Champion => 13.0,
     };
 
     let dmg_multiplier = match character.mental_level {
@@ -182,8 +196,9 @@ fn create_inner_shadow(dummy: User, character: &CharacterModel) -> FighterData {
         MentalLevel::Novice => 1.0,
         MentalLevel::Accustomed => 1.5,
         MentalLevel::Spirited => 1.8,
-        MentalLevel::Strong => 2.0,
-        MentalLevel::Master => 2.2,
+        MentalLevel::Experient => 2.0,
+        MentalLevel::Strong => 2.3,
+        MentalLevel::Master => 2.8,
         MentalLevel::Legend => 3.5,
         MentalLevel::Champion => 4.0,
     };

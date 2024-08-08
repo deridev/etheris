@@ -1,5 +1,7 @@
 use etheris_common::{calculate_power_level, Attribute};
-use etheris_data::{items, personality::Personality, weapon::WeaponKind, BossKind, SkillKind};
+use etheris_data::{
+    items, personality::Personality, weapon::WeaponKind, BossKind, PactKind, SkillKind,
+};
 use etheris_database::character_model::{BattleAction, CharacterModel};
 use etheris_discord::twilight_model::user::User;
 
@@ -23,6 +25,7 @@ pub struct FighterData {
     pub inventory: Vec<BattleItem>,
     pub personalities: Vec<Personality>,
     pub skills: Vec<SkillKind>,
+    pub pacts: Vec<PactKind>,
 
     pub strength_level: u32,
     pub intelligence_level: u32,
@@ -65,6 +68,7 @@ impl FighterData {
                 .collect(),
             personalities: character.personalities.clone(),
             skills: character.skills.clone(),
+            pacts: character.pacts.clone().into_iter().collect(),
 
             strength_level: character.stats.strength_level,
             intelligence_level: character.stats.intelligence_level,
@@ -100,6 +104,7 @@ impl FighterData {
             vitality: Attribute::from(enemy.vitality),
             weapon: enemy.weapon,
             skills: enemy.skills.to_vec(),
+            pacts: enemy.pacts.clone().into_iter().collect(),
             immunities: enemy.immunities,
         }
     }

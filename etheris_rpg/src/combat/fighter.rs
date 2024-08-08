@@ -11,10 +11,11 @@ use etheris_data::{
     items::{self, Item},
     personality::Personality,
     weapon::WeaponKind,
-    BossKind, SkillKind,
+    BossKind, PactKind, SkillKind,
 };
 use etheris_database::character_model::BattleAction;
 use etheris_discord::{twilight_model::user::User, ButtonBuilder, Emoji};
+use prelude::BoxedPact;
 use tokio::sync::Mutex;
 
 use crate::{
@@ -22,6 +23,7 @@ use crate::{
     common::{BoxedSkill, DamageSpecifier},
     data::{finishers::Finisher, Reward},
     list::*,
+    pacts::list::get_boxed_pact_from_kind,
     FighterData, Modifiers,
 };
 
@@ -50,6 +52,7 @@ pub enum Composure {
     OnAir(u8),
 }
 
+// Skill
 #[derive(Clone)]
 pub struct FighterSkill {
     pub identifier: &'static str,
@@ -81,6 +84,43 @@ impl Debug for FighterSkill {
 }
 
 impl PartialEq for FighterSkill {
+    fn eq(&self, other: &Self) -> bool {
+        self.identifier == other.identifier
+    }
+}
+
+// Pact
+#[derive(Clone)]
+pub struct FighterPact {
+    pub identifier: &'static str,
+    pub dynamic_pact: Arc<Mutex<BoxedPact>>,
+    pub base_kind: PactKind,
+}
+
+impl From<PactKind> for FighterPact {
+    fn from(value: PactKind) -> Self {
+        let boxed_pact = get_boxed_pact_from_kind(value);
+        Self::new(boxed_pact)
+    }
+}
+
+impl FighterPact {
+    pub fn new(pact: BoxedPact) -> Self {
+        Self {
+            identifier: pact.data(&Default::default()).identifier,
+            base_kind: pact.kind(),
+            dynamic_pact: Arc::new(Mutex::new(pact)),
+        }
+    }
+}
+
+impl Debug for FighterPact {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "[dyn Pact]")
+    }
+}
+
+impl PartialEq for FighterPact {
     fn eq(&self, other: &Self) -> bool {
         self.identifier == other.identifier
     }
@@ -335,6 +375,7 @@ pub struct Fighter {
     pub inventory: Vec<BattleItem>,
     pub personalities: Vec<Personality>,
     pub skills: Vec<FighterSkill>,
+    pub pacts: Vec<FighterPact>,
     pub effects: Vec<Effect>,
     pub modifiers: Modifiers,
     pub body_immunities: BodyImmunities,
@@ -407,6 +448,11 @@ impl Fighter {
                 .iter()
                 .map(|s| FighterSkill::from(s.clone()))
                 .collect(),
+            pacts: data
+                .pacts
+                .iter()
+                .map(|s| FighterPact::from(s.clone()))
+                .collect(),
             effects: Vec::new(),
             modifiers: Modifiers::new(),
             body_immunities: data.immunities,
@@ -445,12 +491,12 @@ impl Fighter {
 
     pub fn strength_multiplier(&self) -> f32 {
         let base = 1.5 + (self.strength_level as f32);
-        base * (self.power as f32) * 0.22
+        base * (self.power as f32) * 0.2
     }
 
     pub fn intelligence_multiplier(&self) -> f32 {
         let base = 1.5 + (self.intelligence_level as f32);
-        base * (self.power as f32) * 0.17
+        base * (self.power as f32) * 0.15
     }
 
     pub fn mixed_multiplier(&self, strength_weight: f32, intelligence_weight: f32) -> f32 {
@@ -599,7 +645,7 @@ impl Fighter {
             && self.vitality.value == 0
             && vital_damage > 0
             && vital_damage < (self.vitality.max / 4)
-            && Probability::new(80).generate_random_bool()
+            && Probability::new(40).generate_random_bool()
         {
             self.flags.insert(FighterFlags::HAD_A_NEAR_DEATH_EXPERIENCE);
             self.vitality.value += (vital_damage % 4) + 1;

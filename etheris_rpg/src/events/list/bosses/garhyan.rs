@@ -6,7 +6,7 @@ use super::super::prelude::*;
 make_event!(garhyan_shredder_first_invitation, Event {
     identifier: "garhyan_shredder_first_invitation",
     spawn: EventSpawn {
-        base_probability: Probability::new(5),
+        base_probability: Probability::new(20),
         weighted_regions: vec![(WorldRegion::Gloomwood, 1), (WorldRegion::Mudland, 3)],
         conditions: vec![
             Condition::StrongerThan(weak_shredder()),

@@ -67,7 +67,7 @@ impl Skill for EthriaAdaptation {
             api.fighter_mut()
                 .body_immunities
                 .increase_resistance(immunity, 0.09);
-            api.fighter_mut().overload += 0.25;
+            api.add_overload(api.fighter_index, 0.25).await;
         }
 
         Ok(())

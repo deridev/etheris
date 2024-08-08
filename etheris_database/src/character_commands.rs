@@ -167,7 +167,6 @@ impl CharacterCommands {
         Ok(models)
     }
 
-
     pub async fn add_ap_to_everyone(&self, amount: u32) -> anyhow::Result<()> {
         let update = doc! {
             "$inc": { "action_points": amount }

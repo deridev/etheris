@@ -37,6 +37,8 @@ impl Color {
     pub const BLURPLE: Color = Color::Rgb(131, 118, 204);
     pub const VERY_DARK_BLUE: Color = Color::Rgb(34, 31, 166);
 
+    pub const PURPLE: Color = Color::Rgb(125, 59, 237);
+
     pub const VERY_LIGHT_RED: Color = Color::Rgb(242, 162, 170);
     pub const LIGHT_RED: Color = Color::Rgb(230, 106, 118);
     pub const RED: Color = Color::Rgb(240, 41, 60);

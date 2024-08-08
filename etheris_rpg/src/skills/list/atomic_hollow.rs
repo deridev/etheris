@@ -43,7 +43,7 @@ impl Skill for AtomicHollow {
                 culprit: fighter.index,
                 kind: DamageKind::SpecialPhysical,
                 amount: damage,
-                balance_effectiveness: 25,
+                balance_effectiveness: 10,
                 accuracy: 99,
                 effect: None
             },
@@ -61,7 +61,7 @@ impl Skill for AtomicHollow {
         }
 
 
-        api.add_overload(api.fighter_index, 3.5).await;
+        api.add_overload(api.fighter_index, 6.5).await;
 
         Ok(())
     }
