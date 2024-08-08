@@ -192,7 +192,7 @@ impl<'a> BattleApi<'a> {
         }
 
         if base_overload <= 100.0 && fighter.overload >= 100.0 {
-            let overload_damage = self.rng().gen_range(20..=30);
+            let overload_damage = self.rng().gen_range(40..=50);
             let overload_damage =
                 (overload_damage as f32 * fighter.intelligence_multiplier() * 0.9) as i32;
 

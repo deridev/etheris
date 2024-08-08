@@ -25,7 +25,7 @@ impl Skill for AbyssalSerpent {
         let target = api.target().clone();
 
         let base_damage = api.rng().gen_range(10..=17);
-        let damage = api.rng().gen_range(20..=27);
+        let damage = api.rng().gen_range(20..=25);
 
         let multiplier = fighter.intelligence_multiplier() * 1.1;
         let damage = base_damage + ((damage as f32) * multiplier) as i32;
@@ -38,7 +38,7 @@ impl Skill for AbyssalSerpent {
                 amount: damage,
                 balance_effectiveness: 17,
                 accuracy: 95,
-                effect: Some(Effect::new(EffectKind::Poisoned, 60, fighter.index))
+                effect: Some(Effect::new(EffectKind::Poisoned, 30, fighter.index))
             },
         ).await;
 
