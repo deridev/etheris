@@ -91,6 +91,7 @@ pub static ALL_EVENTS: Lazy<Vec<EventBuilder>> = Lazy::new(|| {
         basic::forest::basic_mudland_trapped,
         // Desert
         basic::desert::basic_desert_exploration,
+        basic::desert::basic_desert_water_well,
         basic::desert::basic_desert_digging,
         basic::desert::basic_desert_beginner_nomad_merchant,
         basic::desert::basic_desert_lost_traveler,

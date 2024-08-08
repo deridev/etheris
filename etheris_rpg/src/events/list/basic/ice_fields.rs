@@ -145,7 +145,7 @@ make_event!(
         identifier: "basic_icefields_frozen_lake",
         spawn: EventSpawn {
             weighted_regions: vec![(WorldRegion::Icefields, 1)],
-            base_probability: Probability::new(50),
+            base_probability: Probability::new(20),
             ..Default::default()
         },
         emoji: Emoji::from_unicode("❄️"),

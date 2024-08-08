@@ -142,6 +142,101 @@ make_event!(
 );
 
 make_event!(
+    basic_desert_water_well,
+    Event {
+        identifier: "basic_desert_water_well",
+        spawn: EventSpawn {
+            weighted_regions: vec![(WorldRegion::Tenypt, 1), (WorldRegion::Sandywater, 1),],
+            ..Default::default()
+        },
+        emoji: Emoji::from_unicode("💧"),
+        message: EventMessage::Multiple(&[
+            "você encontrou um pequeno poço. O que deseja fazer?",
+            "você achou um poço de água. Deseja usá-lo?",
+        ]),
+        actions: vec![
+            common::ignore_action(),
+            Action {
+                name: "Cavar".to_string(),
+                emoji: Some(items::tool::SHOVEL.emoji),
+                conditions: vec![Condition::HasItem(items::tool::SHOVEL, 1)],
+                consequences: vec![
+                    common::consequence_didnt_find_anything(Probability::new(5)),
+                    Consequence {
+                        kind: ConsequenceKind::Rewards {
+                            message: "o poço tinha água e algumas outras coisas!".to_string(),
+                            iterations: 2,
+                            items: vec![
+                                (Probability::new(100), items::consumable::WATER, (1, 2)),
+                                (
+                                    Probability::new(100),
+                                    items::consumable::COFFEE_POWDER,
+                                    (1, 1)
+                                ),
+                                (Probability::new(100), items::consumable::WHEAT, (1, 2)),
+                                (Probability::new(100), items::consumable::MILK, (1, 1)),
+                                (Probability::new(100), items::consumable::BACON, (1, 1)),
+                            ],
+                            orbs: (10, 15),
+                            xp: XpReward {
+                                health: (0, 10),
+                                intelligence: (0, 5),
+                                strength: (0, 5),
+                                knowledge: (0, 5)
+                            }
+                        },
+                        ..Default::default()
+                    }
+                ],
+                extra_consequences: vec![Consequence {
+                    kind: ConsequenceKind::RemoveItemDurability(items::tool::SHOVEL, 1),
+                    ..Default::default()
+                }],
+                ..Default::default()
+            },
+            Action {
+                name: "Destruir".to_string(),
+                emoji: Some(items::tool::HAMMER.emoji),
+                conditions: vec![Condition::HasItem(items::tool::HAMMER, 1)],
+                consequences: vec![Consequence {
+                    kind: ConsequenceKind::Rewards {
+                        message: "o poço foi destruído e você pegou alguns materiais e itens!"
+                            .to_string(),
+                        iterations: 3,
+                        items: vec![
+                            (Probability::new(100), items::consumable::WATER, (1, 3)),
+                            (Probability::new(100), items::material::STONE, (2, 6)),
+                            (Probability::new(100), items::material::STICK, (2, 3)),
+                            (Probability::new(70), items::material::RAW_TRUNK, (1, 1)),
+                            (Probability::new(70), items::material::PLANK, (1, 1)),
+                            (
+                                Probability::new(70),
+                                items::consumable::CHOCOLATE_MILK,
+                                (1, 1)
+                            ),
+                            (Probability::new(70), items::ore::COPPER_ORE, (1, 1)),
+                        ],
+                        orbs: (5, 20),
+                        xp: XpReward {
+                            health: (0, 15),
+                            intelligence: (0, 5),
+                            strength: (0, 15),
+                            knowledge: (0, 5)
+                        }
+                    },
+                    ..Default::default()
+                }],
+                extra_consequences: vec![Consequence {
+                    kind: ConsequenceKind::RemoveItemDurability(items::tool::HAMMER, 1),
+                    ..Default::default()
+                }],
+                ..Default::default()
+            }
+        ]
+    }
+);
+
+make_event!(
     basic_desert_digging,
     Event {
         identifier: "basic_desert_digging",
@@ -259,6 +354,7 @@ make_event!(
     Event {
         identifier: "basic_desert_sandstorm",
         spawn: EventSpawn {
+            base_probability: Probability::new(10),
             weighted_regions: vec![(WorldRegion::Tenypt, 5), (WorldRegion::Sandywater, 3)],
             ..Default::default()
         },
@@ -388,7 +484,7 @@ make_event!(
                                 (Probability::new(30), items::special::GIFT, (1, 1)),
                                 (Probability::new(2), items::ore::GOLD_ORE, (2, 4)),
                             ],
-                            orbs: (50, 100),
+                            orbs: (30, 70),
                             xp: XpReward {
                                 strength: (30, 50),
                                 health: (20, 40),

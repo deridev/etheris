@@ -68,6 +68,7 @@ pub enum SkillKind {
     DeepCut,
     ElectricalDischarge,
     AtomicBreath,
+    AbyssalSerpent,
 }
 
 impl SkillKind {
@@ -118,6 +119,7 @@ impl SkillKind {
             Self::DeepCut,
             Self::ElectricalDischarge,
             Self::AtomicBreath,
+            Self::AbyssalSerpent,
         ]
     }
 
@@ -177,6 +179,7 @@ impl SkillKind {
             Self::DeepCut => &[Personality::Insanity, Personality::Arrogance],
             Self::ElectricalDischarge => &[Personality::Cowardice, Personality::Aggressiveness],
             Self::AtomicBreath => &[Personality::Insanity, Personality::Calm],
+            Self::AbyssalSerpent => &[Personality::Courage, Personality::Aggressiveness],
         }
     }
 
@@ -217,10 +220,11 @@ impl SkillKind {
             Self::ParalyzingBet => 40,
             Self::EtherShadow => 45,
             Self::DeepCut => 50,
-            Self::SkillMirror => 55,
-            Self::AtomicHollow => 60,
+            Self::AbyssalSerpent => 55,
+            Self::SkillMirror => 60,
             Self::AtomicBreath => 65,
             Self::YinYang => 70,
+            Self::AtomicHollow => 80,
             Self::TenkuKikan(_) => 80,
             Self::Hakikotenchou => 90,
             Self::FinalCrucifix => 130,
@@ -267,7 +271,8 @@ impl SkillKind {
             | Self::GarhyanRatSummon
             | Self::ThermalFists
             | Self::DeepCut
-            | Self::ElectricalDischarge => 3,
+            | Self::ElectricalDischarge
+            | Self::AbyssalSerpent => 3,
             Self::WaterJet
             | Self::FlamingBall
             | Self::EtherShadow

@@ -78,6 +78,7 @@ impl BossBrain {
         *phase_weights.get_mut(&BattleInputKind::Finish).unwrap() = 10.0;
         *phase_weights.get_mut(&BattleInputKind::Defend).unwrap() = 0.45;
         *phase_weights.get_mut(&BattleInputKind::UseItem).unwrap() = 0.1;
+        *phase_weights.get_mut(&BattleInputKind::UseSkill).unwrap() = 2.5;
 
         // Reset weights for actions that can't be used in current composure
         for (input_kind, weight) in phase_weights.iter_mut() {

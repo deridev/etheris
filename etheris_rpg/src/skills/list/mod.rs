@@ -54,6 +54,7 @@ use_skill!(thermal_fists);
 use_skill!(deep_cut);
 use_skill!(electrical_discharge);
 use_skill!(atomic_breath);
+use_skill!(abyssal_serpent);
 
 mod specific;
 pub use specific::*;
@@ -115,5 +116,6 @@ pub fn get_boxed_skill_from_kind(kind: SkillKind) -> Box<dyn super::Skill + Send
         SkillKind::DeepCut => Box::<DeepCut>::default(),
         SkillKind::ElectricalDischarge => Box::<ElectricalDischarge>::default(),
         SkillKind::AtomicBreath => Box::<AtomicBreath>::default(),
+        SkillKind::AbyssalSerpent => Box::<AbyssalSerpent>::default(),
     }
 }

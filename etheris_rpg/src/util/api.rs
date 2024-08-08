@@ -192,7 +192,7 @@ impl<'a> BattleApi<'a> {
         }
 
         if base_overload <= 100.0 && fighter.overload >= 100.0 {
-            let overload_damage = self.rng().gen_range(30..=50);
+            let overload_damage = self.rng().gen_range(20..=30);
             let overload_damage =
                 (overload_damage as f32 * fighter.intelligence_multiplier() * 0.9) as i32;
 
@@ -411,10 +411,11 @@ impl<'a> BattleApi<'a> {
             .push((damage, target_index));
 
         if missed {
-            self.battle_mut()
-                .turn_end_queues
-                .damage_misses
-                .push((culprit_index, damage, target_index));
+            self.battle_mut().turn_end_queues.damage_misses.push((
+                culprit_index,
+                damage,
+                target_index,
+            ));
         }
 
         let has_fallen = self.battle_mut().rng.gen_bool(falling_prob);

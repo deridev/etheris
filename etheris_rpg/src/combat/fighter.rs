@@ -217,13 +217,10 @@ impl FighterWeapon {
     pub fn action(&self) -> &'static str {
         match self.kind {
             WeaponKind::Knife => "Cortar",
-            WeaponKind::Stick => "Atacar",
-            WeaponKind::Bat => "Bater",
+            WeaponKind::Stick | WeaponKind::ScorpionFang => "Atacar",
+            WeaponKind::Bat | WeaponKind::IceBat | WeaponKind::Umbrella => "Bater",
             WeaponKind::Spear => "Perfurar",
-            WeaponKind::Katana => "Cortar",
-            WeaponKind::EthriaKatana => "Cortar",
-            WeaponKind::Umbrella => "Bater",
-            WeaponKind::ScorpionFang => "Atacar",
+            WeaponKind::Katana | WeaponKind::EthriaKatana => "Cortar",
         }
     }
 

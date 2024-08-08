@@ -6,6 +6,7 @@ const CONSUMABLE_TAGS: &[ItemTag] = &[ItemTag::Consumable];
 pub const ALL_ITEMS: &[Item] = &[
     SALT,
     SUGAR,
+    COFFEE_POWDER,
     WATER,
     MILK,
     WHEAT,
@@ -25,6 +26,7 @@ pub const ALL_ITEMS: &[Item] = &[
     CHOCOLATE_MILK,
     ORANGE_JUICE,
     LEMONADE,
+    COFFEE,
     BEEF,
     CHICKEN_MEAT,
     BACON,
@@ -64,6 +66,24 @@ pub const SUGAR: Item = Item {
     purchase_properties: PurchaseProperties {
         base_price: 2,
         base_sell_price: 1,
+        ..PurchaseProperties::default()
+    },
+    ..Item::default()
+};
+
+pub const COFFEE_POWDER: Item = Item {
+    identifier: "coffee_powder",
+    display_name: "Pó de Café",
+    emoji: Emoji::from_emote(Some("coffee_powder"), 1271195392079429765),
+    tags: CONSUMABLE_TAGS,
+    consumption_properties: Some(ConsumptionProperties {
+        ether_regeneration: 3,
+        health_regenation: 1,
+        ..ConsumptionProperties::default()
+    }),
+    purchase_properties: PurchaseProperties {
+        base_price: 48,
+        base_sell_price: 7,
         ..PurchaseProperties::default()
     },
     ..Item::default()
@@ -406,6 +426,24 @@ pub const LEMONADE: Item = Item {
     purchase_properties: PurchaseProperties {
         base_price: 37,
         base_sell_price: 21,
+        ..PurchaseProperties::default()
+    },
+    ..Item::default()
+};
+
+pub const COFFEE: Item = Item {
+    identifier: "coffee",
+    display_name: "Café",
+    emoji: Emoji::from_emote(Some("coffee_mug"), 1271195435188355145),
+    tags: CONSUMABLE_TAGS,
+    consumption_properties: Some(ConsumptionProperties {
+        health_regenation: 20,
+        ether_regeneration: 30,
+        ..ConsumptionProperties::default()
+    }),
+    purchase_properties: PurchaseProperties {
+        base_price: 90,
+        base_sell_price: 25,
         ..PurchaseProperties::default()
     },
     ..Item::default()

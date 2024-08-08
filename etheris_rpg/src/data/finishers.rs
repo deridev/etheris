@@ -50,6 +50,7 @@ impl Finisher {
             WeaponKind::EthriaKatana => &[Self::Decapitate, Self::StabNeck, Self::PierceHeart],
             WeaponKind::Umbrella => &[Self::SmashSkull, Self::PierceHeart],
             WeaponKind::ScorpionFang => &[Self::PierceHeart, Self::StabNeck],
+            WeaponKind::IceBat => &[Self::SmashSkull],
         }
     }
 

@@ -205,6 +205,55 @@ make_enemy!(
 );
 
 make_enemy!(
+    valent_criminal,
+    Enemy {
+        identifier: "valent_criminal",
+        name: "Criminoso Valente",
+        base_probability: Probability::ALWAYS,
+        brain: BrainKind::Simple,
+        boss: None,
+        regions: &[(WorldRegion::Emerelis, 3), (WorldRegion::Gloomwood, 3)],
+        personalities: &[Personality::Aggressiveness, Personality::Arrogance],
+        potential: EnemyPotential::Medium,
+        immunities: BodyImmunities::new(),
+        strength: 10,
+        intelligence: 5,
+        resistance: 129,
+        vitality: 60,
+        ether: 20,
+        weapon: Some(WeaponKind::Knife),
+        allies: None,
+        skills: vec![
+            SkillKind::ImbuedPunch,
+            SkillKind::Charge,
+            SkillKind::SimpleCut
+        ],
+        pacts: vec![],
+        drop: EnemyReward {
+            orbs: (30, 40),
+            xp: (20, 60),
+            items: vec![
+                EnemyRewardItem {
+                    amount: (1, 1),
+                    item: items::material::STICK,
+                    probability: Probability::new(80),
+                },
+                EnemyRewardItem {
+                    amount: (1, 1),
+                    item: items::material::KNIFE,
+                    probability: Probability::new(40),
+                },
+                EnemyRewardItem {
+                    amount: (1, 1),
+                    item: items::material::RAW_TRUNK,
+                    probability: Probability::new(20),
+                },
+            ],
+        },
+    }
+);
+
+make_enemy!(
     newbie_hunter,
     Enemy {
         identifier: "newbie_hunter",

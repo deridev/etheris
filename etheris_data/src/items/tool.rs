@@ -3,7 +3,7 @@ use etheris_discord::Emoji;
 
 const TOOL_TAGS: &[ItemTag] = &[ItemTag::Tool];
 pub const ALL_ITEMS: &[Item] = &[
-    TRANSLATOR, SHOVEL, PICKAXE, HAMMER, AXE, BAT, SPEAR, KATANA, UMBRELLA,
+    TRANSLATOR, SHOVEL, PICKAXE, HAMMER, AXE, BAT, SPEAR, KATANA, UMBRELLA, ICE_BAT,
 ];
 
 pub const TRANSLATOR: Item = Item {
@@ -152,6 +152,21 @@ pub const UMBRELLA: Item = Item {
     purchase_properties: PurchaseProperties {
         base_price: 400,
         base_sell_price: 30,
+
+        ..PurchaseProperties::default()
+    },
+    ..Item::default()
+};
+
+pub const ICE_BAT: Item = Item {
+    identifier: "ice_bat",
+    display_name: "Taco de Gelo",
+    emoji: Emoji::from_emote(Some("ice_bat"), 1271196267787325461),
+    tags: TOOL_TAGS,
+    weapon: Some(WeaponKind::IceBat),
+    purchase_properties: PurchaseProperties {
+        base_price: 500,
+        base_sell_price: 60,
 
         ..PurchaseProperties::default()
     },

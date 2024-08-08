@@ -194,13 +194,13 @@ fn create_inner_shadow(dummy: User, character: &CharacterModel) -> FighterData {
         MentalLevel::Laymen => 0.6,
         MentalLevel::Beginner => 0.75,
         MentalLevel::Novice => 1.0,
-        MentalLevel::Accustomed => 1.5,
-        MentalLevel::Spirited => 1.8,
-        MentalLevel::Experient => 2.0,
-        MentalLevel::Strong => 2.3,
-        MentalLevel::Master => 2.8,
-        MentalLevel::Legend => 3.5,
-        MentalLevel::Champion => 4.0,
+        MentalLevel::Accustomed => 1.3,
+        MentalLevel::Spirited => 1.4,
+        MentalLevel::Experient => 1.6,
+        MentalLevel::Strong => 1.9,
+        MentalLevel::Master => 2.3,
+        MentalLevel::Legend => 2.6,
+        MentalLevel::Champion => 3.0,
     };
 
     let mut shadow_character = character.clone();
@@ -225,12 +225,12 @@ fn create_inner_shadow(dummy: User, character: &CharacterModel) -> FighterData {
 
     multiply_by_multiplier!(
         shadow_character.stats.ether.value,
-        overall_multiplier * 0.8,
+        0.3 + overall_multiplier * 0.4,
         i32
     );
     multiply_by_multiplier!(
         shadow_character.stats.ether.max,
-        overall_multiplier * 0.8,
+        0.3 + overall_multiplier * 0.4,
         i32
     );
 

@@ -425,7 +425,13 @@ impl BattleController {
     }
 
     pub async fn update_turn_history_message(&mut self) -> anyhow::Result<()> {
-        if self.battle.history.last().map(|h| h.messages.is_empty()).unwrap_or(false) {
+        if self
+            .battle
+            .history
+            .last()
+            .map(|h| h.messages.is_empty())
+            .unwrap_or(false)
+        {
             println!("Empty history. Last input: {:?}", self.last_input);
         }
 

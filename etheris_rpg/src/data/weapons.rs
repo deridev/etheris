@@ -242,6 +242,65 @@ async fn weapon_bat(mut api: BattleApi<'_>) -> anyhow::Result<()> {
     Ok(())
 }
 
+async fn weapon_ice_bat(mut api: BattleApi<'_>) -> anyhow::Result<()> {
+    let base_damage = api.rng().gen_range(7..=12);
+    let damage = api.rng().gen_range(14..=17);
+    let damage = base_damage + (damage as f32 * api.fighter().weapon_multiplier()) as i32;
+
+    let is_critical = Probability::new(15).generate_random_bool();
+
+    let damage = api
+        .apply_damage(
+            api.target_index,
+            DamageSpecifier {
+                culprit: api.fighter_index,
+                amount: damage,
+                kind: DamageKind::Physical,
+                balance_effectiveness: if is_critical { 20 } else { 10 },
+                accuracy: 60,
+                effect: Some(Effect::new(EffectKind::Ice, 35, api.fighter_index)),
+            },
+        )
+        .await;
+
+    let target_name = api.target().name.to_owned();
+    if is_critical {
+        if !damage.missed {
+            api.apply_effect(
+                api.target_index,
+                Effect::new(EffectKind::Bleeding, 60, api.fighter_index),
+            )
+            .await;
+        }
+
+        api.emit_message(format!(
+            "**{}** deu uma tacada MUITO FORTE no rosto de **{}** e causou **{damage}** e seu rosto começou a sangrar",
+            api.fighter().name,
+            target_name
+        ))
+    } else {
+        api.emit_random_message(&[
+            format!(
+                "**{}** deu uma tacada em **{}** e causou **{damage}**",
+                api.fighter().name,
+                target_name
+            ),
+            format!(
+                "**{}** bateu com um taco com força no peito de **{}** e causou **{damage}**",
+                api.fighter().name,
+                target_name
+            ),
+            format!(
+                "**{}** deu uma tacada na cabeça de **{}** e causou **{damage}**",
+                api.fighter().name,
+                target_name
+            ),
+        ]);
+    }
+
+    Ok(())
+}
+
 async fn weapon_umbrella(mut api: BattleApi<'_>) -> anyhow::Result<()> {
     let base_damage = api.rng().gen_range(4..=15);
     let damage = api.rng().gen_range(10..=18);
@@ -353,5 +412,6 @@ pub async fn execute_weapon_attack(
         WeaponKind::Katana => weapon_katana(api).await,
         WeaponKind::ScorpionFang => weapon_scorpion_fang(api).await,
         WeaponKind::EthriaKatana => weapon_ethria_katana(api).await,
+        WeaponKind::IceBat => weapon_ice_bat(api).await,
     }
 }
