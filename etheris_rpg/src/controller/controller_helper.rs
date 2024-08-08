@@ -291,14 +291,14 @@ pub async fn tick_every_effect(
                         Default::default(),
                     ));
 
-                    let dmg = 6 + (api.fighter().health().max as f32 * 0.025) as i32;
+                    let dmg = 6 + (api.fighter().health().max as f32 * 0.022) as i32;
                     let dmg = api
                         .apply_damage(
                             api.fighter_index,
                             DamageSpecifier {
                                 kind: DamageKind::Poisonous,
                                 amount: (dmg as f64 * immunity_dmg_multiplier) as i32,
-                                balance_effectiveness: 3,
+                                balance_effectiveness: 2,
                                 accuracy: 255,
                                 ..Default::default()
                             },

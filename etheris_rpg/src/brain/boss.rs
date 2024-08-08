@@ -89,7 +89,7 @@ impl BossBrain {
 
         if (self.phase == BossPhase::Aggressive
             || self.phase == BossPhase::Opening
-            || api.rng().gen_bool(0.01))
+            || api.rng().gen_bool(0.02))
             && fighter.actions.contains(&BattleAction::ControlPower)
             && fighter.potential > fighter.power
         {

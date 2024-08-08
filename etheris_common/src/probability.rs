@@ -1,6 +1,6 @@
 use std::fmt::Display;
 
-use rand::Rng;
+use rand::{rngs::StdRng, Rng, SeedableRng};
 use serde::{Deserialize, Serialize};
 
 #[derive(
@@ -35,13 +35,13 @@ impl Probability {
 
     pub fn generate_random_bool(&self) -> bool {
         let probability = self.value_f64();
-        if probability == 0.0 {
+        if probability <= 0.0 {
             return false;
         } else if probability >= 1.0 {
             return true;
         }
 
-        rand::thread_rng().gen_bool(probability.clamp(0.01, 1.0))
+        StdRng::from_entropy().gen_bool(probability.clamp(0.011, 1.0))
     }
 }
 

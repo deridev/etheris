@@ -432,7 +432,7 @@ impl BattleController {
             .map(|h| h.messages.is_empty())
             .unwrap_or(false)
         {
-            println!("Empty history. Last input: {:?}", self.last_input);
+            println!("Empty history by {} turn. Last input: {:?}", self.battle.get_current_fighter().name, self.last_input);
         }
 
         let response = Response::from(self.create_turn_embed()).remove_all_components();
