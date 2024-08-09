@@ -62,7 +62,7 @@ impl Skill for DeepCut {
         let base_damage = api.rng().gen_range(30..=50);
         let damage = base_damage + api.rng().gen_range(15..=20);
 
-        let multiplier = fighter.intelligence_multiplier();
+        let multiplier = fighter.intelligence_multiplier() * 0.98;
         let damage = ((damage as f32) * multiplier) as i32;
 
         let damage = api.apply_damage(

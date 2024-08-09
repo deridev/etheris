@@ -4,6 +4,8 @@ use self::brain::BrainKind;
 
 use super::prelude::*;
 
+const SKILLS_NOT_CLONEABLE: &[&'static str] = &["tenku_kikan"];
+
 #[derive(Debug, Clone, Default)]
 pub struct EtherShadow {
     used: bool
@@ -26,7 +28,6 @@ impl Skill for EtherShadow {
         }
     }
 
-    
     fn can_use(&self, api: BattleApi<'_>) -> bool {
         !self.used && self.default_can_use(api)
     }
@@ -40,6 +41,10 @@ impl Skill for EtherShadow {
         for skill in fighter.skills {
             let kind = skill.base_kind;
             if kind == self.kind() {
+                continue;
+            }
+
+            if SKILLS_NOT_CLONEABLE.contains(&skill.identifier) {
                 continue;
             }
 

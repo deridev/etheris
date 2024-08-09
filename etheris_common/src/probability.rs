@@ -35,9 +35,9 @@ impl Probability {
 
     pub fn generate_random_bool(&self) -> bool {
         let probability = self.value_f64();
-        if probability <= 0.0 {
+        if probability <= 0.001 {
             return false;
-        } else if probability >= 1.0 {
+        } else if probability >= 0.9999 {
             return true;
         }
 

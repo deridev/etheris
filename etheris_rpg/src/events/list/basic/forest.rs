@@ -810,6 +810,7 @@ make_event!(
                                 (Probability::new(70), items::consumable::CHOCOLATE, (1, 1)),
                                 (Probability::new(50), items::material::KNIFE, (1, 1)),
                                 (Probability::new(30), items::material::PAPER, (1, 3)),
+                                (Probability::new(30), items::consumable::COFFEE_POWDER, (1, 2)),
                             ],
                             orbs: (5, 15),
                             xp: XpReward {

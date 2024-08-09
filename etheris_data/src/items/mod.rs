@@ -47,5 +47,5 @@ pub fn get_item_by_weapon(weapon: WeaponKind) -> Item {
         .iter()
         .find(|i| i.weapon == Some(weapon))
         .copied()
-        .expect("Every weapon should be also a item")
+        .expect(format!("Every weapon should be also a item: {:?}", weapon).as_str())
 }

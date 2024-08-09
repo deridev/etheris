@@ -203,7 +203,7 @@ impl<'a> BattleApi<'a> {
                         kind: DamageKind::Special,
                         amount: overload_damage,
                         balance_effectiveness: 20,
-                        accuracy: 100,
+                        accuracy: 255,
                         effect: Some(Effect::new(EffectKind::Bleeding, 30, fighter.index)),
                         culprit: fighter.index,
                     },

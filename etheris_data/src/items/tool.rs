@@ -3,7 +3,7 @@ use etheris_discord::Emoji;
 
 const TOOL_TAGS: &[ItemTag] = &[ItemTag::Tool];
 pub const ALL_ITEMS: &[Item] = &[
-    TRANSLATOR, SHOVEL, PICKAXE, HAMMER, AXE, BAT, SPEAR, KATANA, UMBRELLA, ICE_BAT,
+    TRANSLATOR, SHOVEL, PICKAXE, HAMMER, AXE, BAT, SPEAR, KATANA, ETHRIA_KATANA, UMBRELLA, ICE_BAT,
 ];
 
 pub const TRANSLATOR: Item = Item {
@@ -119,7 +119,7 @@ pub const KATANA: Item = Item {
     display_name: "Katana",
     emoji: Emoji::from_emote(Some("katana"), 1207539850098770011),
     tags: TOOL_TAGS,
-    weapon: Some(WeaponKind::EthriaKatana),
+    weapon: Some(WeaponKind::Katana),
     purchase_properties: PurchaseProperties {
         base_price: 800,
         base_sell_price: 200,
@@ -134,7 +134,7 @@ pub const ETHRIA_KATANA: Item = Item {
     display_name: "Katana de Ethria",
     emoji: Emoji::from_emote(Some("ethria_katana"), 1267206629162750075),
     tags: TOOL_TAGS,
-    weapon: Some(WeaponKind::Katana),
+    weapon: Some(WeaponKind::EthriaKatana),
     purchase_properties: PurchaseProperties {
         base_price: 4000,
         base_sell_price: 1000,

@@ -40,7 +40,7 @@ pub async fn meditate(mut ctx: CommandContext) -> anyhow::Result<()> {
     verify_user_cooldown!(ctx, author, "MEDITATE");
     ctx.db()
         .cooldowns()
-        .create_cooldown(author.id, "MEDITATE", chrono::Duration::try_minutes(25).unwrap())
+        .create_cooldown(author.id, "MEDITATE", chrono::Duration::try_minutes(10).unwrap())
         .await?;
 
     let inner_shadow = create_inner_shadow(author.clone(), &character); 
@@ -83,7 +83,7 @@ pub async fn meditate(mut ctx: CommandContext) -> anyhow::Result<()> {
 
     if has_won {
         let mut knowledge_xp = 25 + (total_dmg_dealt_ratio * 60.0).round() as u32;
-        let mut intelligence_xp = 100 + (total_dmg_dealt_ratio * 300.0).round() as u32;
+        let mut intelligence_xp = 70 + (total_dmg_dealt_ratio * 300.0).round() as u32;
 
         knowledge_xp = (knowledge_xp as f64 * character.mental_level.reward_multiplier()) as u32;
         intelligence_xp = (intelligence_xp as f64 * character.mental_level.reward_multiplier()) as u32;
@@ -191,16 +191,16 @@ fn create_inner_shadow(dummy: User, character: &CharacterModel) -> FighterData {
     };
 
     let dmg_multiplier = match character.mental_level {
-        MentalLevel::Laymen => 0.6,
-        MentalLevel::Beginner => 0.75,
-        MentalLevel::Novice => 1.0,
-        MentalLevel::Accustomed => 1.3,
-        MentalLevel::Spirited => 1.4,
-        MentalLevel::Experient => 1.6,
-        MentalLevel::Strong => 1.9,
-        MentalLevel::Master => 2.3,
-        MentalLevel::Legend => 2.6,
-        MentalLevel::Champion => 3.0,
+        MentalLevel::Laymen => 0.5,
+        MentalLevel::Beginner => 0.6,
+        MentalLevel::Novice => 0.8,
+        MentalLevel::Accustomed => 1.0,
+        MentalLevel::Spirited => 1.2,
+        MentalLevel::Experient => 1.4,
+        MentalLevel::Strong => 1.6,
+        MentalLevel::Master => 2.0,
+        MentalLevel::Legend => 2.3,
+        MentalLevel::Champion => 2.6,
     };
 
     let mut shadow_character = character.clone();
